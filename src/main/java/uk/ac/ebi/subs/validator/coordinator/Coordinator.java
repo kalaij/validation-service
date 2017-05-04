@@ -35,7 +35,7 @@ public class Coordinator {
         this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
-    private void processSubmission(SubmissionEnvelope envelope) {
+    public void processSubmission(SubmissionEnvelope envelope) {
         logger.debug("Received validation request on submission {}", envelope.getSubmission().getId());
 
         // For now we are only prototyping with samples
