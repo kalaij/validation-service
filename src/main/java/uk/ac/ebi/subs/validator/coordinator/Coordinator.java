@@ -10,11 +10,15 @@ import uk.ac.ebi.subs.data.component.Archive;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
+import uk.ac.ebi.subs.validator.data.ValidationOutcomeEnum;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
+import uk.ac.ebi.subs.validator.repository.repository.ValidationOutcomeRepository;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class Coordinator {
@@ -22,7 +26,8 @@ public class Coordinator {
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    private EntityProcessor entityProcessor;
+    @Autowired
+    private ValidationOutcomeRepository repository;
 
     @Autowired
     public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate, MessageConverter messageConverter) {
@@ -40,17 +45,30 @@ public class Coordinator {
         if (samples.size() > 0) {
             for (Sample sample : samples) {
 
-                ValidationOutcome validationOutcome = new ValidationOutcome(
-                        Arrays.asList(Archive.BioSamples, Archive.Ena, Archive.ArrayExpress),
-                        sample.getId());
+                // Generate and persist Validation Outcome Document
+                ValidationOutcome validationOutcome = generateValidationOutcomeDocument(sample);
+                repository.insert(validationOutcome);
 
-                // TODO - Store document in MongoDB
-
+                // Send sample to validation queues
                 rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, sample);
                 rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, sample);
                 rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, sample);
             }
         }
+    }
 
+    private ValidationOutcome generateValidationOutcomeDocument(Sample sample) {
+        ValidationOutcome validationOutcome = new ValidationOutcome();
+        validationOutcome.setEntityUuid(sample.getId());
+        validationOutcome.setValidationOutcome(ValidationOutcomeEnum.Pending);
+
+        List<Archive> archiveList = Arrays.asList(Archive.BioSamples, Archive.Ena, Archive.ArrayExpress);
+
+        Map<Archive, Boolean> expectedOutcomes = new HashMap<>();
+        for (Archive archive : archiveList) {
+            expectedOutcomes.put(archive, false);
+        }
+        validationOutcome.setExpectedOutcomes(expectedOutcomes);
+        return validationOutcome;
     }
 }

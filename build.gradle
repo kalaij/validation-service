@@ -11,6 +11,7 @@ repositories {
 dependencies {
     compile project(':validator-data-model')
     compile project(':validator-messaging')
+    compile project(':validator-repository')
 
     compile group: 'uk.ac.ebi.subs', name: 'subs-processing-model', version: '1.0.0-SNAPSHOT'
 
