@@ -12,7 +12,7 @@ import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.repository.repository.ValidationOutcomeRepository;
+import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
 
 import java.util.Arrays;
 import java.util.HashMap;
