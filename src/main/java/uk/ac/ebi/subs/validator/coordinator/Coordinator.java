@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.component.Archive;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.processing.SubmissionEnvelope;
+import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
@@ -48,10 +49,16 @@ public class Coordinator {
             ValidationOutcome validationOutcome = generateValidationOutcomeDocument(sample);
             repository.insert(validationOutcome);
 
+            ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(
+                    validationOutcome.getUuid(), sample);
+
             // Send sample to validation queues
-            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, sample);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, sample);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, sample);
+            rabbitMessagingTemplate.convertAndSend(
+                    Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(
+                    Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(
+                    Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, messageEnvelope);
         }
 
     }
