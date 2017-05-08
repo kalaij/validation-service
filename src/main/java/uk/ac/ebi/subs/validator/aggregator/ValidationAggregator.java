@@ -18,7 +18,7 @@ public class ValidationAggregator {
     private ValidationOutcomeRepository repository;
 
     public void updateValidationOutcome(EntityValidationOutcome validationOutcome) {
-        ValidationOutcome validationOutcomeDocument = repository.findOne(validationOutcome.getUuid());
+        ValidationOutcome validationOutcomeDocument = repository.findOne(validationOutcome.getEnvelopeUUID());
 
         validationOutcomeDocument.getValidationResults().add(validationOutcome);
         validationOutcomeDocument.getExpectedOutcomes().put(validationOutcome.getArchive(), true);
