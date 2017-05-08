@@ -36,7 +36,7 @@ public class ValidationAggregatorListener {
 
     @RabbitListener(queues = Queues.VALIDATION_RESULT)
     public void handleValidationResult(EntityValidationOutcome validationOutcome) {
-        logger.debug("Received sample.");
+        logger.debug("Received validation outcome.");
 
         validationAggregator.updateValidationOutcome(validationOutcome);
 
