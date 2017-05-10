@@ -2,6 +2,7 @@ package uk.ac.ebi.subs.validator.coordinator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MessageConverter;
@@ -12,6 +13,7 @@ import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
+import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
 
@@ -36,6 +38,7 @@ public class Coordinator {
         this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
+    @RabbitListener(queues = Queues.SUBMISSION_VALIDATOR)
     public void processSubmission(SubmissionEnvelope envelope) {
         logger.debug("Received validation request on submission {}", envelope.getSubmission().getId());
 
