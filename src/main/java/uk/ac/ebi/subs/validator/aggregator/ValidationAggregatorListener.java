@@ -6,8 +6,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.EntityValidationOutcome;
-import uk.ac.ebi.subs.validator.data.ValidationOutcomeEnum;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
@@ -19,6 +19,7 @@ import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
  *
  * Created by karoly on 05/05/2017.
  */
+@Service
 public class ValidationAggregatorListener {
 
     private static Logger logger = LoggerFactory.getLogger(ValidationAggregatorListener.class);

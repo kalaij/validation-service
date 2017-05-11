@@ -1,6 +1,7 @@
 package uk.ac.ebi.subs.validator.aggregator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.EntityValidationOutcome;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
@@ -12,6 +13,7 @@ import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
  *
  * Created by karoly on 05/05/2017.
  */
+@Service
 public class ValidationAggregator {
 
     @Autowired
