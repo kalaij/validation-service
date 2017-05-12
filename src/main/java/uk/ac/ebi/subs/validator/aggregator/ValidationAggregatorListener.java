@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.EntityValidationOutcome;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
@@ -30,9 +29,8 @@ public class ValidationAggregatorListener {
     ValidationAggregator validationAggregator;
 
     @Autowired
-    public ValidationAggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate, MessageConverter messageConverter) {
+    public ValidationAggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
-        this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
     @RabbitListener(queues = Queues.VALIDATION_RESULT)
@@ -46,6 +44,6 @@ public class ValidationAggregatorListener {
 
     private void sendOutcomeDocumentUpdate(EntityValidationOutcome validationOutcome) {
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_OUTCOME_DOCUMENT_UPDATED,
-                validationOutcome.getUuid());
+                validationOutcome.getOutcomeDocumentUUID());
     }
 }
