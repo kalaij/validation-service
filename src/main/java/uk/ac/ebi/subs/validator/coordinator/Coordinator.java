@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.component.Archive;
 import uk.ac.ebi.subs.data.submittable.Sample;
@@ -17,11 +16,7 @@ import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class Coordinator {
@@ -33,9 +28,8 @@ public class Coordinator {
     private ValidationOutcomeRepository repository;
 
     @Autowired
-    public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate, MessageConverter messageConverter) {
+    public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
-        this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
     @RabbitListener(queues = Queues.SUBMISSION_VALIDATOR)
