@@ -39,10 +39,14 @@ public class ValidationAggregatorListener {
 
         validationAggregator.updateValidationOutcome(validationOutcome);
 
+        logger.debug("Validation outcome has been updated in MongoDB.");
+
         sendOutcomeDocumentUpdate(validationOutcome);
     }
 
     private void sendOutcomeDocumentUpdate(EntityValidationOutcome validationOutcome) {
+        logger.debug("Sending message: outcome document has been updated in MongoDB.");
+
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_OUTCOME_DOCUMENT_UPDATED,
                 validationOutcome.getOutcomeDocumentUUID());
     }
