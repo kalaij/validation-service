@@ -44,7 +44,7 @@ public class Coordinator {
             logger.debug("Validate the following object: {}", sample);
 
             // Generate and persist Validation Outcome Document
-            ValidationOutcome validationOutcome = generateValidationOutcomeDocument(sample);
+            ValidationOutcome validationOutcome = generateValidationOutcomeDocument(sample, envelope.getSubmission().getId());
             repository.insert(validationOutcome);
             logger.debug("Outcome document has been persisted into MongoDB");
 
@@ -52,21 +52,19 @@ public class Coordinator {
                     validationOutcome.getUuid(), sample);
 
             logger.debug("Send sample to validation queues");
-            rabbitMessagingTemplate.convertAndSend(
-                    Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(
-                    Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, messageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(
-                    Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, messageEnvelope);
         }
 
     }
 
-    private ValidationOutcome generateValidationOutcomeDocument(Sample sample) {
+    private ValidationOutcome generateValidationOutcomeDocument(Sample sample, String submissionId) {
         logger.debug("Create Outcome Document");
 
         ValidationOutcome outcomeDocument = new ValidationOutcome();
         outcomeDocument.setUuid(UUID.randomUUID().toString());
+        outcomeDocument.setSubmissionId(submissionId);
 
         outcomeDocument.setEntityUuid(sample.getId());
 
