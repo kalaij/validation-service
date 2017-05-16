@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Created by karoly on 08/05/2017.
  */
 @SpringBootApplication
-public class ValidatorAggregatorApplication {
+public class AggregatorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ValidatorAggregatorApplication.class, args);
+        SpringApplication.run(AggregatorApplication.class, args);
     }
 
 }

@@ -19,29 +19,32 @@ import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
  * Created by karoly on 05/05/2017.
  */
 @Service
-public class ValidationAggregatorListener {
+public class AggregatorListener {
 
-    private static Logger logger = LoggerFactory.getLogger(ValidationAggregatorListener.class);
+    private static Logger logger = LoggerFactory.getLogger(AggregatorListener.class);
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
-    ValidationAggregator validationAggregator;
+    OutcomeDocumentService outcomeDocumentService;
 
     @Autowired
-    public ValidationAggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public AggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
     }
 
     @RabbitListener(queues = Queues.VALIDATION_RESULT)
     public void handleValidationResult(EntityValidationOutcome validationOutcome) {
-        logger.debug("Received validation outcome.");
+        logger.debug("Received entity validation outcome.");
 
-        validationAggregator.updateValidationOutcome(validationOutcome);
+        logger.debug("Trying to update Validation Outcome Document in MongoDB...");
+        boolean success = outcomeDocumentService.updateValidationOutcome(validationOutcome);
 
-        logger.debug("Validation outcome has been updated in MongoDB.");
-
-        sendOutcomeDocumentUpdate(validationOutcome);
+        if(success) {
+            sendOutcomeDocumentUpdate(validationOutcome);
+        } else {
+            logger.info("Ignoring validation results for older version.");
+        }
     }
 
     private void sendOutcomeDocumentUpdate(EntityValidationOutcome validationOutcome) {
