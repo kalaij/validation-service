@@ -6,7 +6,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.subs.data.component.Archive;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
@@ -16,7 +15,7 @@ import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
 
-import java.util.*;
+import java.util.List;
 
 @Component
 public class Coordinator {
@@ -26,6 +25,9 @@ public class Coordinator {
 
     @Autowired
     private ValidationOutcomeRepository repository;
+
+    @Autowired
+    private OutcomeDocumentService outcomeDocumentService;
 
     @Autowired
     public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate) {
@@ -43,15 +45,14 @@ public class Coordinator {
         for (Sample sample : samples) {
             logger.debug("Validate the following object: {}", sample);
 
-            // Generate and persist Validation Outcome Document
-            ValidationOutcome validationOutcome = generateValidationOutcomeDocument(sample, envelope.getSubmission().getId());
+            ValidationOutcome validationOutcome = outcomeDocumentService.generateValidationOutcomeDocument(sample, envelope.getSubmission().getId());
+
             repository.insert(validationOutcome);
-            logger.debug("Outcome document has been persisted into MongoDB");
+            logger.debug("Outcome document has been persisted into MongoDB with ID: {}", validationOutcome.getUuid());
 
-            ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(
-                    validationOutcome.getUuid(), sample);
+            ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationOutcome.getUuid(), sample);
 
-            logger.debug("Send sample to validation queues");
+            logger.debug("Sending sample to validation queues");
             rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, messageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, messageEnvelope);
@@ -59,21 +60,4 @@ public class Coordinator {
 
     }
 
-    private ValidationOutcome generateValidationOutcomeDocument(Sample sample, String submissionId) {
-        logger.debug("Create Outcome Document");
-
-        ValidationOutcome outcomeDocument = new ValidationOutcome();
-        outcomeDocument.setUuid(UUID.randomUUID().toString());
-        outcomeDocument.setSubmissionId(submissionId);
-
-        outcomeDocument.setEntityUuid(sample.getId());
-
-        Map<Archive, Boolean> expectedOutcomes = new HashMap<>();
-        for (Archive archive : Arrays.asList(Archive.BioSamples, Archive.Ena, Archive.ArrayExpress)) {
-            expectedOutcomes.put(archive, false);
-        }
-        outcomeDocument.setExpectedOutcomes(expectedOutcomes);
-
-        return outcomeDocument;
-    }
 }
