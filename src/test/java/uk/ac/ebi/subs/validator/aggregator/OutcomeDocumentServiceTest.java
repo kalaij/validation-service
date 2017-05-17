@@ -44,7 +44,7 @@ public class OutcomeDocumentServiceTest {
 
     @After
     public void tearDown() {
-        //repository.deleteAll();
+        repository.deleteAll();
     }
 
     /**
