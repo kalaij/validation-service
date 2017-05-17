@@ -39,7 +39,7 @@ public class OutcomeDocumentService {
      * @param entityUuid
      * @return String version
      */
-    private String checkVersion(String submissionId, String entityUuid) {
+    public String checkVersion(String submissionId, String entityUuid) {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
