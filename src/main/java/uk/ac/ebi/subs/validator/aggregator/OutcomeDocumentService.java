@@ -35,7 +35,7 @@ public class OutcomeDocumentService {
         return false;
     }
 
-    private boolean checkVersion(String submissionId, String entityUuid, double current) {
+    public boolean checkVersion(String submissionId, String entityUuid, double thisOutcomeVersion) {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
@@ -45,7 +45,7 @@ public class OutcomeDocumentService {
 
             List<Double> doubleVersions = versions.stream().map(Double::valueOf).collect(Collectors.toList());
             double max = Collections.max(doubleVersions);
-            if (max > current) {
+            if (max > thisOutcomeVersion) {
                 return false;
             }
         }
