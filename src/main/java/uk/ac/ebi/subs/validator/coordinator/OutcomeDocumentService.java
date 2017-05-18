@@ -48,7 +48,11 @@ public class OutcomeDocumentService {
                     .collect(Collectors.toList());
 
             double max = Collections.max(doubleVersions);
-            return String.valueOf(max + 0.1);
+            String version = String.valueOf(max + 0.1);
+
+            deleteObsoleteValidationOutcomeResults(validationOutcomes);
+
+            return version;
         }
         return "1.0";
     }
@@ -69,4 +73,7 @@ public class OutcomeDocumentService {
         return outcomeDocument;
     }
 
+    private void deleteObsoleteValidationOutcomeResults(List<ValidationOutcome> validationOutcomes) {
+        repository.delete(validationOutcomes);
+    }
 }
