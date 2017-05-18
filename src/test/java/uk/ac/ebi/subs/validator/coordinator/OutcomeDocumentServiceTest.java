@@ -41,8 +41,8 @@ public class OutcomeDocumentServiceTest {
     }
 
     @Test
-    public void checkVersionTest() {
-        Assert.assertEquals("4.5", service.checkVersion("123", "44566"));
+    public void getVersionTest() {
+        Assert.assertEquals("4.5", service.getVersion("123", "44566"));
     }
 
     private List<ValidationOutcome> generateValidationOutcomes(int numberOfDocs) {

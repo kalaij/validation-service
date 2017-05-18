@@ -27,7 +27,7 @@ public class OutcomeDocumentService {
     public ValidationOutcome generateValidationOutcomeDocument(Sample sample, String submissionId) {
         logger.debug("Creating Validation Outcome Document for a Sample from submission {}", submissionId);
 
-        String version = checkVersion(submissionId, sample.getId());
+        String version = getVersion(submissionId, sample.getId());
         ValidationOutcome outcomeDocument = generateValidationOutcome(submissionId, sample, version);
 
         return outcomeDocument;
@@ -39,17 +39,15 @@ public class OutcomeDocumentService {
      * @param entityUuid
      * @return String version
      */
-    public String checkVersion(String submissionId, String entityUuid) {
+    public String getVersion(String submissionId, String entityUuid) {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
-            List<String> versions = validationOutcomes.stream()
-                    .map(validationOutcome -> validationOutcome.getVersion())
+            List<Double> doubleVersions = validationOutcomes.stream()
+                    .map(validationOutcome -> Double.valueOf(validationOutcome.getVersion()))
                     .collect(Collectors.toList());
 
-            List<Double> doubleVersions = versions.stream().map(Double::valueOf).collect(Collectors.toList());
             double max = Collections.max(doubleVersions);
-
             return String.valueOf(max + 0.1);
         }
         return "1.0";
