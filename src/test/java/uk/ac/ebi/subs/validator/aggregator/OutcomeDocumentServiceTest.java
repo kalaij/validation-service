@@ -51,16 +51,16 @@ public class OutcomeDocumentServiceTest {
      * Check that current version is the most up to date.
      */
     @Test
-    public void checkVersionTest1() {
-        Assert.assertTrue(service.checkVersion("123", "44566", 1.2));
+    public void isLatestVersionTest1() {
+        Assert.assertTrue(service.isLatestVersion("123", "44566", 1.2));
     }
 
     /**
      *  Check that current version is obsolete.
      */
     @Test
-    public void checkVersionTest2() {
-        Assert.assertTrue(!service.checkVersion("123", "44566", 1.0));
+    public void isLatestVersionTest2() {
+        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1.0));
     }
 
     /**

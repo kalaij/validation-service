@@ -10,13 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * This class updates the {@code ValidationOutcome} document in the MongoDB database with the various entities
- * validation outcomes. Also set the flag to {@code true} in the validation result map, when we updated the validation
- * result of that specific archive.
- *
- * Created by karoly on 05/05/2017.
- */
+
 @Service
 public class OutcomeDocumentService {
 
@@ -26,7 +20,7 @@ public class OutcomeDocumentService {
     public boolean updateValidationOutcome(EntityValidationOutcome validationOutcome) {
         ValidationOutcome outcome = repository.findOne(validationOutcome.getOutcomeDocumentUUID());
 
-        if(checkVersion(outcome.getSubmissionId(), outcome.getEntityUuid(), Double.valueOf(outcome.getVersion()))) {
+        if(isLatestVersion(outcome.getSubmissionId(), outcome.getEntityUuid(), Double.valueOf(outcome.getVersion()))) {
             outcome.getValidationResults().add(validationOutcome);
             outcome.getExpectedOutcomes().put(validationOutcome.getArchive(), true);
             repository.save(outcome);
@@ -35,15 +29,14 @@ public class OutcomeDocumentService {
         return false;
     }
 
-    public boolean checkVersion(String submissionId, String entityUuid, double thisOutcomeVersion) {
+    public boolean isLatestVersion(String submissionId, String entityUuid, double thisOutcomeVersion) {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
-            List<String> versions = validationOutcomes.stream()
-                    .map(validationOutcome -> validationOutcome.getVersion())
+            List<Double> doubleVersions = validationOutcomes.stream()
+                    .map(validationOutcome -> Double.valueOf(validationOutcome.getVersion()))
                     .collect(Collectors.toList());
 
-            List<Double> doubleVersions = versions.stream().map(Double::valueOf).collect(Collectors.toList());
             double max = Collections.max(doubleVersions);
             if (max > thisOutcomeVersion) {
                 return false;
