@@ -20,7 +20,7 @@ public class OutcomeDocumentService {
     public boolean updateValidationOutcome(EntityValidationOutcome validationOutcome) {
         ValidationOutcome outcome = repository.findOne(validationOutcome.getOutcomeDocumentUUID());
 
-        if (outcome != null) { // An obsolete document may already been deleted.
+        if (outcome != null) {
             if (isLatestVersion(outcome.getSubmissionId(), outcome.getEntityUuid(), Double.valueOf(outcome.getVersion()))) {
                 outcome.getValidationResults().add(validationOutcome);
                 outcome.getExpectedOutcomes().put(validationOutcome.getArchive(), true);
