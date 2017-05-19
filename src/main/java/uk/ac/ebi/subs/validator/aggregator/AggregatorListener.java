@@ -43,7 +43,7 @@ public class AggregatorListener {
         if(success) {
             sendOutcomeDocumentUpdate(validationOutcome);
         } else {
-            logger.info("Ignoring validation results for older version.");
+            logger.info("Ignoring obsolete validation results.");
         }
     }
 

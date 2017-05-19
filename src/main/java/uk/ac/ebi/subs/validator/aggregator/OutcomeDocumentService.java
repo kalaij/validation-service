@@ -20,11 +20,13 @@ public class OutcomeDocumentService {
     public boolean updateValidationOutcome(EntityValidationOutcome validationOutcome) {
         ValidationOutcome outcome = repository.findOne(validationOutcome.getOutcomeDocumentUUID());
 
-        if(isLatestVersion(outcome.getSubmissionId(), outcome.getEntityUuid(), Double.valueOf(outcome.getVersion()))) {
-            outcome.getValidationResults().add(validationOutcome);
-            outcome.getExpectedOutcomes().put(validationOutcome.getArchive(), true);
-            repository.save(outcome);
-            return true;
+        if (outcome != null) { // An obsolete document may already been deleted.
+            if (isLatestVersion(outcome.getSubmissionId(), outcome.getEntityUuid(), Double.valueOf(outcome.getVersion()))) {
+                outcome.getValidationResults().add(validationOutcome);
+                outcome.getExpectedOutcomes().put(validationOutcome.getArchive(), true);
+                repository.save(outcome);
+                return true;
+            }
         }
         return false;
     }
