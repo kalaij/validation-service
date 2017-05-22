@@ -40,10 +40,14 @@ public class Coordinator {
     public void processSubmission(SubmissionEnvelope envelope) {
 
         // We only receive a sample at a time
-        Sample sample = envelope.getSamples().get(0);
-        if (sample != null) {
-            logger.info("Received validation request on sample {}", sample.getId());
-            handleSample(sample, envelope.getSubmission().getId());
+        if (envelope.getSamples().size() > 1) {
+            throw new IllegalArgumentException("Expected 1 sample, got [" + envelope.getSamples().size() + "] samples.");
+        } else {
+            Sample sample = envelope.getSamples().get(0);
+            if (sample != null) {
+                logger.info("Received validation request on sample {}", sample.getId());
+                handleSample(sample, envelope.getSubmission().getId());
+            }
         }
     }
 
