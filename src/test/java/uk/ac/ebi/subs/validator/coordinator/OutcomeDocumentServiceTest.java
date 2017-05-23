@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,18 +30,14 @@ public class OutcomeDocumentServiceTest {
 
     @Before
     public void setUp() {
+        repository.deleteAll();
         List<ValidationOutcome> validationOutcomeList = generateValidationOutcomes(5);
         repository.insert(validationOutcomeList);
     }
 
-    @After
-    public void tearDown() {
-        repository.deleteAll();
-    }
-
     @Test
     public void getVersionTest() {
-        Assert.assertEquals("4.5", service.getVersion("123", "44566"));
+        Assert.assertEquals("5", service.getVersion("123", "44566"));
     }
 
     private List<ValidationOutcome> generateValidationOutcomes(int numberOfDocs) {
@@ -53,7 +48,7 @@ public class OutcomeDocumentServiceTest {
         while (i < numberOfDocs) {
             validationOutcome = new ValidationOutcome();
             validationOutcome.setUuid(UUID.randomUUID().toString());
-            validationOutcome.setVersion(Double.valueOf(i + 0.4).toString());
+            validationOutcome.setVersion(Integer.valueOf(i).toString());
             validationOutcome.setSubmissionId("123");
             validationOutcome.setEntityUuid("44566");
             validationOutcomes.add(validationOutcome);
