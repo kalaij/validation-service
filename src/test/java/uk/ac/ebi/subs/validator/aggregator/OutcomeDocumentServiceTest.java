@@ -47,7 +47,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest1() {
-        Assert.assertTrue(service.isLatestVersion("123", "44566", 3));
+        Assert.assertTrue(service.isLatestVersion("123", "44566", "3"));
     }
 
     /**
@@ -55,7 +55,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest2() {
-        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1));
+        Assert.assertTrue(!service.isLatestVersion("123", "44566", "1"));
     }
 
     /**
