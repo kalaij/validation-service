@@ -35,11 +35,11 @@ public class OutcomeDocumentService {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
-            List<Double> doubleVersions = validationOutcomes.stream()
-                    .map(validationOutcome -> Double.valueOf(validationOutcome.getVersion()))
+            List<Integer> versions = validationOutcomes.stream()
+                    .map(validationOutcome -> Integer.valueOf(validationOutcome.getVersion()))
                     .collect(Collectors.toList());
 
-            double max = Collections.max(doubleVersions);
+            int max = Collections.max(versions);
             if (max > thisOutcomeVersion) {
                 return false;
             }

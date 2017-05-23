@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.aggregator;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,13 +37,9 @@ public class OutcomeDocumentServiceTest {
 
     @Before
     public void setUp() {
+        repository.deleteAll();
         List<ValidationOutcome> validationOutcomeList = generateValidationOutcomes();
         repository.insert(validationOutcomeList);
-    }
-
-    @After
-    public void tearDown() {
-        repository.deleteAll();
     }
 
     /**
@@ -52,7 +47,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest1() {
-        Assert.assertTrue(service.isLatestVersion("123", "44566", 1.2));
+        Assert.assertTrue(service.isLatestVersion("123", "44566", 3));
     }
 
     /**
@@ -60,7 +55,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest2() {
-        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1.0));
+        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1));
     }
 
     /**
@@ -68,7 +63,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void updateValidationOutcomeTest1() {
-        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("1.1", newDocUUID);
+        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("2", newDocUUID);
 
         Assert.assertTrue(service.updateValidationOutcome(entityValidationOutcome));
     }
@@ -78,7 +73,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void updateValidationOutcomeTest2() {
-        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("1.0", oldDocUUID);
+        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("1", oldDocUUID);
 
         Assert.assertTrue(!service.updateValidationOutcome(entityValidationOutcome));
     }
@@ -96,7 +91,7 @@ public class OutcomeDocumentServiceTest {
         vo1.setUuid(UUID.randomUUID().toString());
         oldDocUUID = vo1.getUuid();
         vo1.setExpectedOutcomes(archiveBooleanMap);
-        vo1.setVersion("1.0");
+        vo1.setVersion("1");
         vo1.setSubmissionId("123");
         vo1.setEntityUuid("44566");
 
@@ -107,7 +102,7 @@ public class OutcomeDocumentServiceTest {
         vo2.setUuid(UUID.randomUUID().toString());
         newDocUUID = vo2.getUuid();
         vo2.setExpectedOutcomes(archiveBooleanMap);
-        vo2.setVersion("1.1");
+        vo2.setVersion("2");
         vo2.setSubmissionId("123");
         vo2.setEntityUuid("44566");
 
