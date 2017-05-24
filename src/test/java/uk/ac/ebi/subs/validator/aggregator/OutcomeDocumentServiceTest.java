@@ -47,7 +47,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest1() {
-        Assert.assertTrue(service.isLatestVersion("123", "44566", "3"));
+        Assert.assertTrue(service.isLatestVersion("123", "44566", 3));
     }
 
     /**
@@ -55,7 +55,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void isLatestVersionTest2() {
-        Assert.assertTrue(!service.isLatestVersion("123", "44566", "1"));
+        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1));
     }
 
     /**
@@ -63,7 +63,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void updateValidationOutcomeTest1() {
-        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("2", newDocUUID);
+        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome(2, newDocUUID);
 
         Assert.assertTrue(service.updateValidationOutcome(entityValidationOutcome));
     }
@@ -73,7 +73,7 @@ public class OutcomeDocumentServiceTest {
      */
     @Test
     public void updateValidationOutcomeTest2() {
-        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome("1", oldDocUUID);
+        EntityValidationOutcome entityValidationOutcome = generateEntityValidationOutcome(1, oldDocUUID);
 
         Assert.assertTrue(!service.updateValidationOutcome(entityValidationOutcome));
     }
@@ -91,7 +91,7 @@ public class OutcomeDocumentServiceTest {
         vo1.setUuid(UUID.randomUUID().toString());
         oldDocUUID = vo1.getUuid();
         vo1.setExpectedOutcomes(archiveBooleanMap);
-        vo1.setVersion("1");
+        vo1.setVersion(1);
         vo1.setSubmissionId("123");
         vo1.setEntityUuid("44566");
 
@@ -102,7 +102,7 @@ public class OutcomeDocumentServiceTest {
         vo2.setUuid(UUID.randomUUID().toString());
         newDocUUID = vo2.getUuid();
         vo2.setExpectedOutcomes(archiveBooleanMap);
-        vo2.setVersion("2");
+        vo2.setVersion(2);
         vo2.setSubmissionId("123");
         vo2.setEntityUuid("44566");
 
@@ -111,7 +111,7 @@ public class OutcomeDocumentServiceTest {
         return validationOutcomes;
     }
 
-    private EntityValidationOutcome generateEntityValidationOutcome(String version, String docUUID) {
+    private EntityValidationOutcome generateEntityValidationOutcome(int version, String docUUID) {
         EntityValidationOutcome evo = new EntityValidationOutcome();
         evo.setOutcomeDocumentUUID(docUUID);
         evo.setEntityUuid("44566");
