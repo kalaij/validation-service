@@ -27,19 +27,19 @@ public class OutcomeDocumentService {
     public ValidationOutcome generateValidationOutcomeDocument(Sample sample, String submissionId) {
         logger.debug("Creating Validation Outcome Document for a Sample from submission {}", submissionId);
 
-        String version = getVersion(submissionId, sample.getId());
+        int version = getVersion(submissionId, sample.getId());
         ValidationOutcome outcomeDocument = generateValidationOutcome(submissionId, sample, version);
 
         return outcomeDocument;
     }
 
     /**
-     * ValidationOutcome versioning starts on 1.0 with increments of 0.1
+     * ValidationOutcome versioning starts on 1 with increments of 1.
      * @param submissionId
      * @param entityUuid
      * @return String version
      */
-    public String getVersion(String submissionId, String entityUuid) {
+    public int getVersion(String submissionId, String entityUuid) {
         List<ValidationOutcome> validationOutcomes = repository.findBySubmissionIdAndEntityUuid(submissionId, entityUuid);
 
         if (validationOutcomes.size() > 0) {
@@ -48,16 +48,16 @@ public class OutcomeDocumentService {
                     .collect(Collectors.toList());
 
             int max = Collections.max(versions);
-            String version = String.valueOf(max + 1);
+            int version = max + 1;
 
             deleteObsoleteValidationOutcomeResults(validationOutcomes);
 
             return version;
         }
-        return "1";
+        return 1;
     }
 
-    private ValidationOutcome generateValidationOutcome(String submissionId, Sample sample, String version) {
+    private ValidationOutcome generateValidationOutcome(String submissionId, Sample sample, int version) {
         ValidationOutcome outcomeDocument = new ValidationOutcome();
         outcomeDocument.setUuid(UUID.randomUUID().toString());
         outcomeDocument.setSubmissionId(submissionId);

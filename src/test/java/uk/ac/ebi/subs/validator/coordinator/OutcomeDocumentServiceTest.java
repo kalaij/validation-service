@@ -37,7 +37,7 @@ public class OutcomeDocumentServiceTest {
 
     @Test
     public void getVersionTest() {
-        Assert.assertEquals("5", service.getVersion("123", "44566"));
+        Assert.assertEquals(5, service.getVersion("123", "44566"));
     }
 
     private List<ValidationOutcome> generateValidationOutcomes(int numberOfDocs) {
@@ -48,7 +48,7 @@ public class OutcomeDocumentServiceTest {
         while (i < numberOfDocs) {
             validationOutcome = new ValidationOutcome();
             validationOutcome.setUuid(UUID.randomUUID().toString());
-            validationOutcome.setVersion(Integer.valueOf(i).toString());
+            validationOutcome.setVersion(i);
             validationOutcome.setSubmissionId("123");
             validationOutcome.setEntityUuid("44566");
             validationOutcomes.add(validationOutcome);
