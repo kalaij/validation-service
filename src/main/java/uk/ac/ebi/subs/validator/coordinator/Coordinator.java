@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.processing.SubmissionEnvelope;
+import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
@@ -36,21 +37,15 @@ public class Coordinator {
      * Validator data entry point.
      * @param envelope
      */
-    @RabbitListener(queues = Queues.SUBMISSION_VALIDATOR)
-    public void processSubmission(SubmissionEnvelope envelope) {
-
-        // We only receive a sample at a time
-        if (envelope.getSamples().size() == 1) {
-            Sample sample = envelope.getSamples().get(0);
-            logger.info("Received validation request on sample {}", sample.getId());
-            handleSample(sample, envelope.getSubmission().getId());
-        } else {
-            throw new IllegalArgumentException("Expected 1 sample, got [" + envelope.getSamples().size() + "] samples.");
-        }
+    @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
+    public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
+        Sample sample = envelope.getEntityToValidate();
+        logger.info("Received validation request on sample {}", sample.getId());
+        handleSample(sample, envelope.getSubmissionId());
     }
 
-    private void handleSample(Sample sample, String id) {
-        ValidationOutcome validationOutcome = outcomeDocumentService.generateValidationOutcomeDocument(sample, id);
+    private void handleSample(Sample sample, String submissionId) {
+        ValidationOutcome validationOutcome = outcomeDocumentService.generateValidationOutcomeDocument(sample, submissionId);
         repository.insert(validationOutcome);
         logger.debug("Outcome document has been persisted into MongoDB with ID: {}", validationOutcome.getUuid());
 

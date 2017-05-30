@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.Archive;
+import uk.ac.ebi.subs.data.submittable.BaseSubmittable;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
 import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
@@ -24,11 +25,11 @@ public class OutcomeDocumentService {
     @Autowired
     private ValidationOutcomeRepository repository;
 
-    public ValidationOutcome generateValidationOutcomeDocument(Sample sample, String submissionId) {
+    public ValidationOutcome generateValidationOutcomeDocument(BaseSubmittable submittable, String submissionId) {
         logger.debug("Creating Validation Outcome Document for a Sample from submission {}", submissionId);
 
-        int version = getVersion(submissionId, sample.getId());
-        ValidationOutcome outcomeDocument = generateValidationOutcome(submissionId, sample, version);
+        int version = getVersion(submissionId, submittable.getId());
+        ValidationOutcome outcomeDocument = generateValidationOutcome(submissionId, submittable, version);
 
         return outcomeDocument;
     }
@@ -57,11 +58,11 @@ public class OutcomeDocumentService {
         return 1;
     }
 
-    private ValidationOutcome generateValidationOutcome(String submissionId, Sample sample, int version) {
+    private ValidationOutcome generateValidationOutcome(String submissionId, BaseSubmittable submittable, int version) {
         ValidationOutcome outcomeDocument = new ValidationOutcome();
         outcomeDocument.setUuid(UUID.randomUUID().toString());
         outcomeDocument.setSubmissionId(submissionId);
-        outcomeDocument.setEntityUuid(sample.getId());
+        outcomeDocument.setEntityUuid(submittable.getId());
 
         outcomeDocument.setVersion(version);
 
