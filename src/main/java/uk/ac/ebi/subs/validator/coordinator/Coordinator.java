@@ -7,7 +7,6 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.processing.SubmissionEnvelope;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationOutcome;
@@ -40,6 +39,11 @@ public class Coordinator {
     @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
     public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
         Sample sample = envelope.getEntityToValidate();
+
+        if (sample == null) {
+            throw new IllegalArgumentException("The envelop should contain a sample.");
+        }
+
         logger.info("Received validation request on sample {}", sample.getId());
         handleSample(sample, envelope.getSubmissionId());
     }
