@@ -46,12 +46,6 @@ public class CoordinatorTest {
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
-    @Test
-    public void testSubmissionWithContent() {
-        SubmittableValidationEnvelope<Sample> submittableEnvelopWithoutSample = createSubmittableEnvelopeWithSample();
-        coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
-    }
-
     private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
