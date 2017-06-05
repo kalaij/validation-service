@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationOutcome;
+import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
+import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 @Component
 public class Coordinator {
@@ -22,10 +22,10 @@ public class Coordinator {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
-    private ValidationOutcomeRepository repository;
+    private ValidationResultRepository repository;
 
     @Autowired
-    private OutcomeDocumentService outcomeDocumentService;
+    private ValidationResultService validationResultService;
 
     @Autowired
     public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate) {
@@ -49,11 +49,11 @@ public class Coordinator {
     }
 
     private void handleSample(Sample sample, String submissionId) {
-        ValidationOutcome validationOutcome = outcomeDocumentService.generateValidationOutcomeDocument(sample, submissionId);
-        repository.insert(validationOutcome);
-        logger.debug("Outcome document has been persisted into MongoDB with ID: {}", validationOutcome.getUuid());
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample, submissionId);
+        repository.insert(validationResult);
+        logger.debug("Outcome document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationOutcome.getUuid(), sample);
+        ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), sample);
 
         logger.debug("Sending sample to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);

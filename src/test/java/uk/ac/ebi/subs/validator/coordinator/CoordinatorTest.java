@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
-import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
+import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.UUID;
 
@@ -20,13 +20,13 @@ import java.util.UUID;
  * Created by karoly on 30/05/2017.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableMongoRepositories(basePackageClasses = ValidationOutcomeRepository.class)
+@EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { OutcomeDocumentService.class, Coordinator.class })
+@SpringBootTest(classes = { ValidationResultService.class, Coordinator.class })
 public class CoordinatorTest {
 
     @Autowired
-    ValidationOutcomeRepository repository;
+    ValidationResultRepository repository;
 
     @Autowired
     private Coordinator coordinator;

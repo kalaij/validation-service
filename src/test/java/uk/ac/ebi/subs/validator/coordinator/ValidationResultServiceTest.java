@@ -9,29 +9,29 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.validator.data.ValidationOutcome;
-import uk.ac.ebi.subs.validator.repository.ValidationOutcomeRepository;
+import uk.ac.ebi.subs.validator.data.ValidationResult;
+import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableMongoRepositories(basePackageClasses = ValidationOutcomeRepository.class)
+@EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = OutcomeDocumentService.class)
-public class OutcomeDocumentServiceTest {
+@SpringBootTest(classes = ValidationResultService.class)
+public class ValidationResultServiceTest {
 
     @Autowired
-    ValidationOutcomeRepository repository;
+    ValidationResultRepository repository;
 
     @Autowired
-    OutcomeDocumentService service;
+    ValidationResultService service;
 
     @Before
     public void setUp() {
         repository.deleteAll();
-        List<ValidationOutcome> validationOutcomeList = generateValidationOutcomes(5);
+        List<ValidationResult> validationOutcomeList = generateValidationOutcomes(5);
         repository.insert(validationOutcomeList);
     }
 
@@ -40,13 +40,13 @@ public class OutcomeDocumentServiceTest {
         Assert.assertEquals(5, service.getVersion("123", "44566"));
     }
 
-    private List<ValidationOutcome> generateValidationOutcomes(int numberOfDocs) {
-        List<ValidationOutcome> validationOutcomes = new ArrayList<>();
-        ValidationOutcome validationOutcome;
+    private List<ValidationResult> generateValidationOutcomes(int numberOfDocs) {
+        List<ValidationResult> validationOutcomes = new ArrayList<>();
+        ValidationResult validationOutcome;
 
         int i = 0;
         while (i < numberOfDocs) {
-            validationOutcome = new ValidationOutcome();
+            validationOutcome = new ValidationResult();
             validationOutcome.setUuid(UUID.randomUUID().toString());
             validationOutcome.setVersion(i);
             validationOutcome.setSubmissionId("123");
