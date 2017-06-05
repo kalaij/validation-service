@@ -26,7 +26,8 @@ public class OutcomeDocumentService {
     private ValidationOutcomeRepository repository;
 
     public ValidationOutcome generateValidationOutcomeDocument(BaseSubmittable submittable, String submissionId) {
-        logger.debug("Creating Validation Outcome Document for a Sample from submission {}", submissionId);
+        logger.debug("Creating Validation Outcome Document for {} from submission {}",
+                submittable.getClass().getSimpleName(), submissionId);
 
         int version = getVersion(submissionId, submittable.getId());
         ValidationOutcome outcomeDocument = generateValidationOutcome(submissionId, submittable, version);
