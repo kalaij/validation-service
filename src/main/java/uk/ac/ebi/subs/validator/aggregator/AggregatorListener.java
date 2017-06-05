@@ -15,7 +15,7 @@ import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
  * This class is listening on events on the validation result {@code Queue}.
  * When processing a published event it will update the {@code {@link uk.ac.ebi.subs.validator.data.ValidationResult}}
  * document with the validation results and publish a message of the updated document's UUID
- * to the outcome document update queue.
+ * to the validation result document update queue.
  *
  * Created by karoly on 05/05/2017.
  */
@@ -38,20 +38,20 @@ public class AggregatorListener {
     public void handleValidationResult(SingleValidationResult singleValidationResult) {
         logger.debug("Received single validation result for an entity.");
 
-        logger.debug("Trying to update Validation Outcome Document in MongoDB...");
+        logger.debug("Trying to update Validation Result Document in MongoDB...");
         boolean success = validationResultService.updateValidationResult(singleValidationResult);
 
         if(success) {
-            sendOutcomeDocumentUpdate(singleValidationResult);
+            sendValidationResultDocumentUpdate(singleValidationResult);
         } else {
             logger.info("Ignoring obsolete validation results.");
         }
     }
 
-    private void sendOutcomeDocumentUpdate(SingleValidationResult validationOutcome) {
-        logger.debug("Sending message: outcome document has been updated in MongoDB.");
+    private void sendValidationResultDocumentUpdate(SingleValidationResult singleValidationResult) {
+        logger.debug("Sending message: validation result document has been updated in MongoDB.");
 
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED,
-                validationOutcome.getValidationResultUUID());
+                singleValidationResult.getValidationResultUUID());
     }
 }

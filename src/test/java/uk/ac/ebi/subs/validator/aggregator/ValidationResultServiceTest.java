@@ -59,7 +59,7 @@ public class ValidationResultServiceTest {
     }
 
     /**
-     * Update validation outcome document successfully.
+     * Update validation result document successfully.
      */
     @Test
     public void updateValidationResultTest1() {
@@ -69,10 +69,10 @@ public class ValidationResultServiceTest {
     }
 
     /**
-     * Ignore entity validation result that refers to an older version and skip the validation outcome document update.
+     * Ignore entity validation result that refers to an older version and skip the validation result document update.
      */
     @Test
-    public void updateValidationOutcomeTest2() {
+    public void updateValidationResultTest2() {
         SingleValidationResult singleValidationResult = generateEntityValidationResult(1, oldDocUUID);
 
         Assert.assertTrue(!service.updateValidationResult(singleValidationResult));
