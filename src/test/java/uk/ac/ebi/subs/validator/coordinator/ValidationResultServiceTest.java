@@ -31,8 +31,8 @@ public class ValidationResultServiceTest {
     @Before
     public void setUp() {
         repository.deleteAll();
-        List<ValidationResult> validationOutcomeList = generateValidationOutcomes(5);
-        repository.insert(validationOutcomeList);
+        List<ValidationResult> validationResults = generateValidationResults(5);
+        repository.insert(validationResults);
     }
 
     @Test
@@ -40,21 +40,21 @@ public class ValidationResultServiceTest {
         Assert.assertEquals(5, service.getVersion("123", "44566"));
     }
 
-    private List<ValidationResult> generateValidationOutcomes(int numberOfDocs) {
-        List<ValidationResult> validationOutcomes = new ArrayList<>();
-        ValidationResult validationOutcome;
+    private List<ValidationResult> generateValidationResults(int numberOfDocs) {
+        List<ValidationResult> validationResults = new ArrayList<>();
+        ValidationResult validationResult;
 
         int i = 0;
         while (i < numberOfDocs) {
-            validationOutcome = new ValidationResult();
-            validationOutcome.setUuid(UUID.randomUUID().toString());
-            validationOutcome.setVersion(i);
-            validationOutcome.setSubmissionId("123");
-            validationOutcome.setEntityUuid("44566");
-            validationOutcomes.add(validationOutcome);
+            validationResult = new ValidationResult();
+            validationResult.setUuid(UUID.randomUUID().toString());
+            validationResult.setVersion(i);
+            validationResult.setSubmissionId("123");
+            validationResult.setEntityUuid("44566");
+            validationResults.add(validationResult);
 
             i++;
         }
-        return validationOutcomes;
+        return validationResults;
     }
 }

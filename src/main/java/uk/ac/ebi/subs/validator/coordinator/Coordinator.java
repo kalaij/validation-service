@@ -51,7 +51,7 @@ public class Coordinator {
     private void handleSample(Sample sample, String submissionId) {
         ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample, submissionId);
         repository.insert(validationResult);
-        logger.debug("Outcome document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+        logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
         ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), sample);
 

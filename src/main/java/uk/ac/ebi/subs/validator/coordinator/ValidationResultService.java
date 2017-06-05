@@ -25,7 +25,7 @@ public class ValidationResultService {
     private ValidationResultRepository repository;
 
     public ValidationResult generateValidationResultDocument(BaseSubmittable submittable, String submissionId) {
-        logger.debug("Creating Validation Outcome Document for {} from submission {}",
+        logger.debug("Creating Validation Result Document for {} from submission {}",
                 submittable.getClass().getSimpleName(), submissionId);
 
         int version = getVersion(submissionId, submittable.getId());
