@@ -1,10 +1,32 @@
-version '1.0.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+group 'uk.ac.ebi.subs.validator.coordinator'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://jitpack.io' }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+    }
+}
 
 dependencies {
-    compile project(':validator-core')
-    compile project(':validator-messaging')
-
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter'
     compile group: 'uk.ac.ebi.subs', name: 'subs-processing-model', version: '1.0.0-SNAPSHOT'
+
+    compile 'com.github.EMBL-EBI-SUBS:validator-common:master-SNAPSHOT'
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
