@@ -39,7 +39,7 @@ public class SampleRelationshipValidatorTest {
 
     @Test
     public void referenceNotFoundTest() {
-        validator.validate(Arrays.asList(relationship), singleValidationResult);
+        validator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
         Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
     }
@@ -47,7 +47,7 @@ public class SampleRelationshipValidatorTest {
     @Test
     public void referenceFoundTest() {
         relationship.setAccession("SAMEA123456");
-        validator.validate(Arrays.asList(relationship), singleValidationResult);
+        validator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
         Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());

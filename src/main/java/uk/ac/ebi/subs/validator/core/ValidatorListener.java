@@ -39,7 +39,7 @@ public class ValidatorListener {
         logger.debug("Validation request received.");
 
         Sample sample = (Sample) envelope.getEntityToValidate();
-        SingleValidationResult singleValidationResult = referenceValidator.validate(
+        SingleValidationResult singleValidationResult = referenceValidator.validateSampleRelationships(
                 sample.getSampleRelationships(),
                 generateSingleValidationResult(sample.getId()));
 
