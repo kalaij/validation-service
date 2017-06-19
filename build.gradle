@@ -5,6 +5,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        jcenter()
 
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
@@ -20,6 +21,7 @@ apply plugin: 'org.springframework.boot'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    jcenter()
 
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
@@ -27,10 +29,18 @@ repositories {
 dependencies {
     compile ("com.github.EMBL-EBI-SUBS:validator-common:master-SNAPSHOT") {
         changing = true
-        exclude group: 'org.springframework.boot', module :'spring-boot-starter-data-mongodb'
     }
 
+    compile('uk.ac.ebi.biosamples:biosamples-spring-boot-starter:4.0.0-SNAPSHOT') {
+        changing = true
+        exclude group: 'org.springframework.boot'
+    }
+
+    compile("uk.ac.ebi.subs:subs-repository:1.0.0-SNAPSHOT")
     compile("org.springframework.boot:spring-boot-starter")
+
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.mockito:mockito-core:2.+")
 }
 
 sourceCompatibility = 1.8
