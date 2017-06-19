@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class SampleRelationshipValidator {
 
-    private final String MISSING_SAMPLE = "Could not find sample reference(s) to: %s";
+    private final String MISSING_SAMPLE = "Could not find referenced sample(s): %s";
     private final String SUCCESS_MESSAGE = "All sample references found.";
 
     @Autowired
@@ -27,7 +27,11 @@ public class SampleRelationshipValidator {
                 Sample sample = repository.findByAccession(sampleRelationship.getAccession());
 
             if (sample == null) {
-                accessions.append(sampleRelationship.getAccession());
+                if(accessions.toString().isEmpty()) {
+                    accessions.append(sampleRelationship.getAccession());
+                } else {
+                    accessions.append(", " + sampleRelationship.getAccession());
+                }
             }
 
             if (accessions.toString().isEmpty()) {
