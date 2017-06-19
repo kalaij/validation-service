@@ -18,20 +18,20 @@ import static org.mockito.Mockito.when;
 
 public class SampleRelationshipValidatorTest {
 
-    private SampleRelationshipValidator validator;
-    private SampleRepository repository;
+    private ReferenceValidator validator;
+    private SampleRepository sampleRepository;
 
     private SampleRelationship relationship;
     private SingleValidationResult singleValidationResult;
 
     @Before
     public void setUp() {
-        validator = new SampleRelationshipValidator();
-        repository = mock(SampleRepository.class);
-        validator.repository = repository;
+        validator = new ReferenceValidator();
+        sampleRepository = mock(SampleRepository.class);
+        validator.sampleRepository = sampleRepository;
 
-        when(repository.findByAccession("SAMEA100001")).thenReturn(null);
-        when(repository.findByAccession("SAMEA123456")).thenReturn(new Sample());
+        when(sampleRepository.findByAccession("SAMEA100001")).thenReturn(null);
+        when(sampleRepository.findByAccession("SAMEA123456")).thenReturn(new Sample());
 
         relationship = generateSampleRelationship();
         singleValidationResult = generateSingleValidationResult("123456");
