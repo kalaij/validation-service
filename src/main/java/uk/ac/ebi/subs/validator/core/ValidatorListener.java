@@ -7,16 +7,24 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.validator.core.validators.SampleRelationshipValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 
+import java.util.UUID;
+
 @Service
 public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
+
+    @Autowired
+    private SampleRelationshipValidator sampleRelationshipValidator;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
@@ -30,7 +38,20 @@ public class ValidatorListener {
     public void handleValidationRequest(ValidationMessageEnvelope envelope) {
         logger.debug("Validation request received.");
 
-        //TODO
+        Sample sample = (Sample) envelope.getEntityToValidate();
+        SingleValidationResult singleValidationResult = sampleRelationshipValidator.validate(
+                sample.getSampleRelationships(),
+                generateSingleValidationResult(sample.getId()));
+
+        sendResults(singleValidationResult);
+    }
+
+    private SingleValidationResult generateSingleValidationResult(String entityId) {
+        SingleValidationResult result = new SingleValidationResult();
+        result.setUuid(UUID.randomUUID().toString());
+        result.setEntityUuid(entityId);
+        result.setValidationAuthor(ValidationAuthor.Core);
+        return result;
     }
 
     private void sendResults(SingleValidationResult singleValidationResult) {
