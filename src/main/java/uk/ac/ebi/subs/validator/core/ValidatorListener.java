@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
+import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
@@ -24,7 +24,7 @@ public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
 
     @Autowired
-    private ReferenceValidator referenceValidator;
+    SampleRefValidator sampleRefValidator;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
@@ -39,7 +39,7 @@ public class ValidatorListener {
         logger.debug("Validation request received.");
 
         Sample sample = (Sample) envelope.getEntityToValidate();
-        SingleValidationResult singleValidationResult = referenceValidator.validateSampleRelationships(
+        SingleValidationResult singleValidationResult = sampleRefValidator.validateSampleRelationships(
                 sample.getSampleRelationships(),
                 generateSingleValidationResult(sample.getId()));
 
