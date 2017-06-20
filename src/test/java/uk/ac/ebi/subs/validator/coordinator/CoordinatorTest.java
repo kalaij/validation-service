@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.component.Team;
+import uk.ac.ebi.subs.data.dto.SampleDto;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
@@ -42,24 +43,24 @@ public class CoordinatorTest {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(expectedErrorMessage);
 
-        SubmittableValidationEnvelope<Sample> submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
+        SubmittableValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithoutSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope<>(submissionId, null);
+        return new SubmittableValidationEnvelope(submissionId, null);
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope<>(submissionId, createSample());
+       return new SubmittableValidationEnvelope(submissionId, createSample());
     }
 
-    private Sample createSample() {
-        Sample sample = new Sample();
+    private SampleDto createSample() {
+        SampleDto sample = new SampleDto();
         String id = UUID.randomUUID().toString();
         sample.setId("TEST_SAMPLE_" + id);
         sample.setTaxon("testTaxon_" + id);

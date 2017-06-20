@@ -4,8 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.subs.data.component.Archive;
-import uk.ac.ebi.subs.data.submittable.BaseSubmittable;
+import uk.ac.ebi.subs.data.dto.AssayDto;
+import uk.ac.ebi.subs.data.dto.BaseSubmittableDto;
+import uk.ac.ebi.subs.data.dto.SampleDto;
+import uk.ac.ebi.subs.data.dto.StudyDto;
+import uk.ac.ebi.subs.validator.data.BlankValidationResultMaps;
+import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
@@ -24,7 +28,30 @@ public class ValidationResultService {
     @Autowired
     private ValidationResultRepository repository;
 
-    public ValidationResult generateValidationResultDocument(BaseSubmittable submittable, String submissionId) {
+
+    public ValidationResult generateValidationResultDocument(SampleDto sample, String submissionId){
+        ValidationResult validationResult = generateVersionedValidationResult(sample, submissionId);
+        validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
+
+        return validationResult;
+    }
+
+    public ValidationResult generateValidationResultDocument(StudyDto study, String submissionId){
+        ValidationResult validationResult = generateVersionedValidationResult(study, submissionId);
+        validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
+
+        return validationResult;
+    }
+
+    public ValidationResult generateValidationResultDocument(AssayDto assay, String submissionId){
+        ValidationResult validationResult = generateVersionedValidationResult(assay, submissionId);
+        validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
+
+        return validationResult;
+    }
+
+
+    private ValidationResult generateVersionedValidationResult(BaseSubmittableDto submittable, String submissionId) {
         logger.debug("Creating Validation Result Document for {} from submission {}",
                 submittable.getClass().getSimpleName(), submissionId);
 
@@ -58,7 +85,7 @@ public class ValidationResultService {
         return 1;
     }
 
-    private ValidationResult generateValidationResult(String submissionId, BaseSubmittable submittable, int version) {
+    private ValidationResult generateValidationResult(String submissionId, BaseSubmittableDto submittable, int version) {
         ValidationResult validationResult = new ValidationResult();
         validationResult.setUuid(UUID.randomUUID().toString());
         validationResult.setSubmissionId(submissionId);
@@ -66,11 +93,6 @@ public class ValidationResultService {
 
         validationResult.setVersion(version);
 
-        Map<Archive, Boolean> expectedResults = new HashMap<>();
-        for (Archive archive : Arrays.asList(Archive.BioSamples, Archive.Ena, Archive.ArrayExpress)) {
-            expectedResults.put(archive, false);
-        }
-        validationResult.setExpectedResults(expectedResults);
         return validationResult;
     }
 
