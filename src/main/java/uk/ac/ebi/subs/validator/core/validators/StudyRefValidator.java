@@ -23,7 +23,7 @@ public class StudyRefValidator implements ReferenceValidator {
     @Override
     public void validate(AbstractSubsRef studyRef, SingleValidationResult singleValidationResult) {
         Study study = studyRepository.findFirstByAccessionOrderByCreatedDateDesc(studyRef.getAccession());
-        updateSingleValidationResult(study, studyRef, singleValidationResult);
+        initializeSingleValidationResult(study, studyRef, singleValidationResult);
     }
 
 }

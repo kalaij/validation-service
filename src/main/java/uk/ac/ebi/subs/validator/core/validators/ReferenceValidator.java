@@ -11,12 +11,22 @@ public interface ReferenceValidator {
 
     void validate(AbstractSubsRef subsRef, SingleValidationResult singleValidationResult);
 
-    default void updateSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
+    default void initializeSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
         if(submittable == null) {
             singleValidationResult.setMessage(String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
             singleValidationResult.setValidationStatus(ValidationStatus.Error);
         } else {
             singleValidationResult.setValidationStatus(ValidationStatus.Pass);
+        }
+    }
+
+    default void updateSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
+        if(submittable == null) {
+            StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
+            message.append(" " + String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
+
+            singleValidationResult.setMessage(message.toString());
+            singleValidationResult.setValidationStatus(ValidationStatus.Error);
         }
     }
 

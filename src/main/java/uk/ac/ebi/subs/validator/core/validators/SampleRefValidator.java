@@ -27,8 +27,14 @@ public class SampleRefValidator implements ReferenceValidator {
      */
     @Override
     public void validate(AbstractSubsRef sampleRef, SingleValidationResult singleValidationResult) {
+
         Sample sample = sampleRepository.findByAccession(sampleRef.getAccession());
-        updateSingleValidationResult(sample, sampleRef, singleValidationResult);
+
+        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+            initializeSingleValidationResult(sample, sampleRef, singleValidationResult);
+        } else {
+            updateSingleValidationResult(sample, sampleRef, singleValidationResult);
+        }
     }
 
     /**
