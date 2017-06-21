@@ -11,8 +11,10 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.handlers.AssayDataHandler;
 import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
 import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
+import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
@@ -27,7 +29,11 @@ public class ValidatorListener {
     @Autowired
     AssayHandler assayHandler;
     @Autowired
+    AssayDataHandler assayDataHandler;
+    @Autowired
     SampleHandler sampleHandler;
+    @Autowired
+    StudyHandler studyHandler;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
@@ -48,10 +54,9 @@ public class ValidatorListener {
     // TODO - add queue @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
     public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
         logger.debug("AssayData validation request received.");
-        // TODO
 
-        // assayref
-        // sampleref
+        SingleValidationResult singleValidationResult = assayDataHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResult);
     }
 
     @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
@@ -65,9 +70,9 @@ public class ValidatorListener {
     // TODO - add queue @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
     public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
         logger.debug("Study validation request received.");
-        // TODO
 
-        //no refs
+        SingleValidationResult singleValidationResult = studyHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResult);
     }
 
     private void sendResults(SingleValidationResult singleValidationResult) {
