@@ -16,22 +16,22 @@ import java.util.UUID;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SampleRelationshipValidatorTest {
+public class SampleRefValidatorTest {
 
-    private SampleRelationshipValidator validator;
-    private SampleRepository repository;
+    private SampleRefValidator sampleRefValidator;
+    private SampleRepository sampleRepository;
 
     private SampleRelationship relationship;
     private SingleValidationResult singleValidationResult;
 
     @Before
     public void setUp() {
-        validator = new SampleRelationshipValidator();
-        repository = mock(SampleRepository.class);
-        validator.repository = repository;
+        sampleRefValidator = new SampleRefValidator();
+        sampleRepository = mock(SampleRepository.class);
+        sampleRefValidator.sampleRepository = sampleRepository;
 
-        when(repository.findByAccession("SAMEA100001")).thenReturn(null);
-        when(repository.findByAccession("SAMEA123456")).thenReturn(new Sample());
+        when(sampleRepository.findByAccession("SAMEA100001")).thenReturn(null);
+        when(sampleRepository.findByAccession("SAMEA123456")).thenReturn(new Sample());
 
         relationship = generateSampleRelationship();
         singleValidationResult = generateSingleValidationResult("123456");
@@ -39,7 +39,7 @@ public class SampleRelationshipValidatorTest {
 
     @Test
     public void referenceNotFoundTest() {
-        validator.validate(Arrays.asList(relationship), singleValidationResult);
+        sampleRefValidator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
         Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
     }
@@ -47,17 +47,15 @@ public class SampleRelationshipValidatorTest {
     @Test
     public void referenceFoundTest() {
         relationship.setAccession("SAMEA123456");
-        validator.validate(Arrays.asList(relationship), singleValidationResult);
+        sampleRefValidator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
         Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
     }
 
     private SingleValidationResult generateSingleValidationResult(String entityId) {
-        SingleValidationResult result = new SingleValidationResult();
+        SingleValidationResult result = new SingleValidationResult(ValidationAuthor.Core, entityId);
         result.setUuid(UUID.randomUUID().toString());
-        result.setEntityUuid(entityId);
-        result.setValidationAuthor(ValidationAuthor.Core);
         return result;
     }
 
