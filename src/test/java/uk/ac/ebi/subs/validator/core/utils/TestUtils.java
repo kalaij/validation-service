@@ -3,6 +3,7 @@ package uk.ac.ebi.subs.validator.core.utils;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.SampleRelationship;
 import uk.ac.ebi.subs.data.component.SampleUse;
+import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 
@@ -38,5 +39,17 @@ public class TestUtils {
         SampleUse sampleUse = new SampleUse();
         sampleUse.setSampleRef(generateSampleRef(accession));
         return sampleUse;
+    }
+
+    public static StudyRef generateStudyRef(String accession) {
+        return generateStudyRef(accession, null, null);
+    }
+
+    public static StudyRef generateStudyRef(String accession, String team, String alias) {
+        StudyRef studyRef = new StudyRef();
+        studyRef.setAccession(accession);
+        studyRef.setTeam(team);
+        studyRef.setAlias(alias);
+        return studyRef;
     }
 }
