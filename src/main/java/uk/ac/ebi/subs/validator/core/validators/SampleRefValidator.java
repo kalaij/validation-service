@@ -9,6 +9,7 @@ import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class SampleRefValidator implements ReferenceValidator {
      * @param singleValidationResult
      * @return
      */
-    public SingleValidationResult validateSampleRelationships(List<SampleRelationship> sampleRelationshipList, SingleValidationResult singleValidationResult) {
+    public void validateSampleRelationships(List<SampleRelationship> sampleRelationshipList, SingleValidationResult singleValidationResult) {
         StringBuilder accessions = new StringBuilder();
 
         for (SampleRelationship sampleRelationship : sampleRelationshipList) {
@@ -50,9 +51,12 @@ public class SampleRefValidator implements ReferenceValidator {
                 }
             }
 
-            updateSingleValidationResult(accessions, singleValidationResult);
+            if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+                initializeSingleValidationResult(accessions, singleValidationResult);
+            } else {
+                updateSingleValidationResult(accessions, singleValidationResult);
+            }
         }
-        return singleValidationResult;
     }
 
     /**
@@ -74,7 +78,11 @@ public class SampleRefValidator implements ReferenceValidator {
                 }
             }
 
-            updateSingleValidationResult(accessions, singleValidationResult);
+            if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+                initializeSingleValidationResult(accessions, singleValidationResult);
+            } else {
+                updateSingleValidationResult(accessions, singleValidationResult);
+            }
         }
     }
 

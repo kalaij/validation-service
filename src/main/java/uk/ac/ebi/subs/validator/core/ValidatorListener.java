@@ -7,24 +7,27 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.subs.data.submittable.Assay;
+import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
+import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
+import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 
-import java.util.UUID;
-
 @Service
 public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
 
     @Autowired
-    SampleRefValidator sampleRefValidator;
+    AssayHandler assayHandler;
+    @Autowired
+    SampleHandler sampleHandler;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
@@ -34,24 +37,37 @@ public class ValidatorListener {
         this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
-    @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
-    public void handleValidationRequest(ValidationMessageEnvelope envelope) {
-        logger.debug("Validation request received.");
+    // TODO - add queue @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
+    public void handleAssayValidationRequest(ValidationMessageEnvelope<Assay> envelope) {
+        logger.debug("Assay validation request received.");
 
-        Sample sample = (Sample) envelope.getEntityToValidate();
-        SingleValidationResult singleValidationResult = sampleRefValidator.validateSampleRelationships(
-                sample.getSampleRelationships(),
-                generateSingleValidationResult(sample.getId()));
-
+        SingleValidationResult singleValidationResult = assayHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResult);
     }
 
-    private SingleValidationResult generateSingleValidationResult(String entityId) {
-        SingleValidationResult result = new SingleValidationResult();
-        result.setUuid(UUID.randomUUID().toString());
-        result.setEntityUuid(entityId);
-        result.setValidationAuthor(ValidationAuthor.Core);
-        return result;
+    // TODO - add queue @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
+    public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
+        logger.debug("AssayData validation request received.");
+        // TODO
+
+        // assayref
+        // sampleref
+    }
+
+    @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
+    public void handleSampleValidationRequest(ValidationMessageEnvelope<Sample> envelope) {
+        logger.debug("Sample validation request received.");
+
+        SingleValidationResult singleValidationResult = sampleHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResult);
+    }
+
+    // TODO - add queue @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
+    public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
+        logger.debug("Study validation request received.");
+        // TODO
+
+        //no refs
     }
 
     private void sendResults(SingleValidationResult singleValidationResult) {

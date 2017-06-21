@@ -54,10 +54,8 @@ public class SampleRefValidatorTest {
     }
 
     private SingleValidationResult generateSingleValidationResult(String entityId) {
-        SingleValidationResult result = new SingleValidationResult();
+        SingleValidationResult result = new SingleValidationResult(ValidationAuthor.Core, entityId);
         result.setUuid(UUID.randomUUID().toString());
-        result.setEntityUuid(entityId);
-        result.setValidationAuthor(ValidationAuthor.Core);
         return result;
     }
 
