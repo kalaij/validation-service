@@ -27,8 +27,12 @@ public class SampleRefValidator implements ReferenceValidator {
      */
     @Override
     public void validate(AbstractSubsRef sampleRef, SingleValidationResult singleValidationResult) {
-
-        Sample sample = sampleRepository.findByAccession(sampleRef.getAccession());
+        Sample sample;
+        if (sampleRef.getAccession() != null) {
+            sample = sampleRepository.findByAccession(sampleRef.getAccession());
+        } else {
+            sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRef.getTeam(), sampleRef.getAlias());
+        }
 
         if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
             initializeSingleValidationResult(sample, sampleRef, singleValidationResult);
@@ -47,7 +51,12 @@ public class SampleRefValidator implements ReferenceValidator {
         StringBuilder accessions = new StringBuilder();
 
         for (SampleRelationship sampleRelationship : sampleRelationshipList) {
-            Sample sample = sampleRepository.findByAccession(sampleRelationship.getAccession());
+            Sample sample;
+            if (sampleRelationship.getAccession() != null) {
+                sample = sampleRepository.findByAccession(sampleRelationship.getAccession());
+            } else {
+                sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRelationship.getTeam(), sampleRelationship.getAlias());
+            }
 
             if (sample == null) {
                 if(accessions.toString().isEmpty()) {
@@ -74,7 +83,13 @@ public class SampleRefValidator implements ReferenceValidator {
         StringBuilder accessions = new StringBuilder();
 
         for (SampleUse sampleUse : sampleUseList) {
-            Sample sample = sampleRepository.findByAccession(sampleUse.getSampleRef().getAccession());
+
+            Sample sample;
+            if (sampleUse.getSampleRef().getAccession() != null) {
+                sample = sampleRepository.findByAccession(sampleUse.getSampleRef().getAccession());
+            } else {
+                sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleUse.getSampleRef().getTeam(), sampleUse.getSampleRef().getAlias());
+            }
 
             if (sample == null) {
                 if(accessions.toString().isEmpty()) {

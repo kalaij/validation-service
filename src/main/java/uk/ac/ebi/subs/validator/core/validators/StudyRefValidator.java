@@ -7,6 +7,7 @@ import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 @Service
 @EnableMongoRepositories(basePackageClasses = StudyRepository.class)
@@ -22,8 +23,18 @@ public class StudyRefValidator implements ReferenceValidator {
      */
     @Override
     public void validate(AbstractSubsRef studyRef, SingleValidationResult singleValidationResult) {
-        Study study = studyRepository.findFirstByAccessionOrderByCreatedDateDesc(studyRef.getAccession());
-        initializeSingleValidationResult(study, studyRef, singleValidationResult);
+        Study study;
+        if (studyRef.getAccession() != null) {
+            study = studyRepository.findFirstByAccessionOrderByCreatedDateDesc(studyRef.getAccession());
+        } else {
+            study = studyRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(studyRef.getTeam(), studyRef.getAlias());
+        }
+
+        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+            initializeSingleValidationResult(study, studyRef, singleValidationResult);
+        } else {
+            updateSingleValidationResult(study, studyRef, singleValidationResult);
+        }
     }
 
 }
