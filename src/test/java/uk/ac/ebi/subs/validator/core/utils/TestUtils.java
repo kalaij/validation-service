@@ -1,5 +1,6 @@
 package uk.ac.ebi.subs.validator.core.utils;
 
+import uk.ac.ebi.subs.data.component.AssayRef;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.SampleRelationship;
 import uk.ac.ebi.subs.data.component.SampleUse;
@@ -51,5 +52,16 @@ public class TestUtils {
         studyRef.setTeam(team);
         studyRef.setAlias(alias);
         return studyRef;
+    }
+    public static AssayRef generateAssayRef(String accession) {
+        return generateAssayRef(accession, null, null);
+    }
+
+    public static AssayRef generateAssayRef(String accession, String team, String alias) {
+        AssayRef assayRef = new AssayRef();
+        assayRef.setAccession(accession);
+        assayRef.setTeam(team);
+        assayRef.setAlias(alias);
+        return assayRef;
     }
 }
