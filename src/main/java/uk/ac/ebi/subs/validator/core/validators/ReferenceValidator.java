@@ -7,14 +7,20 @@ import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 public interface ReferenceValidator {
 
-    String FAIL_MESSAGE = "Could not find reference target: %s";
+    String FAIL_MESSAGE = "Could not find reference target: %s .";
+    String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s .";
 
     void validate(AbstractSubsRef subsRef, SingleValidationResult singleValidationResult);
 
     default void initializeSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
         if(submittable == null) {
-            singleValidationResult.setMessage(String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
+            if(abstractSubsRef.getAccession() == null || abstractSubsRef.getAccession().isEmpty()) {
+                singleValidationResult.setMessage(String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, abstractSubsRef.getAlias(), abstractSubsRef.getTeam()));
+            } else {
+                singleValidationResult.setMessage(String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
+            }
             singleValidationResult.setValidationStatus(ValidationStatus.Error);
+
         } else {
             singleValidationResult.setValidationStatus(ValidationStatus.Pass);
         }
@@ -23,26 +29,30 @@ public interface ReferenceValidator {
     default void updateSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
         if(submittable == null) {
             StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
-            message.append(" " + String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
+            if(abstractSubsRef.getAccession() == null || abstractSubsRef.getAccession().isEmpty()) {
+                message.append(" " + String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, abstractSubsRef.getAlias(), abstractSubsRef.getTeam()));
+            } else {
+                message.append(" " + String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
+            }
 
             singleValidationResult.setMessage(message.toString());
             singleValidationResult.setValidationStatus(ValidationStatus.Error);
         }
     }
 
-    default void initializeSingleValidationResult(StringBuilder accessions, SingleValidationResult singleValidationResult) {
-        if (accessions.toString().isEmpty()) {
+    default void initializeSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
+        if (referencesTargets.toString().isEmpty()) {
             singleValidationResult.setValidationStatus(ValidationStatus.Pass);
         } else {
-            singleValidationResult.setMessage(String.format(FAIL_MESSAGE, accessions));
+            singleValidationResult.setMessage(referencesTargets.toString());
             singleValidationResult.setValidationStatus(ValidationStatus.Error);
         }
     }
 
-    default void updateSingleValidationResult(StringBuilder accessions, SingleValidationResult singleValidationResult) {
-        if (!accessions.toString().isEmpty()) {
+    default void updateSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
+        if (!referencesTargets.toString().isEmpty()) {
             StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
-            message.append(" " + String.format(FAIL_MESSAGE, accessions));
+            message.append(" " + referencesTargets);
 
             singleValidationResult.setMessage(message.toString());
             singleValidationResult.setValidationStatus(ValidationStatus.Error);

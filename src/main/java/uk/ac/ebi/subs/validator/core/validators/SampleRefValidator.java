@@ -17,6 +17,9 @@ import java.util.List;
 @EnableMongoRepositories(basePackageClasses = SampleRepository.class)
 public class SampleRefValidator implements ReferenceValidator {
 
+    String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s";
+    String FAIL_MESSAGE = "Could not find reference target: %s .";
+
     @Autowired
     public SampleRepository sampleRepository;
 
@@ -48,7 +51,7 @@ public class SampleRefValidator implements ReferenceValidator {
      * @return
      */
     public void validateSampleRelationships(List<SampleRelationship> sampleRelationshipList, SingleValidationResult singleValidationResult) {
-        StringBuilder accessions = new StringBuilder();
+        StringBuilder referencesTargets = new StringBuilder();
 
         for (SampleRelationship sampleRelationship : sampleRelationshipList) {
             Sample sample;
@@ -59,17 +62,28 @@ public class SampleRefValidator implements ReferenceValidator {
             }
 
             if (sample == null) {
-                if(accessions.toString().isEmpty()) {
-                    accessions.append(sampleRelationship.getAccession());
+                if (sampleRelationship.getAccession() != null && !sampleRelationship.getAccession().isEmpty()) {
+
+                    if(referencesTargets.toString().isEmpty()) {
+                        referencesTargets.append(String.format(FAIL_MESSAGE, sampleRelationship.getAccession()));
+                    } else {
+                        referencesTargets.append(", " + String.format(FAIL_MESSAGE, sampleRelationship.getAccession()));
+                    }
+
                 } else {
-                    accessions.append(", " + sampleRelationship.getAccession());
+
+                    if(referencesTargets.toString().isEmpty()) {
+                        referencesTargets.append(String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, sampleRelationship.getAlias(), sampleRelationship.getTeam()));
+                    } else {
+                        referencesTargets.append(", " + String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, sampleRelationship.getAlias(), sampleRelationship.getTeam()));
+                    }
                 }
             }
 
             if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
-                initializeSingleValidationResult(accessions, singleValidationResult);
+                initializeSingleValidationResult(referencesTargets, singleValidationResult);
             } else {
-                updateSingleValidationResult(accessions, singleValidationResult);
+                updateSingleValidationResult(referencesTargets, singleValidationResult);
             }
         }
     }
@@ -80,7 +94,7 @@ public class SampleRefValidator implements ReferenceValidator {
      * @param singleValidationResult
      */
     public void validateSampleUses(List<SampleUse> sampleUseList, SingleValidationResult singleValidationResult) {
-        StringBuilder accessions = new StringBuilder();
+        StringBuilder referencesTargets = new StringBuilder();
 
         for (SampleUse sampleUse : sampleUseList) {
 
@@ -92,17 +106,28 @@ public class SampleRefValidator implements ReferenceValidator {
             }
 
             if (sample == null) {
-                if(accessions.toString().isEmpty()) {
-                    accessions.append(sampleUse.getSampleRef().getAccession());
+                if (sampleUse.getSampleRef().getAccession() != null && !sampleUse.getSampleRef().getAccession().isEmpty()) {
+
+                    if(referencesTargets.toString().isEmpty()) {
+                        referencesTargets.append(String.format(FAIL_MESSAGE, sampleUse.getSampleRef().getAccession()));
+                    } else {
+                        referencesTargets.append(", " + String.format(FAIL_MESSAGE, sampleUse.getSampleRef().getAccession()));
+                    }
+
                 } else {
-                    accessions.append(", " + sampleUse.getSampleRef().getAccession());
+
+                    if(referencesTargets.toString().isEmpty()) {
+                        referencesTargets.append(String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, sampleUse.getSampleRef().getAlias(), sampleUse.getSampleRef().getTeam()));
+                    } else {
+                        referencesTargets.append(", " + String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, sampleUse.getSampleRef().getAlias(), sampleUse.getSampleRef().getTeam()));
+                    }
                 }
             }
 
             if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
-                initializeSingleValidationResult(accessions, singleValidationResult);
+                initializeSingleValidationResult(referencesTargets, singleValidationResult);
             } else {
-                updateSingleValidationResult(accessions, singleValidationResult);
+                updateSingleValidationResult(referencesTargets, singleValidationResult);
             }
         }
     }

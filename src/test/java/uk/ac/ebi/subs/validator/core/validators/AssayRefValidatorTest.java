@@ -43,7 +43,7 @@ public class AssayRefValidatorTest {
 
     @Test
     public void assayNotFoundTest() {
-        AssayRef assayRef = generateAssayRef(null, "testTeam", "testAlias"); // TODO - fix return message to show query values.
+        AssayRef assayRef = generateAssayRef(null, "testTeam", "testAlias");
         SingleValidationResult singleValidationResult = generateSingleValidationResult();
 
         assayRefValidator.validate(assayRef, singleValidationResult);
@@ -54,7 +54,7 @@ public class AssayRefValidatorTest {
 
     @Test
     public void assayFoundByTeamAndAliasTest() {
-        AssayRef assayRef = generateAssayRef(null, "Team", "Alias"); // TODO - fix return message to show query values.
+        AssayRef assayRef = generateAssayRef("", "Team", "Alias");
         SingleValidationResult singleValidationResult = generateSingleValidationResult();
 
         assayRefValidator.validate(assayRef, singleValidationResult);
