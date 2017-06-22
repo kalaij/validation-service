@@ -27,12 +27,11 @@ public class StudyRefValidatorTest {
 
         when(studyRepository.findFirstByAccessionOrderByCreatedDateDesc("STUDY0001")).thenReturn(new Study());
         when(studyRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc("testTeam", "testAlias")).thenReturn(new Study());
-
     }
 
     @Test
     public void studyRefNotFoundEmptyAccessionTest() {
-        StudyRef studyRef = generateStudyRef("", "testTeam", "testAlias");
+        StudyRef studyRef = generateStudyRef("");
         SingleValidationResult singleValidationResult = generateSingleValidationResult();
 
         studyRefValidator.validate(studyRef, singleValidationResult);
