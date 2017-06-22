@@ -18,17 +18,48 @@ import uk.ac.ebi.subs.validator.messaging.ValidationExchangeConfig;
 public class CoreQueueConfiguration {
 
     @Bean
-    public Queue coreValidationQueue() {
+    public MessageConverter messageConverter() {
+        return new MappingJackson2MessageConverter();
+    }
+
+    @Bean
+    public Queue coreAssayValidationQueue() {
+        return new Queue(Queues.CORE_ASSAY_VALIDATION, true);
+    }
+
+    @Bean
+    public Binding coreAssayValidationBinding(Queue coreAssayValidationQueue, TopicExchange validationExchange) {
+        return BindingBuilder.bind(coreAssayValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_ASSAY_VALIDATION);
+    }
+
+    @Bean
+    public Queue coreAssayDataValidationQueue() {
+        return new Queue(Queues.CORE_ASSAYDATA_VALIDATION, true);
+    }
+
+    @Bean
+    public Binding coreAssayDataValidationBinding(Queue coreAssayDataValidationQueue, TopicExchange validationExchange) {
+        return BindingBuilder.bind(coreAssayDataValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION);
+    }
+
+    @Bean
+    public Queue coreSampleValidationQueue() {
         return new Queue(Queues.CORE_SAMPLE_VALIDATION, true);
     }
 
     @Bean
-    public Binding coreValidationBinding(Queue coreValidationQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(coreValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_VALIDATION);
+    public Binding coreSampleValidationBinding(Queue coreSampleValidationQueue, TopicExchange validationExchange) {
+        return BindingBuilder.bind(coreSampleValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION);
     }
 
     @Bean
-    public MessageConverter messageConverter() {
-        return new MappingJackson2MessageConverter();
+    public Queue coreStudyValidationQueue() {
+        return new Queue(Queues.CORE_STUDY_VALIDATION, true);
     }
+
+    @Bean
+    public Binding coreStudyValidationBinding(Queue coreStudyValidationQueue, TopicExchange validationExchange) {
+        return BindingBuilder.bind(coreStudyValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_STUDY_VALIDATION);
+    }
+
 }
