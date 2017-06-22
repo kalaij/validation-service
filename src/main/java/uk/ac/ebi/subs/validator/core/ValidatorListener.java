@@ -43,7 +43,7 @@ public class ValidatorListener {
         this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
-    // TODO - add queue @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
+    @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
     public void handleAssayValidationRequest(ValidationMessageEnvelope<Assay> envelope) {
         logger.debug("Assay validation request received.");
 
@@ -51,7 +51,7 @@ public class ValidatorListener {
         sendResults(singleValidationResult);
     }
 
-    // TODO - add queue @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
+    @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
     public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
         logger.debug("AssayData validation request received.");
 
@@ -67,7 +67,7 @@ public class ValidatorListener {
         sendResults(singleValidationResult);
     }
 
-    // TODO - add queue @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
+    @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
     public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
         logger.debug("Study validation request received.");
 

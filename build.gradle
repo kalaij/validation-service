@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile ("com.github.EMBL-EBI-SUBS:validator-common:master-SNAPSHOT") {
+    compile ("com.github.EMBL-EBI-SUBS:validator-common:48c266b9b0") { // Temporary fix
         changing = true
     }
 
