@@ -33,7 +33,6 @@ public class StudyRefValidatorTest {
     @Test
     public void studyRefNotFoundEmptyAccessionTest() {
         StudyRef studyRef = generateStudyRef("", "testTeam", "testAlias");
-        // TODO change StudyRefValidator to cope with empty strings
         SingleValidationResult singleValidationResult = generateSingleValidationResult();
 
         studyRefValidator.validate(studyRef, singleValidationResult);
@@ -55,7 +54,7 @@ public class StudyRefValidatorTest {
 
     @Test
     public void studyRefFoundByTeamAndAliasTest() {
-        StudyRef studyRef = generateStudyRef(null, "testTeam", "testAlias");
+        StudyRef studyRef = generateStudyRef("", "testTeam", "testAlias");
         SingleValidationResult singleValidationResult = generateSingleValidationResult();
 
         studyRefValidator.validate(studyRef, singleValidationResult);

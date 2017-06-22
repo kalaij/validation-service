@@ -28,7 +28,7 @@ public class SampleRefValidator implements ReferenceValidator {
     @Override
     public void validate(AbstractSubsRef sampleRef, SingleValidationResult singleValidationResult) {
         Sample sample;
-        if (sampleRef.getAccession() != null) {
+        if (sampleRef.getAccession() != null && !sampleRef.getAccession().isEmpty()) {
             sample = sampleRepository.findByAccession(sampleRef.getAccession());
         } else {
             sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRef.getTeam(), sampleRef.getAlias());
@@ -52,7 +52,7 @@ public class SampleRefValidator implements ReferenceValidator {
 
         for (SampleRelationship sampleRelationship : sampleRelationshipList) {
             Sample sample;
-            if (sampleRelationship.getAccession() != null) {
+            if (sampleRelationship.getAccession() != null && !sampleRelationship.getAccession().isEmpty()) {
                 sample = sampleRepository.findByAccession(sampleRelationship.getAccession());
             } else {
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRelationship.getTeam(), sampleRelationship.getAlias());
@@ -85,7 +85,7 @@ public class SampleRefValidator implements ReferenceValidator {
         for (SampleUse sampleUse : sampleUseList) {
 
             Sample sample;
-            if (sampleUse.getSampleRef().getAccession() != null) {
+            if (sampleUse.getSampleRef().getAccession() != null && !sampleUse.getSampleRef().getAccession().isEmpty()) {
                 sample = sampleRepository.findByAccession(sampleUse.getSampleRef().getAccession());
             } else {
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleUse.getSampleRef().getTeam(), sampleUse.getSampleRef().getAlias());

@@ -25,7 +25,7 @@ public class AssayRefValidator implements ReferenceValidator {
     public void validate(AbstractSubsRef assayRef, SingleValidationResult singleValidationResult) {
         Assay assay;
 
-        if (assayRef.getAccession() != null) {
+        if (assayRef.getAccession() != null && !assayRef.getAccession().isEmpty()) {
             assay = assayRepository.findFirstByAccessionOrderByCreatedDateDesc(assayRef.getAccession());
         } else {
             assay = assayRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(assayRef.getTeam(), assayRef.getAlias());

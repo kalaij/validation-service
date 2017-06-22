@@ -24,7 +24,7 @@ public class StudyRefValidator implements ReferenceValidator {
     @Override
     public void validate(AbstractSubsRef studyRef, SingleValidationResult singleValidationResult) {
         Study study;
-        if (studyRef.getAccession() != null) {
+        if (studyRef.getAccession() != null && !studyRef.getAccession().isEmpty()) {
             study = studyRepository.findFirstByAccessionOrderByCreatedDateDesc(studyRef.getAccession());
         } else {
             study = studyRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(studyRef.getTeam(), studyRef.getAlias());
