@@ -11,7 +11,7 @@ import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 @Service
 @EnableMongoRepositories(basePackageClasses = StudyRepository.class)
-public class StudyRefValidator implements ReferenceValidator {
+public class StudyRefValidator extends AbstractReferenceValidator {
 
     @Autowired
     public StudyRepository studyRepository;

@@ -5,14 +5,14 @@ import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
-public interface ReferenceValidator {
+public abstract class AbstractReferenceValidator {
 
     String FAIL_MESSAGE = "Could not find reference target: %s .";
     String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s .";
 
-    void validate(AbstractSubsRef subsRef, SingleValidationResult singleValidationResult);
+    abstract void validate(AbstractSubsRef subsRef, SingleValidationResult singleValidationResult);
 
-    default void initializeSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
+    void initializeSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
         if(submittable == null) {
             if(abstractSubsRef.getAccession() == null || abstractSubsRef.getAccession().isEmpty()) {
                 singleValidationResult.setMessage(String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, abstractSubsRef.getAlias(), abstractSubsRef.getTeam()));
@@ -26,7 +26,7 @@ public interface ReferenceValidator {
         }
     }
 
-    default void updateSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
+    void updateSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
         if(submittable == null) {
             StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
             if(abstractSubsRef.getAccession() == null || abstractSubsRef.getAccession().isEmpty()) {
@@ -40,7 +40,7 @@ public interface ReferenceValidator {
         }
     }
 
-    default void initializeSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
+    void initializeSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
         if (referencesTargets.toString().isEmpty()) {
             singleValidationResult.setValidationStatus(ValidationStatus.Pass);
         } else {
@@ -49,7 +49,7 @@ public interface ReferenceValidator {
         }
     }
 
-    default void updateSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
+    void updateSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
         if (!referencesTargets.toString().isEmpty()) {
             StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
             message.append(" " + referencesTargets);
