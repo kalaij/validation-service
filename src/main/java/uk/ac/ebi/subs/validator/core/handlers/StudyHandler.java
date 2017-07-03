@@ -7,7 +7,7 @@ import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 @Service
-public class StudyHandler implements Handler {
+public class StudyHandler extends AbstractHandler {
 
     /**
      * A Study refers to no other object.

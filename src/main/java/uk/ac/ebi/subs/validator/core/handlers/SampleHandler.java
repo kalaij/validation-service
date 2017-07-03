@@ -8,7 +8,7 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
 @Service
-public class SampleHandler implements Handler {
+public class SampleHandler extends AbstractHandler {
 
     @Autowired
     SampleRefValidator sampleRefValidator;
