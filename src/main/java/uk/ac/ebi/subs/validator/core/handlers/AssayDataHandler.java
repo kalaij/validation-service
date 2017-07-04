@@ -9,7 +9,7 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
 @Service
-public class AssayDataHandler implements Handler {
+public class AssayDataHandler extends AbstractHandler {
 
     @Autowired
     AssayRefValidator assayRefValidator;

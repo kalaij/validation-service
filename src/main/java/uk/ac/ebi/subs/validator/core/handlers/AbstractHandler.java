@@ -6,11 +6,11 @@ import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
 import java.util.UUID;
 
-public interface Handler {
+public abstract class AbstractHandler {
 
-    SingleValidationResult handleValidationRequest(ValidationMessageEnvelope envelope);
+    abstract SingleValidationResult handleValidationRequest(ValidationMessageEnvelope envelope);
 
-    default SingleValidationResult generateBlankSingleValidationResult(String entityId, String validationResultUuid) {
+    SingleValidationResult generateBlankSingleValidationResult(String entityId, String validationResultUuid) {
         SingleValidationResult result = new SingleValidationResult(ValidationAuthor.Core, entityId);
         result.setUuid(UUID.randomUUID().toString());
         result.setValidationResultUUID(validationResultUuid);

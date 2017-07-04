@@ -11,7 +11,7 @@ import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 @Service
 @EnableMongoRepositories(basePackageClasses = AssayRepository.class)
-public class AssayRefValidator implements ReferenceValidator {
+public class AssayRefValidator extends AbstractReferenceValidator {
 
     @Autowired
     public AssayRepository assayRepository;
@@ -23,8 +23,13 @@ public class AssayRefValidator implements ReferenceValidator {
      */
     @Override
     public void validate(AbstractSubsRef assayRef, SingleValidationResult singleValidationResult) {
+        Assay assay;
 
-        Assay assay = assayRepository.findFirstByAccessionOrderByCreatedDateDesc(assayRef.getAccession());
+        if (assayRef.getAccession() != null && !assayRef.getAccession().isEmpty()) {
+            assay = assayRepository.findFirstByAccessionOrderByCreatedDateDesc(assayRef.getAccession());
+        } else {
+            assay = assayRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(assayRef.getTeam(), assayRef.getAlias());
+        }
 
         if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
             initializeSingleValidationResult(assay, assayRef, singleValidationResult);

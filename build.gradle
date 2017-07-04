@@ -4,7 +4,6 @@ version '1.0.0-SNAPSHOT'
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://jitpack.io' }
         jcenter()
 
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
@@ -20,14 +19,13 @@ apply plugin: 'org.springframework.boot'
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
     jcenter()
 
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 dependencies {
-    compile ("com.github.EMBL-EBI-SUBS:validator-common:master-SNAPSHOT") {
+    compile ("uk.ac.ebi.subs:validator-common:1.2.0-SNAPSHOT") {
         changing = true
     }
 
