@@ -17,9 +17,6 @@ import java.util.List;
 @EnableMongoRepositories(basePackageClasses = SampleRepository.class)
 public class SampleRefValidator extends AbstractReferenceValidator {
 
-    String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s";
-    String FAIL_MESSAGE = "Could not find reference target: %s .";
-
     @Autowired
     public SampleRepository sampleRepository;
 
