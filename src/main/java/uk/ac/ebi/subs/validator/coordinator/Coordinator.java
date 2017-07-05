@@ -7,8 +7,10 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Assay;
+import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
@@ -37,7 +39,9 @@ public class Coordinator {
 
     /**
      * Sample validator data entry point.
-     * @param envelope
+     * @param envelope contains the {@link Submittable} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
+     * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
     public boolean processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
@@ -72,7 +76,9 @@ public class Coordinator {
 
     /**
      * Study validator data entry point.
-     * @param envelope
+     * @param envelope contains the {@link Submittable} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
+     * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_STUDY_VALIDATOR)
     public boolean processStudySubmission(SubmittableValidationEnvelope<Study> envelope){
@@ -103,7 +109,9 @@ public class Coordinator {
 
     /**
      * Assay validator data entry point.
-     * @param envelope
+     * @param envelope contains the {@link Submittable} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
+     * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_ASSAY_VALIDATOR)
     public boolean processAssaySubmission(SubmittableValidationEnvelope<Assay> envelope) {
@@ -132,30 +140,36 @@ public class Coordinator {
         return validationResult.getEntityUuid() != null;
     }
 
-//    @RabbitListener(queues = Queues.SUBMISSION_ASSAY_DATA_VALIDATOR)
-//    public boolean processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
-//        AssayData assayData = envelope.getEntityToValidate();
-//
-//        if (assayData == null) {
-//            throw new IllegalArgumentException("The envelop should contain an assay data.");
-//        }
-//
-//        logger.info("Received validation request on assay data {}", assayData.getId());
-//
-//        return handleAssayData(assayData, envelope.getSubmissionId());
-//    }
-//
-//    private boolean handleAssayData(AssayData assayData, String submissionId) {
-//        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assayData, submissionId);
-//
-//        logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
-//
-//        ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), assayData);
-//
-//        logger.debug("Sending assay data to validation queues");
-//        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
-//        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_ASSAYDATA_VALIDATION, messageEnvelope);
-//
-//        return validationResult.getEntityUuid() != null;
-//    }
+    /**
+     * AssayData validator data entry point.
+     * @param envelope contains the {@link Submittable} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
+     * the UUID of the {@link ValidationResult}
+     */
+    @RabbitListener(queues = Queues.SUBMISSION_ASSAY_DATA_VALIDATOR)
+    public boolean processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
+        AssayData assayData = envelope.getEntityToValidate();
+
+        if (assayData == null) {
+            throw new IllegalArgumentException("The envelop should contain an assay data.");
+        }
+
+        logger.info("Received validation request on assay data {}", assayData.getId());
+
+        return handleAssayData(assayData, envelope.getSubmissionId());
+    }
+
+    private boolean handleAssayData(AssayData assayData, String submissionId) {
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assayData, submissionId);
+
+        logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+
+        ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), assayData);
+
+        logger.debug("Sending assay data to validation queues");
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_ASSAYDATA_VALIDATION, messageEnvelope);
+
+        return validationResult.getEntityUuid() != null;
+    }
 }

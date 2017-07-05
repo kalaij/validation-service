@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan("uk.ac.ebi.subs.validator")
 public class CoordinatorApplication {
 
     public static void main(String[] args) {

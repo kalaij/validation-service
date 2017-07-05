@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { ValidationResultService.class, Coordinator.class })
+@SpringBootTest("uk.ac.ebi.subs.validator")
 public class CoordinatorTest {
 
     @Autowired
