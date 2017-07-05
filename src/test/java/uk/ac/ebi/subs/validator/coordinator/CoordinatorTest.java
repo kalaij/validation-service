@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
+@Category(RabbitMQDependentTest.class)
 @SpringBootTest("uk.ac.ebi.subs.validator")
 public class CoordinatorTest {
 
@@ -53,7 +54,6 @@ public class CoordinatorTest {
     }
 
     @Test
-    @Category(RabbitMQDependentTest.class)
     public void testSubmissionWithSample() {
         SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
 
