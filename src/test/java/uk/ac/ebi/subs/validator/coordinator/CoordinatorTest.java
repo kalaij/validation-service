@@ -16,6 +16,10 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
  * Created by karoly on 30/05/2017.
  */
@@ -44,6 +48,13 @@ public class CoordinatorTest {
 
         SubmittableValidationEnvelope<Sample> submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
+    }
+
+    @Test
+    public void testSubmissionWithSample() {
+        SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
+
+        assertThat(coordinator.processSampleSubmission(submittableValidationEnvelope), is(equalTo(true)));
     }
 
     private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithoutSample() {

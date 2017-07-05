@@ -37,7 +37,7 @@ public class Coordinator {
      * @param envelope
      */
     @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
-    public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
+    public boolean processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
         Sample sample = envelope.getEntityToValidate();
 
         if (sample == null) {
@@ -45,19 +45,22 @@ public class Coordinator {
         }
 
         logger.info("Received validation request on sample {}", sample.getId());
-        handleSample(sample, envelope.getSubmissionId());
+        return handleSample(sample, envelope.getSubmissionId());
     }
 
-    private void handleSample(Sample sample, String submissionId) {
+    private boolean handleSample(Sample sample, String submissionId) {
         ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample, submissionId);
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
         ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), sample);
 
         logger.debug("Sending sample to validation queues");
+        // TODO need to correct BioSamples and Taxon routing key names
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_CREATED, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_CREATED, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_AE_SAMPLE_CREATED, messageEnvelope);
-    }
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_TAXON_SAMPLE_CREATED, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
 
+        return validationResult.getEntityUuid() != null;
+    }
 }
