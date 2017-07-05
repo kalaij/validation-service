@@ -29,3 +29,13 @@ dependencies {
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
+
+task('externalCiTest', type: Test) {
+    useJUnit {
+        excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest'
+    }
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+

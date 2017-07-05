@@ -1,7 +1,9 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,7 @@ public class CoordinatorTest {
     }
 
     @Test
+    @Category(RabbitMQDependentTest.class)
     public void testSubmissionWithSample() {
         SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
 
