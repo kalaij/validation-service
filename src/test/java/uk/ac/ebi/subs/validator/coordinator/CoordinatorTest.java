@@ -46,7 +46,7 @@ public class CoordinatorTest {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(expectedErrorMessage);
 
-        SubmittableValidationEnvelope<Sample> submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
+        SubmittableValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
@@ -57,16 +57,16 @@ public class CoordinatorTest {
         assertThat(coordinator.processSampleSubmission(submittableValidationEnvelope), is(equalTo(true)));
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithoutSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope<>(submissionId, null);
+        return new SubmittableValidationEnvelope(submissionId, null);
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope<>(submissionId, createSample());
+       return new SubmittableValidationEnvelope(submissionId, createSample());
     }
 
     private Sample createSample() {

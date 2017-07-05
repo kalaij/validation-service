@@ -4,14 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.subs.data.submittable.BaseSubmittable;
-import uk.ac.ebi.subs.validator.data.ValidationAuthor;
+import uk.ac.ebi.subs.data.submittable.*;
+import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,14 +18,53 @@ public class ValidationResultService {
     @Autowired
     private ValidationResultRepository repository;
 
-    public ValidationResult generateValidationResultDocument(BaseSubmittable submittable, String submissionId) {
-        logger.debug("Creating Validation Result Document for {} from submission {}",
-                submittable.getClass().getSimpleName(), submissionId);
 
-        return createOrUpdateValidationResult(submissionId, submittable.getId());
+    public ValidationResult generateValidationResultDocument(Sample sample, String submissionId){
+        ValidationResult validationResult = createOrUpdateValidationResult(sample, submissionId);
+        if (validationResult.getVersion() == 1) {
+            validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
+        }
+
+        repository.save(validationResult);
+
+        return validationResult;
     }
 
-    ValidationResult createOrUpdateValidationResult(String submissionId, String submittableUuid) {
+    public ValidationResult generateValidationResultDocument(Study study, String submissionId){
+        ValidationResult validationResult = createOrUpdateValidationResult(study, submissionId);
+        if (validationResult.getVersion() == 1) {
+            validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
+        }
+
+        repository.save(validationResult);
+
+        return validationResult;
+    }
+
+    public ValidationResult generateValidationResultDocument(Assay assay, String submissionId){
+        ValidationResult validationResult = createOrUpdateValidationResult(assay, submissionId);
+        if (validationResult.getVersion() == 1) {
+            validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
+        }
+
+        repository.save(validationResult);
+
+        return validationResult;
+    }
+
+    public ValidationResult generateValidationResultDocument(AssayData assayData, String submissionId){
+        ValidationResult validationResult = createOrUpdateValidationResult(assayData, submissionId);
+        if (validationResult.getVersion() == 1) {
+            validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
+        }
+
+        repository.save(validationResult);
+
+        return validationResult;
+    }
+
+    private ValidationResult createOrUpdateValidationResult(Submittable submittable, String submissionId) {
+        String submittableUuid = submittable.getId();
         ValidationResult validationResult = repository.findByEntityUuid(submittableUuid);
         if (validationResult != null) {
             validationResult.setVersion(validationResult.getVersion() + 1);
@@ -39,16 +75,7 @@ public class ValidationResultService {
             validationResult.setEntityUuid(submittableUuid);
 
             validationResult.setVersion(1);
-
-            Map<ValidationAuthor, Boolean> expectedResults = new HashMap<>();
-            for (ValidationAuthor validationAuthor : Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Biosamples,
-                    ValidationAuthor.Ena, ValidationAuthor.Taxonomy)) {
-                expectedResults.put(validationAuthor, false);
-            }
-            validationResult.setExpectedResults(expectedResults);
         }
-
-        repository.save(validationResult);
 
         return validationResult;
     }
