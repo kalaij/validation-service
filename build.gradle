@@ -25,7 +25,22 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter'
 
     compile("uk.ac.ebi.subs:subs-processing-model:1.0.0-SNAPSHOT")
-    compile("uk.ac.ebi.subs:validator-common:1.2.0-SNAPSHOT")
+    compile("uk.ac.ebi.subs:validator-common:1.5.0-SNAPSHOT")
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
+
+task('externalCiTest', type: Test) {
+    useJUnit {
+        excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest'
+    }
+    testLogging {
+        exceptionFormat = 'full'
+    }
+
+    configure(externalCiTest) {
+        group = "verification"
+        description = 'Run tests appropriate for our external CI environment'
+    }
+}
+

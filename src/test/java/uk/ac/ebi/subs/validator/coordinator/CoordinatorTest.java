@@ -1,7 +1,9 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,18 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
  * Created by karoly on 30/05/2017.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { ValidationResultService.class, Coordinator.class })
+@Category(RabbitMQDependentTest.class)
+@SpringBootTest("uk.ac.ebi.subs.validator")
 public class CoordinatorTest {
 
     @Autowired
@@ -42,20 +49,27 @@ public class CoordinatorTest {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(expectedErrorMessage);
 
-        SubmittableValidationEnvelope<Sample> submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
+        SubmittableValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithoutSample() {
-        String submissionId = "testSubmissionId1";
+    @Test
+    public void testSubmissionWithSample() {
+        SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
 
-        return new SubmittableValidationEnvelope<>(submissionId, null);
+        assertThat(coordinator.processSampleSubmission(submittableValidationEnvelope), is(equalTo(true)));
     }
 
-    private SubmittableValidationEnvelope<Sample> createSubmittableEnvelopeWithSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope<>(submissionId, createSample());
+        return new SubmittableValidationEnvelope(submissionId, null);
+    }
+
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample() {
+        String submissionId = "testSubmissionId1";
+
+       return new SubmittableValidationEnvelope(submissionId, createSample());
     }
 
     private Sample createSample() {

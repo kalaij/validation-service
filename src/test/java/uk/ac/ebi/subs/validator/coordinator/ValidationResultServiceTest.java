@@ -9,8 +9,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
+
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
@@ -19,7 +22,7 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 public class ValidationResultServiceTest {
 
     public static final String SUBMISSION_ID = "123";
-    public static final String SUBMITTABLE_ID = "44566";
+
     @Autowired
     ValidationResultRepository repository;
 
@@ -34,10 +37,19 @@ public class ValidationResultServiceTest {
     @Test
     public void getVersionTest() {
         ValidationResult validationResult = new ValidationResult();
+        Sample sample = createSampe();
+
         for (int i = 0; i < 5; i++) {
-            validationResult = service.createOrUpdateValidationResult(SUBMISSION_ID, SUBMITTABLE_ID);
+            validationResult = service.generateValidationResultDocument(sample, SUBMISSION_ID);
         }
 
         Assert.assertEquals(5, validationResult.getVersion());
+    }
+
+    private Sample createSampe() {
+        Sample sample = new Sample();
+        sample.setId(UUID.randomUUID().toString());
+
+        return sample;
     }
 }
