@@ -1,7 +1,9 @@
 package uk.ac.ebi.subs.validator.util;
 
+import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,27 +30,27 @@ public class BlankValidationResultMaps {
      *
      * @return an initialised mapping from the required Validation service(ValidationAuthor) to it's respected validation result(boolean, false by default)
      */
-    public static Map<ValidationAuthor, Boolean> forSample() {
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forSample() {
         return generateDefaultMap(SAMPLE_VALIDATION_SERVICES_REQUIRED);
     }
 
-    public static Map<ValidationAuthor, Boolean> forStudy() {
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forStudy() {
         return generateDefaultMap(STUDY_VALIDATION_SERVICES_REQUIRED);
     }
 
-    public static Map<ValidationAuthor, Boolean> forAssay() {
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forAssay() {
         return generateDefaultMap(ASSAY_VALIDATION_SERVICES_REQUIRED);
     }
 
-    public static Map<ValidationAuthor, Boolean> forAssayData() {
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forAssayData() {
         return generateDefaultMap(ASSAY_DATA_VALIDATION_SERVICES_REQUIRED);
     }
 
-    private static Map<ValidationAuthor, Boolean> generateDefaultMap(List<ValidationAuthor> validationAuthors) {
-        Map<ValidationAuthor, Boolean> blankValidationResultMap = new HashMap<>();
+    private static Map<ValidationAuthor, List<SingleValidationResult>> generateDefaultMap(List<ValidationAuthor> validationAuthors) {
+        Map<ValidationAuthor, List<SingleValidationResult>> blankValidationResultMap = new HashMap<>();
 
         for(ValidationAuthor author: validationAuthors) {
-            blankValidationResultMap.put(author, false);
+            blankValidationResultMap.put(author, new ArrayList<>());
         }
 
         return blankValidationResultMap;
