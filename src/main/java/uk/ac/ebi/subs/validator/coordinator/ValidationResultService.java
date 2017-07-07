@@ -21,9 +21,7 @@ public class ValidationResultService {
 
     public ValidationResult generateValidationResultDocument(Sample sample, String submissionId){
         ValidationResult validationResult = createOrUpdateValidationResult(sample, submissionId);
-        if (validationResult.getVersion() == 1) {
-            validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
-        }
+        validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
 
         repository.save(validationResult);
 
@@ -32,9 +30,7 @@ public class ValidationResultService {
 
     public ValidationResult generateValidationResultDocument(Study study, String submissionId){
         ValidationResult validationResult = createOrUpdateValidationResult(study, submissionId);
-        if (validationResult.getVersion() == 1) {
-            validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
-        }
+        validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
 
         repository.save(validationResult);
 
@@ -43,9 +39,7 @@ public class ValidationResultService {
 
     public ValidationResult generateValidationResultDocument(Assay assay, String submissionId){
         ValidationResult validationResult = createOrUpdateValidationResult(assay, submissionId);
-        if (validationResult.getVersion() == 1) {
-            validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
-        }
+        validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
 
         repository.save(validationResult);
 
@@ -54,9 +48,7 @@ public class ValidationResultService {
 
     public ValidationResult generateValidationResultDocument(AssayData assayData, String submissionId){
         ValidationResult validationResult = createOrUpdateValidationResult(assayData, submissionId);
-        if (validationResult.getVersion() == 1) {
-            validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
-        }
+        validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
 
         repository.save(validationResult);
 

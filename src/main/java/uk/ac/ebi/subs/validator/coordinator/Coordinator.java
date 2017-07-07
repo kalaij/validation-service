@@ -61,7 +61,8 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), sample);
+        ValidationMessageEnvelope<Sample> messageEnvelope =
+                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), sample);
 
         logger.debug("Sending sample to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
@@ -94,7 +95,8 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Study> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), study);
+        ValidationMessageEnvelope<Study> messageEnvelope =
+                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), study);
 
         logger.debug("Sending study to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_STUDY_VALIDATION, messageEnvelope);
@@ -127,7 +129,8 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Assay> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), assay);
+        ValidationMessageEnvelope<Assay> messageEnvelope =
+                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assay);
 
         logger.debug("Sending assay to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAY_VALIDATION, messageEnvelope);
@@ -160,7 +163,8 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), assayData);
+        ValidationMessageEnvelope<AssayData> messageEnvelope =
+                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assayData);
 
         logger.debug("Sending assay data to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
