@@ -10,13 +10,11 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'https://jitpack.io' } // FIXME - remove
 }
 
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://jitpack.io' } // FIXME - remove
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
@@ -27,8 +25,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter'
 
     compile("uk.ac.ebi.subs:subs-processing-model:1.0.0-SNAPSHOT")
-    //compile("uk.ac.ebi.subs:validator-common:1.8.0-SNAPSHOT") FIXME - temporary fix while the new validator-common version is not available
-    compile 'com.github.EMBL-EBI-SUBS:validator-common:SUBS-535-SNAPSHOT' // FIXME - remove
+    compile("uk.ac.ebi.subs:validator-common:1.8.0-SNAPSHOT")
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
