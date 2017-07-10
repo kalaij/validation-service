@@ -6,7 +6,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
@@ -35,23 +36,27 @@ public class AggregatorListener {
     }
 
     @RabbitListener(queues = Queues.VALIDATION_RESULT)
-    public void handleValidationResult(SingleValidationResult singleValidationResult) {
-        logger.debug("Received single validation result for an entity.");
+    public void handleValidationResult(SingleValidationResultsEnvelope singleValidationResultsEnvelope) {
+        logger.debug("Received single validation results from {}.", singleValidationResultsEnvelope.getValidationAuthor());
 
         logger.debug("Trying to update Validation Result Document in MongoDB...");
-        boolean success = validationResultService.updateValidationResult(singleValidationResult);
+        boolean success = validationResultService.updateValidationResult(singleValidationResultsEnvelope);
 
         if(success) {
-            sendValidationResultDocumentUpdate(singleValidationResult);
+            sendValidationResultDocumentUpdate(singleValidationResultsEnvelope);
         } else {
             logger.info("Ignoring obsolete validation results.");
         }
     }
 
-    private void sendValidationResultDocumentUpdate(SingleValidationResult singleValidationResult) {
+    private void sendValidationResultDocumentUpdate(SingleValidationResultsEnvelope singleValidationResultsEnvelope) {
         logger.debug("Sending message: validation result document has been updated in MongoDB.");
 
-        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED,
-                singleValidationResult.getValidationResultUUID());
+        AggregatorToFlipperEnvelope envelope = new AggregatorToFlipperEnvelope(
+                singleValidationResultsEnvelope.getValidationResultUUID(),
+                singleValidationResultsEnvelope.getValidationResultVersion()
+        );
+
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED, envelope);
     }
 }
