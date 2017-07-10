@@ -9,12 +9,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.data.component.Archive;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
+import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +28,8 @@ import java.util.UUID;
 @SpringBootTest(classes = ValidationResultService.class)
 public class ValidationResultServiceTest {
 
-    String oldDocUUID;
-    String newDocUUID;
+    String exampleDoc1;
+    String exampleDoc2;
 
     @Autowired
     ValidationResultRepository repository;
@@ -43,29 +45,19 @@ public class ValidationResultServiceTest {
     }
 
     /**
-     * Check that current version is the most up to date.
-     */
-    @Test
-    public void isLatestVersionTest1() {
-        Assert.assertTrue(service.isLatestVersion("123", "44566", 3));
-    }
-
-    /**
-     *  Check that current version is obsolete.
-     */
-    @Test
-    public void isLatestVersionTest2() {
-        Assert.assertTrue(!service.isLatestVersion("123", "44566", 1));
-    }
-
-    /**
      * Update validation result document successfully.
      */
     @Test
     public void updateValidationResultTest1() {
-        SingleValidationResult singleValidationResult = generateEntityValidationResult(2, newDocUUID);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = new SingleValidationResultsEnvelope(
+                Arrays.asList(generateSingleValidationResult(1, exampleDoc1)),
+                1,
+                exampleDoc1,
+                ValidationAuthor.Biosamples);
 
-        Assert.assertTrue(service.updateValidationResult(singleValidationResult));
+        boolean success = service.updateValidationResult(singleValidationResultsEnvelope);
+
+        Assert.assertTrue(success);
     }
 
     /**
@@ -73,24 +65,28 @@ public class ValidationResultServiceTest {
      */
     @Test
     public void updateValidationResultTest2() {
-        SingleValidationResult singleValidationResult = generateEntityValidationResult(1, oldDocUUID);
 
-        Assert.assertTrue(!service.updateValidationResult(singleValidationResult));
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = new SingleValidationResultsEnvelope(
+                Arrays.asList(generateSingleValidationResult(1, exampleDoc2)),
+                1,
+                exampleDoc2,
+                ValidationAuthor.Biosamples);
+
+        Assert.assertTrue(!service.updateValidationResult(singleValidationResultsEnvelope));
     }
 
     private List<ValidationResult> generateValidationResults() {
         List<ValidationResult> validationResults = new ArrayList<>();
 
-        Map<Archive, Boolean> archiveBooleanMap = new HashMap<>();
-        archiveBooleanMap.put(Archive.BioSamples, false);
-        archiveBooleanMap.put(Archive.ArrayExpress, false);
-        archiveBooleanMap.put(Archive.Ena, false);
+        Map<ValidationAuthor, List<SingleValidationResult>> validationAuthorListMap = new HashMap<>();
+        validationAuthorListMap.put(ValidationAuthor.Taxonomy, new ArrayList<>());
+        validationAuthorListMap.put(ValidationAuthor.Biosamples, new ArrayList<>());
 
         // First
         ValidationResult validationResult1 = new ValidationResult();
         validationResult1.setUuid(UUID.randomUUID().toString());
-        oldDocUUID = validationResult1.getUuid();
-        validationResult1.setExpectedResults(archiveBooleanMap);
+        exampleDoc1 = validationResult1.getUuid();
+        validationResult1.setExpectedResults(validationAuthorListMap);
         validationResult1.setVersion(1);
         validationResult1.setSubmissionId("123");
         validationResult1.setEntityUuid("44566");
@@ -100,23 +96,23 @@ public class ValidationResultServiceTest {
         // Second
         ValidationResult validationResult2 = new ValidationResult();
         validationResult2.setUuid(UUID.randomUUID().toString());
-        newDocUUID = validationResult2.getUuid();
-        validationResult2.setExpectedResults(archiveBooleanMap);
+        exampleDoc2 = validationResult2.getUuid();
+        validationResult2.setExpectedResults(validationAuthorListMap);
         validationResult2.setVersion(2);
         validationResult2.setSubmissionId("123");
-        validationResult2.setEntityUuid("44566");
+        validationResult2.setEntityUuid("66977");
 
         validationResults.add(validationResult2);
 
         return validationResults;
     }
 
-    private SingleValidationResult generateEntityValidationResult(int version, String docUUID) {
+    private SingleValidationResult generateSingleValidationResult(int version, String docUUID) {
         SingleValidationResult singleValidationResult = new SingleValidationResult();
         singleValidationResult.setValidationResultUUID(docUUID);
         singleValidationResult.setEntityUuid("44566");
         singleValidationResult.setUuid(UUID.randomUUID().toString());
-        singleValidationResult.setArchive(Archive.BioSamples);
+        singleValidationResult.setValidationAuthor(ValidationAuthor.Biosamples);
         singleValidationResult.setVersion(version);
         return singleValidationResult;
     }
