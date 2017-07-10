@@ -16,11 +16,15 @@ import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
 import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ValidatorListener {
@@ -47,40 +51,40 @@ public class ValidatorListener {
     public void handleAssayValidationRequest(ValidationMessageEnvelope<Assay> envelope) {
         logger.debug("Assay validation request received.");
 
-        SingleValidationResult singleValidationResult = assayHandler.handleValidationRequest(envelope);
-        sendResults(singleValidationResult);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResultsEnvelope);
     }
 
     @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
     public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
         logger.debug("AssayData validation request received.");
 
-        SingleValidationResult singleValidationResult = assayDataHandler.handleValidationRequest(envelope);
-        sendResults(singleValidationResult);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResultsEnvelope);
     }
 
     @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
     public void handleSampleValidationRequest(ValidationMessageEnvelope<Sample> envelope) {
         logger.debug("Sample validation request received.");
 
-        SingleValidationResult singleValidationResult = sampleHandler.handleValidationRequest(envelope);
-        sendResults(singleValidationResult);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = sampleHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResultsEnvelope);
     }
 
     @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
     public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
         logger.debug("Study validation request received.");
 
-        SingleValidationResult singleValidationResult = studyHandler.handleValidationRequest(envelope);
-        sendResults(singleValidationResult);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = studyHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResultsEnvelope);
     }
 
-    private void sendResults(SingleValidationResult singleValidationResult) {
-        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Error)) {
-            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_ERROR, singleValidationResult);
+    private void sendResults(SingleValidationResultsEnvelope envelope) {
+        List<SingleValidationResult> errorResults = envelope.getSingleValidationResults().stream().filter(svr -> svr.getValidationStatus().equals(ValidationStatus.Error)).collect(Collectors.toList());
+        if (errorResults.size() > 0) {
+            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_ERROR, envelope);
         } else {
-            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_SUCCESS, singleValidationResult);
-
+            rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_SUCCESS, envelope);
         }
     }
 }

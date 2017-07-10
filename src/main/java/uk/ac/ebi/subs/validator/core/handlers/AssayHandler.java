@@ -6,7 +6,10 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyRefValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+
+import java.util.Collections;
 
 @Service
 public class AssayHandler extends AbstractHandler {
@@ -23,14 +26,17 @@ public class AssayHandler extends AbstractHandler {
      * @return
      */
     @Override
-    public SingleValidationResult handleValidationRequest(ValidationMessageEnvelope envelope) {
+    public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
         Assay assay = (Assay) envelope.getEntityToValidate();
 
         SingleValidationResult singleValidationResult = generateBlankSingleValidationResult(assay.getId(), envelope.getValidationResultUUID());
-        studyRefValidator.validate(assay.getStudyRef(), singleValidationResult);
 
+        studyRefValidator.validate(assay.getStudyRef(), singleValidationResult);
         sampleRefValidator.validateSampleUses(assay.getSampleUses(), singleValidationResult);
 
-        return singleValidationResult;
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
+
+        return singleValidationResultsEnvelope;
     }
+
 }
