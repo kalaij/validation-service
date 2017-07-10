@@ -16,7 +16,7 @@ public class ValidationResultService {
         ValidationResult validationResult = repository.findOne(envelope.getValidationResultUUID());
 
         if (validationResult != null) {
-            if (isLatestVersion(validationResult.getVersion(), envelope.getValidationResultVersion())) {
+            if (validationResult.getVersion() == envelope.getValidationResultVersion()) {
                 validationResult.getExpectedResults().put(envelope.getValidationAuthor(), envelope.getSingleValidationResults());
                 repository.save(validationResult);
                 return true;
@@ -25,11 +25,4 @@ public class ValidationResultService {
         return false;
     }
 
-    public boolean isLatestVersion(int persistedValidationResult, int thisValidationResultVersion) {
-        if (persistedValidationResult == thisValidationResultVersion) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
