@@ -2,8 +2,9 @@ version '0.1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
 
-group 'uk.ac.ebi.subs.validator.coordinator'
+group 'uk.ac.ebi.subs'
 
 sourceCompatibility = 1.8
 
@@ -41,6 +42,51 @@ task('externalCiTest', type: Test) {
     configure(externalCiTest) {
         group = "verification"
         description = 'Run tests appropriate for our external CI environment'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+            }
+
+            pom.project {
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                url 'https://github.com/EMBL-EBI-SUBS'
+
+                scm {
+                    url 'https://github.com/EMBL-EBI-SUBS'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'neilg'
+                        name 'Neil Goodgame'
+                        email 'neilg@ebi.ac.uk'
+                    }
+                }
+            }
+        }
     }
 }
 
