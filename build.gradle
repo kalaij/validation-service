@@ -43,11 +43,10 @@ uploadArchives {
 
             pom.project {
                 packaging 'jar'
-                // optionally artifactId can be defined here
-                url 'https://github.com/EMBL-EBI-SUBS'
+                url 'https://github.com/EMBL-EBI-SUBS/validator-aggregator'
 
                 scm {
-                    url 'https://github.com/EMBL-EBI-SUBS'
+                    url 'https://github.com/EMBL-EBI-SUBS/validator-aggregator.git'
                 }
 
                 licenses {
@@ -60,7 +59,7 @@ uploadArchives {
                 developers {
                     developer {
                         id 'subs-internal'
-                        name 'EMBL-EBI USI'
+                        name 'EMBL-EBI-SUBS'
                         email 'subs-internal@ebi.ac.uk'
                     }
                 }
