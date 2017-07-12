@@ -2,6 +2,7 @@ package uk.ac.ebi.subs.validator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.system.ApplicationPidFileWriter;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
@@ -9,6 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 public class CoordinatorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CoordinatorApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(CoordinatorApplication.class);
+        ApplicationPidFileWriter applicationPidFileWriter = new ApplicationPidFileWriter();
+        springApplication.addListeners(applicationPidFileWriter);
+        springApplication.run(args);
     }
 }
