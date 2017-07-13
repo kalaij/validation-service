@@ -2,6 +2,7 @@ package uk.ac.ebi.subs.validator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.system.ApplicationPidFileWriter;
 
 /**
  * Entry point of the Validator Aggregator application.
@@ -12,7 +13,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AggregatorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AggregatorApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(AggregatorApplication.class);
+        ApplicationPidFileWriter applicationPidFileWriter = new ApplicationPidFileWriter();
+        springApplication.addListeners(applicationPidFileWriter);
+        springApplication.run(args);
     }
 
 }
