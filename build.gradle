@@ -106,7 +106,7 @@ task printJarFullPath {
 remotes {
     staging {
         role('staging')
-        host = 'mac-subs-002'
+        host = 'mac-subs-005'
     }
 }
 
