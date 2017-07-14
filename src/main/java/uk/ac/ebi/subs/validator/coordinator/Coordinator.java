@@ -63,6 +63,8 @@ public class Coordinator {
         logger.debug("Sending sample to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
