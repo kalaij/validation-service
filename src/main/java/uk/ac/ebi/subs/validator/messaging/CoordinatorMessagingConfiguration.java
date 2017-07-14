@@ -7,6 +7,8 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 
 /**
  * Created by karoly on 05/07/2017.
@@ -14,6 +16,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackageClasses = ValidationExchangeConfig.class)
 public class CoordinatorMessagingConfiguration {
+
+    @Bean
+    public MessageConverter messageConverter() {
+        return new MappingJackson2MessageConverter();
+    }
 
     /**
      * Instantiate a {@link Queue} for validate published submissions.

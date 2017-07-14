@@ -17,7 +17,6 @@ import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.messaging.Queues;
 import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 @Component
 public class Coordinator {
@@ -25,9 +24,6 @@ public class Coordinator {
 
     @Autowired
     private RabbitMessagingTemplate rabbitMessagingTemplate;
-
-    @Autowired
-    private ValidationResultRepository repository;
 
     @Autowired
     private ValidationResultService validationResultService;
