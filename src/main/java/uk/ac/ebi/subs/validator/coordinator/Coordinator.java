@@ -22,7 +22,6 @@ import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 public class Coordinator {
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
-    @Autowired
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
@@ -40,16 +39,18 @@ public class Coordinator {
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
-    public boolean processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
+    public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
         Sample sample = envelope.getEntityToValidate();
 
         if (sample == null) {
             throw new IllegalArgumentException("The envelop should contain a sample.");
         }
 
-        logger.info("Received validation request on sample {}", sample.getId());
+        logger.info("Received validation request on sample with id {}", sample.getId());
 
-        return handleSample(sample, envelope.getSubmissionId());
+        if (!handleSample(sample, envelope.getSubmissionId())) {
+            logger.error("Error handling sample with id {}", sample.getId());
+        }
     }
 
     private boolean handleSample(Sample sample, String submissionId) {
@@ -57,12 +58,13 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Sample> messageEnvelope =
-                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), sample);
+        ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), sample);
 
         logger.debug("Sending sample to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -74,16 +76,18 @@ public class Coordinator {
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_STUDY_VALIDATOR)
-    public boolean processStudySubmission(SubmittableValidationEnvelope<Study> envelope){
+    public void processStudySubmission(SubmittableValidationEnvelope<Study> envelope){
         Study study = envelope.getEntityToValidate();
 
         if (study == null) {
             throw new IllegalArgumentException("The envelop should contain a study.");
         }
 
-        logger.info("Received validation request on study {}", study.getId());
+        logger.info("Received validation request on study with id {}", study.getId());
 
-        return handleStudy(study, envelope.getSubmissionId());
+        if (!handleStudy(study, envelope.getSubmissionId())) {
+            logger.error("Error handling study with id {}", study.getId());
+        }
     }
 
     private boolean handleStudy(Study study, String submissionId) {
@@ -91,8 +95,7 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Study> messageEnvelope =
-                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), study);
+        ValidationMessageEnvelope<Study> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), study);
 
         logger.debug("Sending study to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_STUDY_VALIDATION, messageEnvelope);
@@ -108,7 +111,7 @@ public class Coordinator {
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_ASSAY_VALIDATOR)
-    public boolean processAssaySubmission(SubmittableValidationEnvelope<Assay> envelope) {
+    public void processAssaySubmission(SubmittableValidationEnvelope<Assay> envelope) {
         Assay assay = envelope.getEntityToValidate();
 
         if (assay == null) {
@@ -117,7 +120,9 @@ public class Coordinator {
 
         logger.info("Received validation request on assay {}", assay.getId());
 
-        return handleAssay(assay, envelope.getSubmissionId());
+        if (!handleAssay(assay, envelope.getSubmissionId())) {
+            logger.error("Error handling assay with id {}", assay.getId());
+        }
     }
 
     private boolean handleAssay(Assay assay, String submissionId) {
@@ -125,8 +130,7 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Assay> messageEnvelope =
-                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assay);
+        ValidationMessageEnvelope<Assay> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assay);
 
         logger.debug("Sending assay to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAY_VALIDATION, messageEnvelope);
@@ -142,7 +146,7 @@ public class Coordinator {
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = Queues.SUBMISSION_ASSAY_DATA_VALIDATOR)
-    public boolean processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
+    public void processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
         AssayData assayData = envelope.getEntityToValidate();
 
         if (assayData == null) {
@@ -151,7 +155,9 @@ public class Coordinator {
 
         logger.info("Received validation request on assay data {}", assayData.getId());
 
-        return handleAssayData(assayData, envelope.getSubmissionId());
+        if (!handleAssayData(assayData, envelope.getSubmissionId())) {
+            logger.error("Error handling assayData with id {}", assayData.getId());
+        }
     }
 
     private boolean handleAssayData(AssayData assayData, String submissionId) {
@@ -159,8 +165,7 @@ public class Coordinator {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<AssayData> messageEnvelope =
-                new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assayData);
+        ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assayData);
 
         logger.debug("Sending assay data to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);

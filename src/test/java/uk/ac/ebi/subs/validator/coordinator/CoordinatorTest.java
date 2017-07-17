@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
-import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -13,14 +12,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
  * Created by karoly on 30/05/2017.
@@ -31,9 +27,6 @@ import static org.junit.Assert.assertThat;
 @Category(RabbitMQDependentTest.class)
 @SpringBootTest("uk.ac.ebi.subs.validator")
 public class CoordinatorTest {
-
-    @Autowired
-    ValidationResultRepository repository;
 
     @Autowired
     private Coordinator coordinator;
@@ -57,7 +50,7 @@ public class CoordinatorTest {
     public void testSubmissionWithSample() {
         SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
 
-        assertThat(coordinator.processSampleSubmission(submittableValidationEnvelope), is(equalTo(true)));
+        coordinator.processSampleSubmission(submittableValidationEnvelope);
     }
 
     private SubmittableValidationEnvelope createSubmittableEnvelopeWithoutSample() {
