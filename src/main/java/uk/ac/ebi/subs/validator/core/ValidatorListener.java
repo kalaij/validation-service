@@ -42,9 +42,8 @@ public class ValidatorListener {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
-    public ValidatorListener(RabbitMessagingTemplate rabbitMessagingTemplate, MessageConverter messageConverter) {
+    public ValidatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
-        this.rabbitMessagingTemplate.setMessageConverter(messageConverter);
     }
 
     @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
