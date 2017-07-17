@@ -47,7 +47,7 @@ public class ValidatorListener {
 
     @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
     public void handleAssayValidationRequest(ValidationMessageEnvelope<Assay> envelope) {
-        logger.debug("Assay validation request received.");
+        logger.debug("Assay validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
@@ -55,7 +55,7 @@ public class ValidatorListener {
 
     @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
     public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
-        logger.debug("AssayData validation request received.");
+        logger.debug("AssayData validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
@@ -63,7 +63,7 @@ public class ValidatorListener {
 
     @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
     public void handleSampleValidationRequest(ValidationMessageEnvelope<Sample> envelope) {
-        logger.debug("Sample validation request received.");
+        logger.debug("Sample validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = sampleHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
@@ -71,7 +71,7 @@ public class ValidatorListener {
 
     @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
     public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
-        logger.debug("Study validation request received.");
+        logger.debug("Study validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = studyHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
