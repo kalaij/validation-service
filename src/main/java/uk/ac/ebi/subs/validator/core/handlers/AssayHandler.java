@@ -34,6 +34,8 @@ public class AssayHandler extends AbstractHandler {
         studyRefValidator.validate(assay.getStudyRef(), singleValidationResult);
         sampleRefValidator.validateSampleUses(assay.getSampleUses(), singleValidationResult);
 
+        checkValidationStatus(singleValidationResult);
+
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
 
         return singleValidationResultsEnvelope;

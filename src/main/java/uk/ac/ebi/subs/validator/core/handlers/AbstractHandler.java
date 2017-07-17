@@ -4,6 +4,7 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,5 +27,11 @@ public abstract class AbstractHandler {
                 envelope.getValidationResultUUID(),
                 ValidationAuthor.Core
         );
+    }
+
+    void checkValidationStatus(SingleValidationResult singleValidationResult) {
+        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+            singleValidationResult.setValidationStatus(ValidationStatus.Pass);
+        }
     }
 }

@@ -29,6 +29,8 @@ public class SampleHandler extends AbstractHandler {
 
         sampleRefValidator.validateSampleRelationships(sample.getSampleRelationships(), singleValidationResult);
 
+        checkValidationStatus(singleValidationResult);
+
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
 
         return singleValidationResultsEnvelope;
