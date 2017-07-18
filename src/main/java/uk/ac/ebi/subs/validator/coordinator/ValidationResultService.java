@@ -66,7 +66,7 @@ public class ValidationResultService {
             validationResult.setSubmissionId(submissionId);
             validationResult.setEntityUuid(submittableUuid);
 
-            validationResult.setVersion(1);
+            //validationResult.setVersion(1); - FIXME - Starting version from *0* we may change this
         }
 
         return validationResult;
