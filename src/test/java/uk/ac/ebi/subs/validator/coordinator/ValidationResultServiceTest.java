@@ -43,7 +43,7 @@ public class ValidationResultServiceTest {
             validationResult = service.generateValidationResultDocument(sample, SUBMISSION_ID);
         }
 
-        Assert.assertEquals(5, validationResult.getVersion());
+        Assert.assertEquals(4, validationResult.getVersion());
     }
 
     private Sample createSampe() {
