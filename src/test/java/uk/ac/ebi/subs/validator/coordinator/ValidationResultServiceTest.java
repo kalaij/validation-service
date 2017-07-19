@@ -29,27 +29,25 @@ public class ValidationResultServiceTest {
     @Autowired
     ValidationResultService service;
 
+    private Sample sample;
+
     @Before
     public void setUp() {
         repository.deleteAll();
+
+        sample = TestUtils.createSample();
+
+        repository.save(TestUtils.createValidationResult(sample.getId()));
     }
 
     @Test
     public void getVersionTest() {
         ValidationResult validationResult = new ValidationResult();
-        Sample sample = createSampe();
 
         for (int i = 0; i < 5; i++) {
             validationResult = service.generateValidationResultDocument(sample, SUBMISSION_ID);
         }
 
-        Assert.assertEquals(4, validationResult.getVersion());
-    }
-
-    private Sample createSampe() {
-        Sample sample = new Sample();
-        sample.setId(UUID.randomUUID().toString());
-
-        return sample;
+        Assert.assertEquals(5, validationResult.getVersion());
     }
 }

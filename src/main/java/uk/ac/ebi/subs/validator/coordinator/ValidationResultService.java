@@ -18,7 +18,6 @@ public class ValidationResultService {
     @Autowired
     private ValidationResultRepository repository;
 
-
     public ValidationResult generateValidationResultDocument(Sample sample, String submissionId){
         ValidationResult validationResult = createOrUpdateValidationResult(sample, submissionId);
         validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
@@ -61,12 +60,7 @@ public class ValidationResultService {
         if (validationResult != null) {
             validationResult.setVersion(validationResult.getVersion() + 1);
         } else {
-            validationResult = new ValidationResult();
-            validationResult.setUuid(UUID.randomUUID().toString());
-            validationResult.setSubmissionId(submissionId);
-            validationResult.setEntityUuid(submittableUuid);
-
-            //validationResult.setVersion(1); - FIXME - Starting version from *0* we may change this
+            throw new IllegalStateException(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
         }
 
         return validationResult;

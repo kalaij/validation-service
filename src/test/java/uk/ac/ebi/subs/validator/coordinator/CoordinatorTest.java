@@ -1,5 +1,6 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -10,13 +11,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
-
-import java.util.UUID;
 
 /**
  * Created by karoly on 30/05/2017.
@@ -31,7 +29,19 @@ public class CoordinatorTest {
     @Autowired
     private Coordinator coordinator;
 
-    private Team testTeam = Team.build("testTeam");
+    @Autowired
+    private ValidationResultRepository validationResultRepository;
+
+    private Sample sample;
+
+    @Before
+    public void setUp() {
+        validationResultRepository.deleteAll();
+
+        sample = TestUtils.createSample();
+
+        validationResultRepository.save(TestUtils.createValidationResult(sample.getId()));
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -48,7 +58,7 @@ public class CoordinatorTest {
 
     @Test
     public void testSubmissionWithSample() {
-        SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample();
+        SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample(sample);
 
         coordinator.processSampleSubmission(submittableValidationEnvelope);
     }
@@ -59,23 +69,9 @@ public class CoordinatorTest {
         return new SubmittableValidationEnvelope(submissionId, null);
     }
 
-    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample() {
+    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample(Sample sample) {
         String submissionId = "testSubmissionId1";
 
-       return new SubmittableValidationEnvelope(submissionId, createSample());
-    }
-
-    private Sample createSample() {
-        Sample sample = new Sample();
-        String id = UUID.randomUUID().toString();
-        sample.setId("TEST_SAMPLE_" + id);
-        sample.setTaxon("testTaxon_" + id);
-        sample.setTaxonId(1234L);
-        sample.setAccession("ABC_" + id);
-        sample.setAlias("TestAlias_" + id);
-        sample.setDescription("Description for sample with id: " + id);
-        sample.setTeam(testTeam);
-
-        return sample;
+       return new SubmittableValidationEnvelope(submissionId, sample);
     }
 }
