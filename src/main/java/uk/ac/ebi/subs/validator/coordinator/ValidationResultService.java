@@ -5,11 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.*;
-import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
+import uk.ac.ebi.subs.validator.data.ValidationStatus;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
-
-import java.util.UUID;
+import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 
 @Service
 public class ValidationResultService {
@@ -58,7 +57,10 @@ public class ValidationResultService {
         String submittableUuid = submittable.getId();
         ValidationResult validationResult = repository.findByEntityUuid(submittableUuid);
         if (validationResult != null) {
+            validationResult.setValidationStatus(ValidationStatus.Pending);
             validationResult.setVersion(validationResult.getVersion() + 1);
+            logger.debug("ValidationResult has been changed to status: {} and version: {}",
+                    validationResult.getValidationStatus().name(), validationResult.getVersion());
         } else {
             throw new IllegalStateException(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
         }
