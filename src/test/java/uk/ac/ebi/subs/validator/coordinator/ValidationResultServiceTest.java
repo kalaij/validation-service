@@ -4,12 +4,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.validator.coordinator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
+@Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = ValidationResultService.class)
 public class ValidationResultServiceTest {
