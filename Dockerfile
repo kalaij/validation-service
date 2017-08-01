@@ -7,7 +7,6 @@ ENV RABBIT_HOST=localhost
 ENV RABBIT_PORT=5672
 
 # copy in the gradlew, gradle credentials and src folder
-ADD .gradle ./.gradle
 ADD gradle ./gradle
 ADD src ./src
 
