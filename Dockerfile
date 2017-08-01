@@ -15,7 +15,8 @@ COPY gradlew gradle.properties.enc build.gradle ./
 RUN ./gradlew assemble
 # run tests, ignore mongoDB/rabbitmq dependent tests...
 RUN ./gradlew externalCiTest
-
+# test
+RUN find . -name "*.jar"
 COPY build/libs/*.jar ./validator-coordinator.jar
 
 CMD java -jar validator-coordinator.jar --spring.data.mongodb.uri=$MONGO_URI --spring.rabbitmq.host=$RABBIT_HOST --spring.rabbitmq.port=$RABBIT_PORT
