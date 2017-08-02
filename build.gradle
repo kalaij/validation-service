@@ -41,7 +41,8 @@ dependencies {
 
 task('externalCiTest', type: Test) {
     useJUnit {
-        excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest'
+	excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest'
+        excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.MongoDBDependentTest'
     }
     testLogging {
         exceptionFormat = 'full'
