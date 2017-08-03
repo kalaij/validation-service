@@ -3,11 +3,13 @@ package uk.ac.ebi.subs.validator.core.validators;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.SampleRelationship;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.repository.model.Sample;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
+import uk.ac.ebi.subs.validator.core.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
@@ -20,6 +22,7 @@ import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateSampleRelati
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateSampleUse;
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateSingleValidationResult;
 
+@Category(MongoDBDependentTest.class)
 public class SampleRefValidatorTest {
 
     private SampleRefValidator sampleRefValidator;
