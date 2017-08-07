@@ -3,9 +3,11 @@ package uk.ac.ebi.subs.validator.core.validators;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.repository.model.Study;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
+import uk.ac.ebi.subs.validator.core.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationStatus;
 
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.when;
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateSingleValidationResult;
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateStudyRef;
 
+@Category(MongoDBDependentTest.class)
 public class StudyRefValidatorTest {
 
     private StudyRefValidator studyRefValidator;

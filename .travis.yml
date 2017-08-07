@@ -1,6 +1,8 @@
 language: java
 jdk:
 - oraclejdk8
+services:
+- docker
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -11,5 +13,6 @@ cache:
 before_install:
 - openssl aes-256-cbc -K $encrypted_36aa442f5570_key -iv $encrypted_36aa442f5570_iv
   -in gradle.properties.enc -out gradle.properties -d
+- docker build -t core-validator:$TRAVIS_BRANCH .
 after_success:
 - test $TRAVIS_BRANCH = "master" && ./gradlew uploadArchives
