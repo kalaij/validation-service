@@ -57,6 +57,6 @@ public class AggregatorListener {
                 singleValidationResultsEnvelope.getValidationResultVersion()
         );
 
-        rabbitMessagingTemplate.convertAndSend(Exchanges.VALIDATION, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED, envelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED, envelope);
     }
 }
