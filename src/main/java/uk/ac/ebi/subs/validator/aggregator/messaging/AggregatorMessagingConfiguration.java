@@ -46,13 +46,13 @@ public class AggregatorMessagingConfiguration {
      * using the routing key of successful validation.
      *
      * @param validationResultQueue {@link Queue} for validation results
-     * @param validationExchange {@link TopicExchange} for validation
+     * @param submissionExchange {@link TopicExchange} for validation
      * @return a {@link Binding} between the validation exchange and validation result queue
      * using the routing key of successful validation.
      */
     @Bean
-    Binding validationResultSuccessBinding(Queue validationResultQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(validationResultQueue).to(validationExchange)
+    Binding validationResultSuccessBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
                 .with(RoutingKeys.EVENT_VALIDATION_SUCCESS);
     }
 
@@ -61,13 +61,13 @@ public class AggregatorMessagingConfiguration {
      * using the routing key of erred validation.
      *
      * @param validationResultQueue {@link Queue} for validation results
-     * @param validationExchange {@link TopicExchange} for validation
+     * @param submissionExchange {@link TopicExchange} for validation
      * @return a {@link Binding} between the validation exchange and validation result queue
      * using the routing key of erred validation.
      */
     @Bean
-    Binding validationResultErrorBinding(Queue validationResultQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(validationResultQueue).to(validationExchange)
+    Binding validationResultErrorBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
                 .with(RoutingKeys.EVENT_VALIDATION_ERROR);
     }
 
