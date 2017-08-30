@@ -27,8 +27,8 @@ public class CoreQueueConfiguration {
     }
 
     @Bean
-    public Binding coreAssayValidationBinding(Queue coreAssayValidationQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(coreAssayValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_ASSAY_VALIDATION);
+    public Binding coreAssayValidationBinding(Queue coreAssayValidationQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(coreAssayValidationQueue).to(submissionExchange).with(RoutingKeys.EVENT_CORE_ASSAY_VALIDATION);
     }
 
     @Bean
@@ -37,8 +37,8 @@ public class CoreQueueConfiguration {
     }
 
     @Bean
-    public Binding coreAssayDataValidationBinding(Queue coreAssayDataValidationQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(coreAssayDataValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION);
+    public Binding coreAssayDataValidationBinding(Queue coreAssayDataValidationQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(coreAssayDataValidationQueue).to(submissionExchange).with(RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION);
     }
 
     @Bean
@@ -47,8 +47,8 @@ public class CoreQueueConfiguration {
     }
 
     @Bean
-    public Binding coreSampleValidationBinding(Queue coreSampleValidationQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(coreSampleValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION);
+    public Binding coreSampleValidationBinding(Queue coreSampleValidationQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(coreSampleValidationQueue).to(submissionExchange).with(RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION);
     }
 
     @Bean
@@ -57,8 +57,8 @@ public class CoreQueueConfiguration {
     }
 
     @Bean
-    public Binding coreStudyValidationBinding(Queue coreStudyValidationQueue, TopicExchange validationExchange) {
-        return BindingBuilder.bind(coreStudyValidationQueue).to(validationExchange).with(RoutingKeys.EVENT_CORE_STUDY_VALIDATION);
+    public Binding coreStudyValidationBinding(Queue coreStudyValidationQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(coreStudyValidationQueue).to(submissionExchange).with(RoutingKeys.EVENT_CORE_STUDY_VALIDATION);
     }
 
 }
