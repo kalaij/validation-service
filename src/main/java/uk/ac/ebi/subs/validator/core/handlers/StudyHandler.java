@@ -1,7 +1,9 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
@@ -12,8 +14,12 @@ import java.util.Collections;
 @Service
 public class StudyHandler extends AbstractHandler {
 
+    @Autowired
+    StudyTypeValidator studyTypeValidator;
+
     /**
      * A Study refers to no other object.
+     * A study must have a studyType
      * @param envelope
      * @return
      */
@@ -22,7 +28,9 @@ public class StudyHandler extends AbstractHandler {
         Study study = (Study) envelope.getEntityToValidate();
         SingleValidationResult singleValidationResult = generateBlankSingleValidationResult(study.getId(), envelope.getValidationResultUUID());
 
-        singleValidationResult.setValidationStatus(ValidationStatus.Pass);
+        studyTypeValidator.validate(study,singleValidationResult);
+
+        checkValidationStatus(singleValidationResult);
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
 
