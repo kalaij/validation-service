@@ -1,7 +1,7 @@
 package uk.ac.ebi.subs.validator.util;
 
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationAuthor;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

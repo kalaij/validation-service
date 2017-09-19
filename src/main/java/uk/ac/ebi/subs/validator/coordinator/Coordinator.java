@@ -48,13 +48,13 @@ public class Coordinator {
 
         logger.info("Received validation request on sample with id {}", sample.getId());
 
-        if (!handleSample(sample, envelope.getSubmissionId())) {
+        if (!handleSample(sample)) {
             logger.error("Error handling sample with id {}", sample.getId());
         }
     }
 
-    private boolean handleSample(Sample sample, String submissionId) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample, submissionId);
+    private boolean handleSample(Sample sample) {
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -85,13 +85,13 @@ public class Coordinator {
 
         logger.info("Received validation request on study with id {}", study.getId());
 
-        if (!handleStudy(study, envelope.getSubmissionId())) {
+        if (!handleStudy(study)) {
             logger.error("Error handling study with id {}", study.getId());
         }
     }
 
-    private boolean handleStudy(Study study, String submissionId) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(study, submissionId);
+    private boolean handleStudy(Study study) {
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(study);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -120,13 +120,13 @@ public class Coordinator {
 
         logger.info("Received validation request on assay {}", assay.getId());
 
-        if (!handleAssay(assay, envelope.getSubmissionId())) {
+        if (!handleAssay(assay)) {
             logger.error("Error handling assay with id {}", assay.getId());
         }
     }
 
-    private boolean handleAssay(Assay assay, String submissionId) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assay, submissionId);
+    private boolean handleAssay(Assay assay) {
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assay);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -155,13 +155,13 @@ public class Coordinator {
 
         logger.info("Received validation request on assay data {}", assayData.getId());
 
-        if (!handleAssayData(assayData, envelope.getSubmissionId())) {
+        if (!handleAssayData(assayData)) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         }
     }
 
-    private boolean handleAssayData(AssayData assayData, String submissionId) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assayData, submissionId);
+    private boolean handleAssayData(AssayData assayData) {
+        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assayData);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
