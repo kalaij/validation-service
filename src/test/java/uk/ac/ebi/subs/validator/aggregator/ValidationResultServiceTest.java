@@ -13,8 +13,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.validator.aggregator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationAuthor;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import java.util.ArrayList;
@@ -112,11 +112,8 @@ public class ValidationResultServiceTest {
 
     private SingleValidationResult generateSingleValidationResult(int version, String docUUID) {
         SingleValidationResult singleValidationResult = new SingleValidationResult();
-        singleValidationResult.setValidationResultUUID(docUUID);
         singleValidationResult.setEntityUuid("44566");
-        singleValidationResult.setUuid(UUID.randomUUID().toString());
         singleValidationResult.setValidationAuthor(ValidationAuthor.Biosamples);
-        singleValidationResult.setVersion(version);
         return singleValidationResult;
     }
 
