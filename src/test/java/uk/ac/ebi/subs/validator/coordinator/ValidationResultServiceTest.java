@@ -3,8 +3,8 @@ package uk.ac.ebi.subs.validator.coordinator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,16 +15,12 @@ import uk.ac.ebi.subs.validator.coordinator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
-import java.util.UUID;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = ValidationResultService.class)
 public class ValidationResultServiceTest {
-
-    public static final String SUBMISSION_ID = "123";
 
     @Autowired
     ValidationResultRepository repository;
@@ -48,7 +44,7 @@ public class ValidationResultServiceTest {
         ValidationResult validationResult = new ValidationResult();
 
         for (int i = 0; i < 5; i++) {
-            validationResult = service.generateValidationResultDocument(sample, SUBMISSION_ID);
+            validationResult = service.generateValidationResultDocument(sample);
         }
 
         Assert.assertEquals(5, validationResult.getVersion());
