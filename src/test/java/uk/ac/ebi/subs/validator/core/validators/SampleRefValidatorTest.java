@@ -11,7 +11,7 @@ import uk.ac.ebi.subs.repository.model.Sample;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.core.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import java.util.Arrays;
 
@@ -47,7 +47,7 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validateSampleRelationships(Arrays.asList(relationship), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validate(sampleRef, singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validate(sampleRef, singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validateSampleUses(Arrays.asList(sampleUse), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -102,6 +102,6 @@ public class SampleRefValidatorTest {
         sampleRefValidator.validateSampleUses(Arrays.asList(sampleUse), singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
     }
 }

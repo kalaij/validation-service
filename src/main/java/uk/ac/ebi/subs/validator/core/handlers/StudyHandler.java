@@ -7,7 +7,7 @@ import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.Collections;
 
@@ -26,7 +26,8 @@ public class StudyHandler extends AbstractHandler {
     @Override
     public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
         Study study = (Study) envelope.getEntityToValidate();
-        SingleValidationResult singleValidationResult = generateBlankSingleValidationResult(study.getId(), envelope.getValidationResultUUID());
+
+        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, study.getId());
 
         studyTypeValidator.validate(study,singleValidationResult);
 

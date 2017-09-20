@@ -6,7 +6,7 @@ import uk.ac.ebi.subs.data.component.SampleRelationship;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationAuthor;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.UUID;
 
@@ -14,7 +14,6 @@ public class TestUtils {
 
     public static SingleValidationResult generateSingleValidationResult() {
         SingleValidationResult result = new SingleValidationResult(ValidationAuthor.Core, UUID.randomUUID().toString());
-        result.setUuid(UUID.randomUUID().toString());
         return result;
     }
 
