@@ -7,7 +7,7 @@ import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.repository.repos.submittables.AssayRepository;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 @Service
 @EnableMongoRepositories(basePackageClasses = AssayRepository.class)
@@ -31,7 +31,7 @@ public class AssayRefValidator extends AbstractReferenceValidator {
             assay = assayRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(assayRef.getTeam(), assayRef.getAlias());
         }
 
-        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+        if (singleValidationResult.getValidationStatus().equals(SingleValidationResultStatus.Pending)) {
             initializeSingleValidationResult(assay, assayRef, singleValidationResult);
         } else {
             updateSingleValidationResult(assay, assayRef, singleValidationResult);

@@ -9,7 +9,7 @@ import uk.ac.ebi.subs.repository.model.Study;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
 import uk.ac.ebi.subs.validator.core.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,7 +40,7 @@ public class StudyRefValidatorTest {
         studyRefValidator.validate(studyRef, singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Error, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class StudyRefValidatorTest {
         studyRefValidator.validate(studyRef, singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class StudyRefValidatorTest {
         studyRefValidator.validate(studyRef, singleValidationResult);
         System.out.println(singleValidationResult.getMessage());
 
-        Assert.assertEquals(ValidationStatus.Pass, singleValidationResult.getValidationStatus());
+        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
     }
 
 }

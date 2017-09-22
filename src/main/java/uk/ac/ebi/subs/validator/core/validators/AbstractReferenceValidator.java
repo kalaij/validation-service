@@ -3,7 +3,7 @@ package uk.ac.ebi.subs.validator.core.validators;
 import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 public abstract class AbstractReferenceValidator {
 
@@ -19,10 +19,10 @@ public abstract class AbstractReferenceValidator {
             } else {
                 singleValidationResult.setMessage(String.format(FAIL_MESSAGE, abstractSubsRef.getAccession()));
             }
-            singleValidationResult.setValidationStatus(ValidationStatus.Error);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
 
         } else {
-            singleValidationResult.setValidationStatus(ValidationStatus.Pass);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Pass);
         }
     }
 
@@ -36,16 +36,16 @@ public abstract class AbstractReferenceValidator {
             }
 
             singleValidationResult.setMessage(message.toString());
-            singleValidationResult.setValidationStatus(ValidationStatus.Error);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
     }
 
     void initializeSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
         if (referencesTargets.toString().isEmpty()) {
-            singleValidationResult.setValidationStatus(ValidationStatus.Pass);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Pass);
         } else {
             singleValidationResult.setMessage(referencesTargets.toString());
-            singleValidationResult.setValidationStatus(ValidationStatus.Error);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractReferenceValidator {
             message.append(" " + referencesTargets);
 
             singleValidationResult.setMessage(message.toString());
-            singleValidationResult.setValidationStatus(ValidationStatus.Error);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
     }
 }

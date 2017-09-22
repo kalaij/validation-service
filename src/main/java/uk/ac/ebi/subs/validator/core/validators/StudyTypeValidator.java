@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.StudyDataType;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 @Service
 public class StudyTypeValidator {
@@ -22,7 +22,7 @@ public class StudyTypeValidator {
 
         if (studyDataType == null) {
             singleValidationResult.setMessage(FAIL_MESSAGE);
-            singleValidationResult.setValidationStatus(ValidationStatus.Error);
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
 
 

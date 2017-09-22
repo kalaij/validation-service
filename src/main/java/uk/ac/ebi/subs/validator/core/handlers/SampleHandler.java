@@ -7,6 +7,7 @@ import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.Collections;
 
@@ -25,7 +26,7 @@ public class SampleHandler extends AbstractHandler {
     public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
         Sample sample = (Sample) envelope.getEntityToValidate();
 
-        SingleValidationResult singleValidationResult = generateBlankSingleValidationResult(sample.getId(), envelope.getValidationResultUUID());
+        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, sample.getId());
 
         sampleRefValidator.validateSampleRelationships(sample.getSampleRelationships(), singleValidationResult);
 

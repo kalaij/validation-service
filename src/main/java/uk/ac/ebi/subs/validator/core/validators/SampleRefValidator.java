@@ -9,7 +9,7 @@ import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.ValidationStatus;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class SampleRefValidator extends AbstractReferenceValidator {
             sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRef.getTeam(), sampleRef.getAlias());
         }
 
-        if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+        if (singleValidationResult.getValidationStatus().equals(SingleValidationResultStatus.Pending)) {
             initializeSingleValidationResult(sample, sampleRef, singleValidationResult);
         } else {
             updateSingleValidationResult(sample, sampleRef, singleValidationResult);
@@ -77,7 +77,7 @@ public class SampleRefValidator extends AbstractReferenceValidator {
                 }
             }
 
-            if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+            if (singleValidationResult.getValidationStatus().equals(SingleValidationResultStatus.Pending)) {
                 initializeSingleValidationResult(referencesTargets, singleValidationResult);
             } else {
                 updateSingleValidationResult(referencesTargets, singleValidationResult);
@@ -121,7 +121,7 @@ public class SampleRefValidator extends AbstractReferenceValidator {
                 }
             }
 
-            if (singleValidationResult.getValidationStatus().equals(ValidationStatus.Pending)) {
+            if (singleValidationResult.getValidationStatus().equals(SingleValidationResultStatus.Pending)) {
                 initializeSingleValidationResult(referencesTargets, singleValidationResult);
             } else {
                 updateSingleValidationResult(referencesTargets, singleValidationResult);

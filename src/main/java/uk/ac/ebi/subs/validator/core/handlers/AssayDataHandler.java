@@ -8,6 +8,7 @@ import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.Collections;
 
@@ -29,7 +30,7 @@ public class AssayDataHandler extends AbstractHandler {
     public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
         AssayData assayData = (AssayData) envelope.getEntityToValidate();
 
-        SingleValidationResult singleValidationResult = generateBlankSingleValidationResult(assayData.getId(), envelope.getValidationResultUUID());
+        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, assayData.getId());
 
         assayRefValidator.validate(assayData.getAssayRef(), singleValidationResult);
         sampleRefValidator.validate(assayData.getSampleRef(), singleValidationResult);
