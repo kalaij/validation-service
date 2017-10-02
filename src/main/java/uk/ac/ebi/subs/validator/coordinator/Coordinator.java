@@ -11,12 +11,13 @@ import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.data.submittable.Submittable;
+import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
-import uk.ac.ebi.subs.validator.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
+
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.*;
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.*;
 
 @Component
 public class Coordinator {
@@ -38,7 +39,7 @@ public class Coordinator {
      * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
      * the UUID of the {@link ValidationResult}
      */
-    @RabbitListener(queues = Queues.SUBMISSION_SAMPLE_VALIDATOR)
+    @RabbitListener(queues = SUBMISSION_SAMPLE_VALIDATOR)
     public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
         Sample sample = envelope.getEntityToValidate();
 
@@ -61,10 +62,10 @@ public class Coordinator {
         ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), sample);
 
         logger.debug("Sending sample to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_BIOSAMPLES_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_TAXON_SAMPLE_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_BIOSAMPLES_SAMPLE_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -75,7 +76,7 @@ public class Coordinator {
      * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
      * the UUID of the {@link ValidationResult}
      */
-    @RabbitListener(queues = Queues.SUBMISSION_STUDY_VALIDATOR)
+    @RabbitListener(queues = SUBMISSION_STUDY_VALIDATOR)
     public void processStudySubmission(SubmittableValidationEnvelope<Study> envelope){
         Study study = envelope.getEntityToValidate();
 
@@ -98,8 +99,8 @@ public class Coordinator {
         ValidationMessageEnvelope<Study> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), study);
 
         logger.debug("Sending study to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_CORE_STUDY_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_ENA_STUDY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_STUDY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_STUDY_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -110,7 +111,7 @@ public class Coordinator {
      * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
      * the UUID of the {@link ValidationResult}
      */
-    @RabbitListener(queues = Queues.SUBMISSION_ASSAY_VALIDATOR)
+    @RabbitListener(queues = SUBMISSION_ASSAY_VALIDATOR)
     public void processAssaySubmission(SubmittableValidationEnvelope<Assay> envelope) {
         Assay assay = envelope.getEntityToValidate();
 
@@ -133,8 +134,8 @@ public class Coordinator {
         ValidationMessageEnvelope<Assay> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assay);
 
         logger.debug("Sending assay to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_CORE_ASSAY_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_ENA_ASSAY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAY_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -145,7 +146,7 @@ public class Coordinator {
      * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
      * the UUID of the {@link ValidationResult}
      */
-    @RabbitListener(queues = Queues.SUBMISSION_ASSAY_DATA_VALIDATOR)
+    @RabbitListener(queues = SUBMISSION_ASSAY_DATA_VALIDATOR)
     public void processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
         AssayData assayData = envelope.getEntityToValidate();
 
@@ -168,8 +169,8 @@ public class Coordinator {
         ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assayData);
 
         logger.debug("Sending assay data to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_ENA_ASSAYDATA_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, messageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }

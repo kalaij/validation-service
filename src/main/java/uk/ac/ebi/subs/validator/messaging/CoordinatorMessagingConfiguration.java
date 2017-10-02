@@ -8,12 +8,17 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import uk.ac.ebi.subs.messaging.ExchangeConfig;
+import uk.ac.ebi.subs.messaging.Queues;
+
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.*;
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.*;
 
 /**
  * Created by karoly on 05/07/2017.
  */
 @Configuration
-@ComponentScan(basePackageClasses = ValidationExchangeConfig.class)
+@ComponentScan(basePackageClasses = ExchangeConfig.class)
 public class CoordinatorMessagingConfiguration {
 
     @Bean
@@ -28,7 +33,7 @@ public class CoordinatorMessagingConfiguration {
      */
     @Bean
     Queue submissionSampleValidatorQueue() {
-        return new Queue(Queues.SUBMISSION_SAMPLE_VALIDATOR, true);
+        return Queues.buildQueueWithDlx(SUBMISSION_SAMPLE_VALIDATOR);
     }
 
     /**
@@ -41,7 +46,7 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForCreatedSampleSubmissionBinding(Queue submissionSampleValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionSampleValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_SAMPLE_CREATED);
+                .with(SUBMITTABLE_SAMPLE_CREATED);
     }
 
     /**
@@ -54,12 +59,12 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForUpdatedSampleSubmissionBinding(Queue submissionSampleValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionSampleValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_SAMPLE_UPDATED);
+                .with(SUBMITTABLE_SAMPLE_UPDATED);
     }
 
     @Bean
     Queue submissionStudyValidatorQueue() {
-        return new Queue(Queues.SUBMISSION_STUDY_VALIDATOR, true);
+        return Queues.buildQueueWithDlx(SUBMISSION_STUDY_VALIDATOR);
     }
 
     /**
@@ -72,7 +77,7 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForCreatedStudySubmissionBinding(Queue submissionStudyValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionStudyValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_STUDY_CREATED);
+                .with(SUBMITTABLE_STUDY_CREATED);
     }
 
     /**
@@ -85,12 +90,12 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForUpdatedStudySubmissionBinding(Queue submissionStudyValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionStudyValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_STUDY_UPDATED);
+                .with(SUBMITTABLE_STUDY_UPDATED);
     }
 
     @Bean
     Queue submissionAssayValidatorQueue() {
-        return new Queue(Queues.SUBMISSION_ASSAY_VALIDATOR, true);
+        return Queues.buildQueueWithDlx(SUBMISSION_ASSAY_VALIDATOR);
     }
 
     /**
@@ -103,7 +108,7 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForCreatedAssaySubmissionBinding(Queue submissionAssayValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionAssayValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_ASSAY_CREATED);
+                .with(SUBMITTABLE_ASSAY_CREATED);
     }
 
     /**
@@ -116,12 +121,12 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForUpdatedAssaySubmissionBinding(Queue submissionAssayValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionAssayValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_ASSAY_UPDATED);
+                .with(SUBMITTABLE_ASSAY_UPDATED);
     }
 
     @Bean
     Queue submissionAssayDataValidatorQueue() {
-        return new Queue(Queues.SUBMISSION_ASSAY_DATA_VALIDATOR, true);
+        return Queues.buildQueueWithDlx(SUBMISSION_ASSAY_DATA_VALIDATOR);
     }
 
     /**
@@ -134,7 +139,7 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForCreatedAssayDataSubmissionBinding(Queue submissionAssayDataValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionAssayDataValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_ASSAYDATA_CREATED);
+                .with(SUBMITTABLE_ASSAYDATA_CREATED);
     }
 
     /**
@@ -147,6 +152,6 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForUpdatedAssayDataSubmissionBinding(Queue submissionAssayDataValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(submissionAssayDataValidatorQueue).to(submissionExchange)
-                .with(RoutingKeys.SUBMITTABLE_ASSAYDATA_UPDATED);
+                .with(SUBMITTABLE_ASSAYDATA_UPDATED);
     }
 }
