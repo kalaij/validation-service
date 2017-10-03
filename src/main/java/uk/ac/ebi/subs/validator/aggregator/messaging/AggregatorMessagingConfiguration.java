@@ -4,7 +4,6 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,8 @@ import uk.ac.ebi.subs.messaging.ExchangeConfig;
 import uk.ac.ebi.subs.messaging.Queues;
 
 import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorQueues.VALIDATION_RESULT;
-import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.*;
+import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_ERROR;
+import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_SUCCESS;
 
 /**
  * Messaging configuration for the validator aggregator.
