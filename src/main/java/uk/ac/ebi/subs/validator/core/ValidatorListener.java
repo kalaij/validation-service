@@ -30,13 +30,13 @@ public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
 
     @Autowired
-    AssayHandler assayHandler;
+    private AssayHandler assayHandler;
     @Autowired
-    AssayDataHandler assayDataHandler;
+    private AssayDataHandler assayDataHandler;
     @Autowired
-    SampleHandler sampleHandler;
+    private SampleHandler sampleHandler;
     @Autowired
-    StudyHandler studyHandler;
+    private StudyHandler studyHandler;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
