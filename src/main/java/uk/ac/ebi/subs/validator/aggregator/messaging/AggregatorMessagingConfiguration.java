@@ -8,9 +8,11 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.messaging.ValidationExchangeConfig;
+import uk.ac.ebi.subs.messaging.ExchangeConfig;
+import uk.ac.ebi.subs.messaging.Queues;
+
+import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorQueues.VALIDATION_RESULT;
+import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.*;
 
 /**
  * Messaging configuration for the validator aggregator.
@@ -18,7 +20,7 @@ import uk.ac.ebi.subs.validator.messaging.ValidationExchangeConfig;
  * Created by karoly on 17/07/2017.
  */
 @Configuration
-@ComponentScan(basePackageClasses = ValidationExchangeConfig.class)
+@ComponentScan(basePackageClasses = ExchangeConfig.class)
 public class AggregatorMessagingConfiguration {
 
     /**
@@ -38,7 +40,7 @@ public class AggregatorMessagingConfiguration {
      */
     @Bean
     Queue validationResultQueue() {
-        return new Queue(Queues.VALIDATION_RESULT, true);
+        return Queues.buildQueueWithDlx(VALIDATION_RESULT);
     }
 
     /**
@@ -53,7 +55,7 @@ public class AggregatorMessagingConfiguration {
     @Bean
     Binding validationResultSuccessBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
-                .with(RoutingKeys.EVENT_VALIDATION_SUCCESS);
+                .with(EVENT_VALIDATION_SUCCESS);
     }
 
     /**
@@ -68,7 +70,7 @@ public class AggregatorMessagingConfiguration {
     @Bean
     Binding validationResultErrorBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
-                .with(RoutingKeys.EVENT_VALIDATION_ERROR);
+                .with(EVENT_VALIDATION_ERROR);
     }
 
 
