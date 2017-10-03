@@ -24,16 +24,6 @@ import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKey
 public class AggregatorMessagingConfiguration {
 
     /**
-     * Instantiate a JSON message converter.
-     *
-     * @return an instance of JSON message converter.
-     */
-    @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    /**
      * Instantiate a {@link Queue} for publish validation results.
      *
      * @return an instance of a {@link Queue} for publish validation results.
