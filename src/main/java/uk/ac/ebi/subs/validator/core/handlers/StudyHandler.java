@@ -31,9 +31,9 @@ public class StudyHandler extends AbstractHandler {
         Study study = (Study) envelope.getEntityToValidate();
         List<SingleValidationResult> resultList = new ArrayList<>();
 
-        resultList.add(studyTypeValidator.validate(study));
+        resultList.add(studyTypeValidator.validate(study)); // Will always return a result pass or not
 
-        resultList.addAll(attributeValidator.validate(study.getAttributes(), study.getId()));
+        resultList.addAll(attributeValidator.validate(study.getAttributes(), study.getId())); // Will only return result(s) on failure
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, resultList);
         return singleValidationResultsEnvelope;

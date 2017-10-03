@@ -18,16 +18,17 @@ public class AttributeValidator {
     public List<SingleValidationResult> validate(List<Attribute> attributes, String id) {
         List<SingleValidationResult> validationResults = new ArrayList<>();
 
-        attributes.forEach(attribute -> {
-            if (attribute.getValue() == null) {
-                SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
-                singleValidationResult.setMessage(String.format(FAIL_MESSAGE, attribute.getName()));
-                singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
+        if (attributes != null) {
+            attributes.forEach(attribute -> {
+                if (attribute.getValue() == null) {
+                    SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
+                    singleValidationResult.setMessage(String.format(FAIL_MESSAGE, attribute.getName()));
+                    singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
 
-                validationResults.add(singleValidationResult);
-            }
-        });
-
+                    validationResults.add(singleValidationResult);
+                }
+            });
+        }
         return validationResults;
     }
 
