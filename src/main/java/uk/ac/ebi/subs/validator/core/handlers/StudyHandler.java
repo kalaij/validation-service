@@ -3,19 +3,22 @@ package uk.ac.ebi.subs.validator.core.handlers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StudyHandler extends AbstractHandler {
 
     @Autowired
-    StudyTypeValidator studyTypeValidator;
+    private StudyTypeValidator studyTypeValidator;
+    @Autowired
+    private AttributeValidator attributeValidator;
 
     /**
      * A Study refers to no other object.
@@ -26,15 +29,14 @@ public class StudyHandler extends AbstractHandler {
     @Override
     public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
         Study study = (Study) envelope.getEntityToValidate();
+        List<SingleValidationResult> resultList = new ArrayList<>();
 
-        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, study.getId());
+        resultList.add(studyTypeValidator.validate(study));
 
-        studyTypeValidator.validate(study,singleValidationResult);
+        resultList.addAll(attributeValidator.validate(study.getAttributes(), study.getId()));
 
-        checkValidationStatus(singleValidationResult);
-
-        SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
-
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, resultList);
         return singleValidationResultsEnvelope;
     }
+
 }
