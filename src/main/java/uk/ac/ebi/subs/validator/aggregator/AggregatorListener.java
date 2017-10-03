@@ -6,11 +6,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.subs.messaging.Exchanges;
+import uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorQueues;
+import uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys;
 import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
-import uk.ac.ebi.subs.validator.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 
 /**
  * This class is listening on events on the validation result {@code Queue}.
@@ -35,7 +35,7 @@ public class AggregatorListener {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
     }
 
-    @RabbitListener(queues = Queues.VALIDATION_RESULT)
+    @RabbitListener(queues = AggregatorQueues.VALIDATION_RESULT)
     public void handleValidationResult(SingleValidationResultsEnvelope singleValidationResultsEnvelope) {
         logger.debug("Received single validation results from {}.", singleValidationResultsEnvelope.getValidationAuthor());
 
@@ -57,6 +57,6 @@ public class AggregatorListener {
                 singleValidationResultsEnvelope.getValidationResultVersion()
         );
 
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, RoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED, envelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, AggregatorRoutingKeys.EVENT_VALIDATION_RESULT_DOCUMENT_UPDATED, envelope);
     }
 }
