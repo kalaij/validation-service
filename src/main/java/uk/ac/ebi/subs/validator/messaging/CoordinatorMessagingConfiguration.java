@@ -21,11 +21,6 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.*;
 @ComponentScan(basePackageClasses = ExchangeConfig.class)
 public class CoordinatorMessagingConfiguration {
 
-    @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
     /**
      * Instantiate a {@link Queue} for validate published submissions.
      *
