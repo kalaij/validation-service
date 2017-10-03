@@ -6,9 +6,14 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import uk.ac.ebi.subs.messaging.ExchangeConfig;
+
+import static uk.ac.ebi.subs.messaging.Queues.buildQueueWithDlx;
 
 @Configuration
+@ComponentScan(basePackageClasses = ExchangeConfig.class)
 public class MessagingConfiguration {
 
     @Bean
@@ -17,13 +22,8 @@ public class MessagingConfiguration {
     }
 
     @Bean
-    public TopicExchange submissionExchange() {
-        return new TopicExchange(Exchanges.SUBMISSIONS);
-    }
-
-    @Bean
     public Queue coreAssayValidationQueue() {
-        return new Queue(Queues.CORE_ASSAY_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_ASSAY_VALIDATION);
     }
 
     @Bean
@@ -33,7 +33,7 @@ public class MessagingConfiguration {
 
     @Bean
     public Queue coreAssayDataValidationQueue() {
-        return new Queue(Queues.CORE_ASSAYDATA_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_ASSAYDATA_VALIDATION);
     }
 
     @Bean
@@ -43,7 +43,7 @@ public class MessagingConfiguration {
 
     @Bean
     public Queue coreSampleValidationQueue() {
-        return new Queue(Queues.CORE_SAMPLE_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_SAMPLE_VALIDATION);
     }
 
     @Bean
@@ -53,7 +53,7 @@ public class MessagingConfiguration {
 
     @Bean
     public Queue coreStudyValidationQueue() {
-        return new Queue(Queues.CORE_STUDY_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_STUDY_VALIDATION);
     }
 
     @Bean

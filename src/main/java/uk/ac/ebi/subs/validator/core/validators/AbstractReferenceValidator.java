@@ -5,7 +5,7 @@ import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
-public abstract class AbstractReferenceValidator {
+public abstract class AbstractValidator {
 
     String FAIL_MESSAGE = "Could not find reference target: %s .";
     String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s .";
