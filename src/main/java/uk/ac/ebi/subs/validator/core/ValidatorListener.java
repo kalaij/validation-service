@@ -14,13 +14,13 @@ import uk.ac.ebi.subs.validator.core.handlers.AssayDataHandler;
 import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
 import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
+import uk.ac.ebi.subs.validator.core.messaging.Exchanges;
+import uk.ac.ebi.subs.validator.core.messaging.Queues;
+import uk.ac.ebi.subs.validator.core.messaging.RoutingKeys;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
-import uk.ac.ebi.subs.validator.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 
 import java.util.List;
 import java.util.stream.Collectors;
