@@ -4,26 +4,20 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.messaging.ValidationExchangeConfig;
+import uk.ac.ebi.subs.messaging.ExchangeConfig;
+
+import static uk.ac.ebi.subs.messaging.Queues.buildQueueWithDlx;
 
 @Configuration
-@ComponentScan(basePackageClasses = ValidationExchangeConfig.class)
-public class CoreQueueConfiguration {
-
-    @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
+@ComponentScan(basePackageClasses = ExchangeConfig.class)
+public class MessagingConfiguration {
 
     @Bean
     public Queue coreAssayValidationQueue() {
-        return new Queue(Queues.CORE_ASSAY_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_ASSAY_VALIDATION);
     }
 
     @Bean
@@ -33,7 +27,7 @@ public class CoreQueueConfiguration {
 
     @Bean
     public Queue coreAssayDataValidationQueue() {
-        return new Queue(Queues.CORE_ASSAYDATA_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_ASSAYDATA_VALIDATION);
     }
 
     @Bean
@@ -43,7 +37,7 @@ public class CoreQueueConfiguration {
 
     @Bean
     public Queue coreSampleValidationQueue() {
-        return new Queue(Queues.CORE_SAMPLE_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_SAMPLE_VALIDATION);
     }
 
     @Bean
@@ -53,12 +47,11 @@ public class CoreQueueConfiguration {
 
     @Bean
     public Queue coreStudyValidationQueue() {
-        return new Queue(Queues.CORE_STUDY_VALIDATION, true);
+        return buildQueueWithDlx(Queues.CORE_STUDY_VALIDATION);
     }
 
     @Bean
     public Binding coreStudyValidationBinding(Queue coreStudyValidationQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(coreStudyValidationQueue).to(submissionExchange).with(RoutingKeys.EVENT_CORE_STUDY_VALIDATION);
     }
-
 }

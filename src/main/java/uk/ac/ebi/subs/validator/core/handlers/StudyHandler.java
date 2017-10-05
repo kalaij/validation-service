@@ -1,40 +1,47 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
-import java.util.Collections;
+import java.util.List;
 
+/**
+ * This class responsible for handle {@link Study} validation.
+ *
+ * A Study refers to no other object.
+ * A study must have a studyType.
+ */
 @Service
 public class StudyHandler extends AbstractHandler {
 
-    @Autowired
-    StudyTypeValidator studyTypeValidator;
+    private StudyTypeValidator studyTypeValidator;
 
-    /**
-     * A Study refers to no other object.
-     * A study must have a studyType
-     * @param envelope
-     * @return
-     */
-    @Override
-    public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
-        Study study = (Study) envelope.getEntityToValidate();
+    private AttributeValidator attributeValidator;
 
-        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, study.getId());
-
-        studyTypeValidator.validate(study,singleValidationResult);
-
-        checkValidationStatus(singleValidationResult);
-
-        SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, Collections.singletonList(singleValidationResult));
-
-        return singleValidationResultsEnvelope;
+    public StudyHandler(StudyTypeValidator studyTypeValidator, AttributeValidator attributeValidator) {
+        this.studyTypeValidator = studyTypeValidator;
+        this.attributeValidator = attributeValidator;
     }
+
+    @Override
+    SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope) {
+        Study study = getStudyFromEnvelope(envelope);
+
+        return studyTypeValidator.validate(study);
+    }
+
+    @Override
+    List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
+        Study study = getStudyFromEnvelope(envelope);
+        return attributeValidator.validate(study.getAttributes(), study.getId());
+    }
+
+    private Study getStudyFromEnvelope(ValidationMessageEnvelope envelope) {
+        return (Study) envelope.getEntityToValidate();
+    }
+
 }

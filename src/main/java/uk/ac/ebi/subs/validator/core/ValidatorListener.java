@@ -10,17 +10,17 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.core.handlers.AssayDataHandler;
 import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
 import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
+import uk.ac.ebi.subs.validator.core.messaging.Queues;
+import uk.ac.ebi.subs.validator.core.messaging.RoutingKeys;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
-import uk.ac.ebi.subs.validator.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.messaging.Queues;
-import uk.ac.ebi.subs.validator.messaging.RoutingKeys;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +30,13 @@ public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
 
     @Autowired
-    AssayHandler assayHandler;
+    private AssayHandler assayHandler;
     @Autowired
-    AssayDataHandler assayDataHandler;
+    private AssayDataHandler assayDataHandler;
     @Autowired
-    SampleHandler sampleHandler;
+    private SampleHandler sampleHandler;
     @Autowired
-    StudyHandler studyHandler;
+    private StudyHandler studyHandler;
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
