@@ -62,9 +62,11 @@ public class AttributeValidatorTest {
         List<SingleValidationResult> resultList = attributeValidator.validate(attributes, "1234");
 
         assertFalse(resultList.isEmpty());
-        assertEquals(1, resultList.size());
+        assertEquals(2, resultList.size());
 
         assertNotNull(resultList.get(0).getMessage());
         assertEquals(SingleValidationResultStatus.Error, resultList.get(0).getValidationStatus());
+        assertNotNull(resultList.get(1).getMessage());
+        assertEquals(SingleValidationResultStatus.Error, resultList.get(1).getValidationStatus());
     }
 }

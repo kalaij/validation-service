@@ -13,23 +13,31 @@ import static uk.ac.ebi.subs.validator.core.validators.ValidatorHelper.getDefaul
 @Service
 public class AttributeValidator {
 
-    private static final String FAIL_MESSAGE = "An attribute value can't be null. Attribute - {}";
+    private static final String NULL_NAME_MESSAGE = "An attribute name can't be null.";
+    private static final String NULL_VALUE_MESSAGE = "An attribute value can't be null. Attribute - {}";
 
     public List<SingleValidationResult> validate(List<Attribute> attributes, String id) {
         List<SingleValidationResult> validationResults = new ArrayList<>();
 
         if (attributes != null) {
             attributes.forEach(attribute -> {
+                if (attribute.getName() == null) {
+                    validationResults.add(createSingleValidationResult(id, NULL_NAME_MESSAGE));
+                }
                 if (attribute.getValue() == null) {
-                    SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
-                    singleValidationResult.setMessage(String.format(FAIL_MESSAGE, attribute.getName()));
-                    singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
-
-                    validationResults.add(singleValidationResult);
+                    validationResults.add(createSingleValidationResult(id, NULL_VALUE_MESSAGE));
                 }
             });
         }
         return validationResults;
+    }
+
+    private SingleValidationResult createSingleValidationResult(String id, String message) {
+        SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
+        singleValidationResult.setMessage(message);
+        singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
+
+        return singleValidationResult;
     }
 
 }
