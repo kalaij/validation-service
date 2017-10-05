@@ -21,12 +21,18 @@ import java.util.List;
 @Service
 public class AssayDataHandler extends AbstractHandler {
 
-    @Autowired
     private AssayRefValidator assayRefValidator;
-    @Autowired
+
     private SampleRefValidator sampleRefValidator;
-    @Autowired
+
     private AttributeValidator attributeValidator;
+
+    public AssayDataHandler(AssayRefValidator assayRefValidator, SampleRefValidator sampleRefValidator,
+                            AttributeValidator attributeValidator) {
+        this.assayRefValidator = assayRefValidator;
+        this.sampleRefValidator = sampleRefValidator;
+        this.attributeValidator = attributeValidator;
+    }
 
     @Override
     SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope) {

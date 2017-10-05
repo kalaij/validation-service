@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
@@ -20,10 +19,14 @@ import java.util.List;
 @Service
 public class SampleHandler extends AbstractHandler {
 
-    @Autowired
     private SampleRefValidator sampleRefValidator;
-    @Autowired
+
     private AttributeValidator attributeValidator;
+
+    public SampleHandler(SampleRefValidator sampleRefValidator, AttributeValidator attributeValidator) {
+        this.sampleRefValidator = sampleRefValidator;
+        this.attributeValidator = attributeValidator;
+    }
 
     @Override
     SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope) {
