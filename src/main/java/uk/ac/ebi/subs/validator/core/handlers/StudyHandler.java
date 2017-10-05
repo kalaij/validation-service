@@ -6,12 +6,16 @@ import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class responsible for handle {@link Study} validation.
+ *
+ * A Study refers to no other object.
+ * A study must have a studyType.
+ */
 @Service
 public class StudyHandler extends AbstractHandler {
 
@@ -20,23 +24,21 @@ public class StudyHandler extends AbstractHandler {
     @Autowired
     private AttributeValidator attributeValidator;
 
-    /**
-     * A Study refers to no other object.
-     * A study must have a studyType
-     * @param envelope
-     * @return
-     */
     @Override
-    public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
-        Study study = (Study) envelope.getEntityToValidate();
-        List<SingleValidationResult> resultList = new ArrayList<>();
+    SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope) {
+        Study study = getStudyFromEnvelope(envelope);
 
-        resultList.add(studyTypeValidator.validate(study)); // Will always return a result pass or not
+        return studyTypeValidator.validate(study);
+    }
 
-        resultList.addAll(attributeValidator.validate(study.getAttributes(), study.getId())); // Will only return result(s) on failure
+    @Override
+    List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
+        Study study = getStudyFromEnvelope(envelope);
+        return attributeValidator.validate(study.getAttributes(), study.getId());
+    }
 
-        SingleValidationResultsEnvelope singleValidationResultsEnvelope = generateSingleValidationResultsEnvelope(envelope, resultList);
-        return singleValidationResultsEnvelope;
+    private Study getStudyFromEnvelope(ValidationMessageEnvelope envelope) {
+        return (Study) envelope.getEntityToValidate();
     }
 
 }
