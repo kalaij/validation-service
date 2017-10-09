@@ -10,11 +10,8 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
-import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationResult;
+import uk.ac.ebi.subs.validator.data.*;
 
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.*;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.*;
@@ -35,12 +32,12 @@ public class Coordinator {
 
     /**
      * Sample validator data entry point.
-     * @param envelope contains the {@link Submittable} entity to validate
-     * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
+     * @param envelope contains the {@link Sample} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} containing the {@link Sample} entity and
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = SUBMISSION_SAMPLE_VALIDATOR)
-    public void processSampleSubmission(SubmittableValidationEnvelope<Sample> envelope) {
+    public void processSampleSubmission(SubmittedSampleValidationEnvelope envelope) {
         Sample sample = envelope.getEntityToValidate();
 
         if (sample == null) {
@@ -72,12 +69,12 @@ public class Coordinator {
 
     /**
      * Study validator data entry point.
-     * @param envelope contains the {@link Submittable} entity to validate
-     * @return true if it could create a {@link ValidationMessageEnvelope} containing the submittable entity and
+     * @param envelope contains the {@link Study} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} containing the {@link Study} entity and
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = SUBMISSION_STUDY_VALIDATOR)
-    public void processStudySubmission(SubmittableValidationEnvelope<Study> envelope){
+    public void processStudySubmission(SubmittedStudyValidationEnvelope envelope){
         Study study = envelope.getEntityToValidate();
 
         if (study == null) {
@@ -107,12 +104,12 @@ public class Coordinator {
 
     /**
      * Assay validator data entry point.
-     * @param envelope contains the {@link Submittable} entity to validate
-     * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
+     * @param envelope contains the {@link Assay} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} with the {@link Assay} entity and
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = SUBMISSION_ASSAY_VALIDATOR)
-    public void processAssaySubmission(SubmittableValidationEnvelope<Assay> envelope) {
+    public void processAssaySubmission(SubmittedAssayValidationEnvelope envelope) {
         Assay assay = envelope.getEntityToValidate();
 
         if (assay == null) {
@@ -142,12 +139,12 @@ public class Coordinator {
 
     /**
      * AssayData validator data entry point.
-     * @param envelope contains the {@link Submittable} entity to validate
-     * @return true if it could create a {@link ValidationMessageEnvelope} with the submittable entity and
+     * @param envelope contains the {@link AssayData} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} with the {@link AssayData} entity and
      * the UUID of the {@link ValidationResult}
      */
     @RabbitListener(queues = SUBMISSION_ASSAY_DATA_VALIDATOR)
-    public void processAssayDataSubmission(SubmittableValidationEnvelope<AssayData> envelope) {
+    public void processAssayDataSubmission(SubmittedAssayDataValidationEnvelope envelope) {
         AssayData assayData = envelope.getEntityToValidate();
 
         if (assayData == null) {

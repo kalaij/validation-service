@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
+import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 /**
@@ -52,26 +53,30 @@ public class CoordinatorTest {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(expectedErrorMessage);
 
-        SubmittableValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
+        SubmittedSampleValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
     @Test
     public void testSubmissionWithSample() {
-        SubmittableValidationEnvelope<Sample> submittableValidationEnvelope = createSubmittableEnvelopeWithSample(sample);
+        SubmittedSampleValidationEnvelope submittableValidationEnvelope = createSubmittableEnvelopeWithSample(sample);
 
         coordinator.processSampleSubmission(submittableValidationEnvelope);
     }
 
-    private SubmittableValidationEnvelope createSubmittableEnvelopeWithoutSample() {
+    private SubmittedSampleValidationEnvelope createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
-        return new SubmittableValidationEnvelope(submissionId, null);
+        SubmittedSampleValidationEnvelope envelope = new SubmittedSampleValidationEnvelope();
+        envelope.setSubmissionId(submissionId);
+
+        return envelope;
     }
 
-    private SubmittableValidationEnvelope createSubmittableEnvelopeWithSample(Sample sample) {
-        String submissionId = "testSubmissionId1";
+    private SubmittedSampleValidationEnvelope createSubmittableEnvelopeWithSample(Sample sample) {
+        SubmittedSampleValidationEnvelope envelope = createSubmittableEnvelopeWithoutSample();
+        envelope.setEntityToValidate(sample);
 
-       return new SubmittableValidationEnvelope(submissionId, sample);
+        return envelope;
     }
 }
