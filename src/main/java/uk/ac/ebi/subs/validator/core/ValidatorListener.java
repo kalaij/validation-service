@@ -6,10 +6,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.data.submittable.AssayData;
-import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.core.handlers.AssayDataHandler;
 import uk.ac.ebi.subs.validator.core.handlers.AssayHandler;
@@ -17,9 +13,7 @@ import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
 import uk.ac.ebi.subs.validator.core.messaging.Queues;
 import uk.ac.ebi.subs.validator.core.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.*;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import java.util.List;
@@ -46,7 +40,7 @@ public class ValidatorListener {
     }
 
     @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
-    public void handleAssayValidationRequest(ValidationMessageEnvelope<Assay> envelope) {
+    public void handleAssayValidationRequest(AssayValidationMessageEnvelope envelope) {
         logger.debug("Assay validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayHandler.handleValidationRequest(envelope);
@@ -54,7 +48,7 @@ public class ValidatorListener {
     }
 
     @RabbitListener(queues = Queues.CORE_ASSAYDATA_VALIDATION)
-    public void handleAssayDataValidationRequest(ValidationMessageEnvelope<AssayData> envelope) {
+    public void handleAssayDataValidationRequest(AssayDataValidationMessageEnvelope envelope) {
         logger.debug("AssayData validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
@@ -62,7 +56,7 @@ public class ValidatorListener {
     }
 
     @RabbitListener(queues = Queues.CORE_SAMPLE_VALIDATION)
-    public void handleSampleValidationRequest(ValidationMessageEnvelope<Sample> envelope) {
+    public void handleSampleValidationRequest(SampleValidationMessageEnvelope envelope) {
         logger.debug("Sample validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = sampleHandler.handleValidationRequest(envelope);
@@ -70,7 +64,7 @@ public class ValidatorListener {
     }
 
     @RabbitListener(queues = Queues.CORE_STUDY_VALIDATION)
-    public void handleStudyValidationRequest(ValidationMessageEnvelope<Study> envelope) {
+    public void handleStudyValidationRequest(StudyValidationMessageEnvelope envelope) {
         logger.debug("Study validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = studyHandler.handleValidationRequest(envelope);
