@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.coordinator.config;
+package uk.ac.ebi.subs.validator.config;
 
 /**
  * This is just a marker interface for tests depends on a running RabbitMQ instance.

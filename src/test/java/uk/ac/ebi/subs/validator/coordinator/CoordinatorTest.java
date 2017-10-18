@@ -12,8 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest;
-import uk.ac.ebi.subs.validator.data.SubmittableValidationEnvelope;
+import uk.ac.ebi.subs.validator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
