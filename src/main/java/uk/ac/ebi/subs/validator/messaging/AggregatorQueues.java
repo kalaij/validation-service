@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.aggregator.messaging;
+package uk.ac.ebi.subs.validator.messaging;
 
 public class AggregatorQueues {
 

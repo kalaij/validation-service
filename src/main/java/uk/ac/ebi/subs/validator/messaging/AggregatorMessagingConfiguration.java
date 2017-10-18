@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.aggregator.messaging;
+package uk.ac.ebi.subs.validator.messaging;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import uk.ac.ebi.subs.messaging.ExchangeConfig;
 import uk.ac.ebi.subs.messaging.Queues;
 
-import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorQueues.VALIDATION_RESULT;
-import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_ERROR;
-import static uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_SUCCESS;
+import static uk.ac.ebi.subs.validator.messaging.AggregatorQueues.VALIDATION_RESULT;
+import static uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_ERROR;
+import static uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_SUCCESS;
 
 /**
  * Messaging configuration for the validator aggregator.
