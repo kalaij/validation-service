@@ -1,0 +1,165 @@
+group 'uk.ac.ebi.subs'
+version '0.4.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
+apply plugin: 'org.hidetake.ssh'
+
+sourceCompatibility = 1.8
+
+ext.gradle_env = hasProperty('env') ? env : 'dev'
+
+bootRepackage {
+    mainClass = "uk.ac.ebi.subs.validator.CoordinatorApplication"
+}
+springBoot {
+    executable = true
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+        classpath 'org.hidetake:gradle-ssh-plugin:1.1.3'
+    }
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter'
+    compile("uk.ac.ebi.subs:subs-processing-model:0.1.1-SNAPSHOT")
+    compile("uk.ac.ebi.subs:subs-data-model:0.1.0-SNAPSHOT")
+    compile("uk.ac.ebi.subs:subs-messaging:0.3.0-SNAPSHOT")
+    compile("uk.ac.ebi.subs:validator-common:0.6.0-SNAPSHOT")
+
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+}
+
+task('externalCiTest', type: Test) {
+    useJUnit {
+	excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.RabbitMQDependentTest'
+        excludeCategories 'uk.ac.ebi.subs.validator.coordinator.config.MongoDBDependentTest'
+    }
+    testLogging {
+        exceptionFormat = 'full'
+    }
+
+    configure(externalCiTest) {
+        group = "verification"
+        description = 'Run tests appropriate for our external CI environment'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword')) {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+            }
+
+            pom.project {
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                url 'https://github.com/EMBL-EBI-SUBS/validator-coordinator'
+
+                scm {
+                    url 'https://github.com/EMBL-EBI-SUBS/validator-coordinator.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'subs-internal'
+                        name 'EMBL-EBI-SUBS'
+                        email 'subs-internal@ebi.ac.uk'
+                    }
+                }
+            }
+        }
+    }
+}
+
+ssh.settings {
+    user = 'sub_adm'
+}
+
+if (project.hasProperty('sshKeyFile')) {
+    ssh.settings.identity = new File(sshKeyFile)
+}
+
+if (project.hasProperty('sshPassphrase')) {
+    ssh.settings.passphrase = sshPassphrase
+}
+
+task printJarName {
+    doLast {
+        println "$jar.archivePath.name"
+    }
+
+}
+
+task printJarFullPath {
+    doLast {
+        println "$jar.archivePath.absolutePath"
+    }
+}
+
+remotes {
+    submission_dev {
+        role('dev')
+        host = 'mac-subs-005'
+    }
+    submission_test {
+        role('test')
+        host = 'mac-subs-007'
+    }
+}
+
+
+task deployJar(type: SshTask, dependsOn: 'assemble') {
+    doLast {
+        File jarDeployDir = new File("/data/$gradle_env/$project.name/jar")
+        sshRun(jarDeployDir)
+    }
+    ssh.settings {
+        knownHosts = allowAnyHosts
+    }
+}
+
+private Object sshRun(File jarDeployDir) {
+    ssh.run {
+        session(remotes.role(gradle_env)) {
+            execute "/homes/sub_adm/create_dirs.sh $gradle_env $project.name", ignoreError: false
+            println "Uploading jar $jar.archivePath.name to $jarDeployDir area on $remote"
+            put(jar.archivePath.absolutePath, jarDeployDir.absolutePath)
+            println "creating symbolic link to $jar.archiveName"
+            def result = execute "ln -s -f $jarDeployDir/$jar.archiveName $jarDeployDir/$jar.baseName" + ".jar", ignoreError: true
+            println result
+            println "updating permissions of $jarDeployDir/$jar.archiveName"
+            execute "chmod u+x $jarDeployDir/*", ignoreError: false
+        }
+    }
+}
