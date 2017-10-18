@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  * This is a service to modify the {@code ValidationResult} status according to the entities validation result.
  */
 @Service
-public class ValidationResultService {
+public class StatusFlipperValidationResultService {
 
-    public static final Logger logger = LoggerFactory.getLogger(ValidationResultService.class);
+    public static final Logger logger = LoggerFactory.getLogger(StatusFlipperValidationResultService.class);
 
     @Autowired
     private ValidationResultRepository repository;

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
 
-import static uk.ac.ebi.subs.validator.flipper.messaging.StatusFlipperQueues.VALIDATION_RESULT_DOCUMENT_UPDATE;
+import static uk.ac.ebi.subs.validator.messaging.StatusFlipperQueues.VALIDATION_RESULT_DOCUMENT_UPDATE;
 
 /**
  * This class is listening on events on the validation aggregation results {@code Queue}.
@@ -22,19 +22,20 @@ public class StatusUpdateListener {
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    @Autowired
-    private ValidationResultService validationResultService;
+    private StatusFlipperValidationResultService statusFlipperValidationResultService;
 
     @Autowired
-    public StatusUpdateListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public StatusUpdateListener(RabbitMessagingTemplate rabbitMessagingTemplate,
+                                StatusFlipperValidationResultService statusFlipperValidationResultService ) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+        this.statusFlipperValidationResultService = statusFlipperValidationResultService;
     }
 
     @RabbitListener(queues = VALIDATION_RESULT_DOCUMENT_UPDATE)
     public void processUpdate(AggregatorToFlipperEnvelope envelope) {
         logger.debug("Processing validation result document update with id {}.", envelope.getValidationResultUuid());
 
-        if (!validationResultService.updateValidationResult(envelope)) {
+        if (!statusFlipperValidationResultService.updateValidationResult(envelope)) {
             logger.debug("Ignoring obsolete validation documents.");
         }
     }
