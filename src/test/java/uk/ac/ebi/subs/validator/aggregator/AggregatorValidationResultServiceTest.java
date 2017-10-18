@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.validator.aggregator.config.MongoDBDependentTest;
+import uk.ac.ebi.subs.validator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
@@ -29,7 +29,7 @@ import java.util.UUID;
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = AggregatorValidationResultService.class)
-public class AggregatorCoordinatorValidationResultServiceTest {
+public class AggregatorValidationResultServiceTest {
 
     String exampleDoc1;
     String exampleDoc2;
