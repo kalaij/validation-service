@@ -11,6 +11,7 @@ ADD gradle ./gradle
 ADD src ./src
 
 COPY gradlew gradle.properties.enc build.gradle ./
+
 # build the code
 RUN ./gradlew assemble
 # run tests, ignore mongoDB/rabbitmq dependent tests...
