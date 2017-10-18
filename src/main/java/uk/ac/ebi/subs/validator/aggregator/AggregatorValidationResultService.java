@@ -9,8 +9,11 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 @Service
 public class AggregatorValidationResultService {
 
-    @Autowired
     private ValidationResultRepository repository;
+
+    public AggregatorValidationResultService(ValidationResultRepository repository) {
+        this.repository = repository;
+    }
 
     public boolean updateValidationResult(SingleValidationResultsEnvelope envelope) {
         ValidationResult validationResult = repository.findOne(envelope.getValidationResultUUID());
