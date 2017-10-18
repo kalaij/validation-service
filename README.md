@@ -1,4 +1,4 @@
-# Validatoion Service
+# Validation Service
 [![Build Status](https://travis-ci.org/EMBL-EBI-SUBS/validation-service.svg?branch=master)](https://travis-ci.org/EMBL-EBI-SUBS/validation-service)
 
 This service responsible for the validation workflow in the Unified Submission Interface.
