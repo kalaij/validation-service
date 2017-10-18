@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.flipper.messaging;
+package uk.ac.ebi.subs.validator.messaging;
 
 public class StatusFlipperRoutingKeys {
 
