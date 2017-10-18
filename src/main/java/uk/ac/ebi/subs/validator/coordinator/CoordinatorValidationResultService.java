@@ -18,8 +18,11 @@ import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 public class CoordinatorValidationResultService {
     private static Logger logger = LoggerFactory.getLogger(CoordinatorValidationResultService.class);
 
-    @Autowired
     private ValidationResultRepository repository;
+
+    public CoordinatorValidationResultService(ValidationResultRepository repository) {
+        this.repository = repository;
+    }
 
     public ValidationResult generateValidationResultDocument(Sample sample){
         ValidationResult validationResult = findAndUpdateValidationResult(sample);

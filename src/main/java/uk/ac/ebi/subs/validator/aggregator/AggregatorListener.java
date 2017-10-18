@@ -27,12 +27,12 @@ public class AggregatorListener {
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    @Autowired
     AggregatorValidationResultService aggregatorValidationResultService;
 
-    @Autowired
-    public AggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public AggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate,
+                              AggregatorValidationResultService aggregatorValidationResultService) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+        this.aggregatorValidationResultService = aggregatorValidationResultService;
     }
 
     @RabbitListener(queues = AggregatorQueues.VALIDATION_RESULT)

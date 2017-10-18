@@ -23,8 +23,11 @@ public class StatusFlipperValidationResultService {
 
     public static final Logger logger = LoggerFactory.getLogger(StatusFlipperValidationResultService.class);
 
-    @Autowired
     private ValidationResultRepository repository;
+
+    public StatusFlipperValidationResultService(ValidationResultRepository repository) {
+        this.repository = repository;
+    }
 
     public boolean updateValidationResult(AggregatorToFlipperEnvelope envelope) {
         ValidationResult validationResult = repository.findOne(envelope.getValidationResultUuid());

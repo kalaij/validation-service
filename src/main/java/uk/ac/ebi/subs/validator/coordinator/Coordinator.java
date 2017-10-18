@@ -22,12 +22,12 @@ public class Coordinator {
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
-    @Autowired
     private CoordinatorValidationResultService coordinatorValidationResultService;
 
-    @Autowired
-    public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate,
+                       CoordinatorValidationResultService coordinatorValidationResultService) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+        this.coordinatorValidationResultService = coordinatorValidationResultService;
     }
 
     /**
