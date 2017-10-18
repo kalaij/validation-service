@@ -7,7 +7,7 @@ import uk.ac.ebi.subs.validator.data.ValidationResult;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 @Service
-public class ValidationResultService {
+public class AggregatorValidationResultService {
 
     @Autowired
     private ValidationResultRepository repository;

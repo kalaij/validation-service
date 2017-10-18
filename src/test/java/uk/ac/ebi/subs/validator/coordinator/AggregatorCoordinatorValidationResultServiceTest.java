@@ -19,14 +19,14 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = ValidationResultService.class)
-public class ValidationResultServiceTest {
+@SpringBootTest(classes = CoordinatorValidationResultService.class)
+public class AggregatorCoordinatorValidationResultServiceTest {
 
     @Autowired
     ValidationResultRepository repository;
 
     @Autowired
-    ValidationResultService service;
+    CoordinatorValidationResultService service;
 
     private Sample sample;
 

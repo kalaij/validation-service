@@ -28,8 +28,8 @@ import java.util.UUID;
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = ValidationResultService.class)
-public class ValidationResultServiceTest {
+@SpringBootTest(classes = AggregatorValidationResultService.class)
+public class AggregatorCoordinatorValidationResultServiceTest {
 
     String exampleDoc1;
     String exampleDoc2;
@@ -38,7 +38,7 @@ public class ValidationResultServiceTest {
     ValidationResultRepository repository;
 
     @Autowired
-    ValidationResultService service;
+    AggregatorValidationResultService service;
 
     @Before
     public void setUp() {

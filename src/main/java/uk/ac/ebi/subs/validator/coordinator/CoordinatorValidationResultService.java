@@ -15,8 +15,8 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 
 @Service
-public class ValidationResultService {
-    private static Logger logger = LoggerFactory.getLogger(ValidationResultService.class);
+public class CoordinatorValidationResultService {
+    private static Logger logger = LoggerFactory.getLogger(CoordinatorValidationResultService.class);
 
     @Autowired
     private ValidationResultRepository repository;

@@ -7,8 +7,8 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorQueues;
-import uk.ac.ebi.subs.validator.aggregator.messaging.AggregatorRoutingKeys;
+import uk.ac.ebi.subs.validator.messaging.AggregatorQueues;
+import uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys;
 import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 
@@ -28,7 +28,7 @@ public class AggregatorListener {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
-    ValidationResultService validationResultService;
+    AggregatorValidationResultService aggregatorValidationResultService;
 
     @Autowired
     public AggregatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
@@ -40,7 +40,7 @@ public class AggregatorListener {
         logger.debug("Received single validation results from {}.", singleValidationResultsEnvelope.getValidationAuthor());
 
         logger.debug("Trying to update Validation Result Document in MongoDB...");
-        boolean success = validationResultService.updateValidationResult(singleValidationResultsEnvelope);
+        boolean success = aggregatorValidationResultService.updateValidationResult(singleValidationResultsEnvelope);
 
         if(success) {
             sendValidationResultDocumentUpdate(singleValidationResultsEnvelope);

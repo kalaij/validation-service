@@ -23,7 +23,7 @@ public class Coordinator {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     @Autowired
-    private ValidationResultService validationResultService;
+    private CoordinatorValidationResultService coordinatorValidationResultService;
 
     @Autowired
     public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate) {
@@ -52,7 +52,7 @@ public class Coordinator {
     }
 
     private boolean handleSample(Sample sample) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(sample);
+        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(sample);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -89,7 +89,7 @@ public class Coordinator {
     }
 
     private boolean handleStudy(Study study) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(study);
+        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(study);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -124,7 +124,7 @@ public class Coordinator {
     }
 
     private boolean handleAssay(Assay assay) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assay);
+        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assay);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -159,7 +159,7 @@ public class Coordinator {
     }
 
     private boolean handleAssayData(AssayData assayData) {
-        ValidationResult validationResult = validationResultService.generateValidationResultDocument(assayData);
+        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assayData);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
