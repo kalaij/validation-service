@@ -20,14 +20,10 @@ import static uk.ac.ebi.subs.validator.messaging.StatusFlipperQueues.VALIDATION_
 public class StatusUpdateListener {
     public static final Logger logger = LoggerFactory.getLogger(StatusUpdateListener.class);
 
-    private RabbitMessagingTemplate rabbitMessagingTemplate;
-
     private StatusFlipperValidationResultService statusFlipperValidationResultService;
 
     @Autowired
-    public StatusUpdateListener(RabbitMessagingTemplate rabbitMessagingTemplate,
-                                StatusFlipperValidationResultService statusFlipperValidationResultService ) {
-        this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+    public StatusUpdateListener(StatusFlipperValidationResultService statusFlipperValidationResultService ) {
         this.statusFlipperValidationResultService = statusFlipperValidationResultService;
     }
 
