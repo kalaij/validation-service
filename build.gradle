@@ -59,6 +59,10 @@ task('externalCiTest', type: Test) {
     }
 }
 
+ssh.settings {
+    user = 'sub_adm'
+}
+
 remotes {
     submission_dev {
         role('dev')
