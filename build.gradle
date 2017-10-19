@@ -59,6 +59,18 @@ task('externalCiTest', type: Test) {
     }
 }
 
+ssh.settings {
+    user = 'sub_adm'
+}
+
+if (project.hasProperty('sshKeyFile')) {
+    ssh.settings.identity = new File(sshKeyFile)
+}
+
+if (project.hasProperty('sshPassphrase')) {
+    ssh.settings.passphrase = sshPassphrase
+}
+
 remotes {
     submission_dev {
         role('dev')
