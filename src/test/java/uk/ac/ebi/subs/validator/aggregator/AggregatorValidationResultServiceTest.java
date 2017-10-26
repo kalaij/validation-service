@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.junit.Assert.assertFalse;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @Category(MongoDBDependentTest.class)
@@ -108,6 +110,14 @@ public class AggregatorValidationResultServiceTest {
         validationResults.add(validationResult2);
 
         return validationResults;
+    }
+
+    @Test
+    public void handleDeletedSubmittable() {
+        SingleValidationResultsEnvelope envelope = new SingleValidationResultsEnvelope();
+        envelope.setValidationResultUUID("missing");
+
+        assertFalse(service.updateValidationResult(envelope));
     }
 
     private SingleValidationResult generateSingleValidationResult(int version, String docUUID) {
