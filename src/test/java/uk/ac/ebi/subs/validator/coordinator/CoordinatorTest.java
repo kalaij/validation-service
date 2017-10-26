@@ -16,6 +16,9 @@ import uk.ac.ebi.subs.validator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
+import static org.junit.Assert.assertTrue;
+import static uk.ac.ebi.subs.validator.coordinator.TestUtils.createSample;
+
 /**
  * Created by karoly on 30/05/2017.
  */
@@ -77,5 +80,18 @@ public class CoordinatorTest {
         envelope.setEntityToValidate(sample);
 
         return envelope;
+    }
+
+    @Test
+    public void handleDeletedSubmittable() {
+        Sample sample = createSample();
+        SubmittedSampleValidationEnvelope envelope = new SubmittedSampleValidationEnvelope();
+        envelope.setEntityToValidate(sample);
+
+        try {
+            coordinator.processSampleSubmission(envelope);
+        } catch (IllegalStateException exception) {
+            assertTrue(exception.getMessage().startsWith("Could not find ValidationResult for submittable with ID"));
+        }
     }
 }
