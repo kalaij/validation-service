@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
@@ -17,15 +16,15 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.*;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.*;
 
 @Component
-public class Coordinator {
-    private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
+public class CoordinatorListener {
+    private static final Logger logger = LoggerFactory.getLogger(CoordinatorListener.class);
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     private CoordinatorValidationResultService coordinatorValidationResultService;
 
-    public Coordinator(RabbitMessagingTemplate rabbitMessagingTemplate,
-                       CoordinatorValidationResultService coordinatorValidationResultService) {
+    public CoordinatorListener(RabbitMessagingTemplate rabbitMessagingTemplate,
+                               CoordinatorValidationResultService coordinatorValidationResultService) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
         this.coordinatorValidationResultService = coordinatorValidationResultService;
     }
