@@ -12,9 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.validator.TestUtils;
 import uk.ac.ebi.subs.validator.config.RabbitMQDependentTest;
 import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
+
+import static org.junit.Assert.assertTrue;
+import static uk.ac.ebi.subs.validator.TestUtils.createSample;
 
 /**
  * Created by karoly on 30/05/2017.
@@ -27,7 +31,7 @@ import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 public class CoordinatorTest {
 
     @Autowired
-    private Coordinator coordinator;
+    private CoordinatorListener coordinator;
 
     @Autowired
     private ValidationResultRepository validationResultRepository;
@@ -77,5 +81,18 @@ public class CoordinatorTest {
         envelope.setEntityToValidate(sample);
 
         return envelope;
+    }
+
+    @Test
+    public void handleDeletedSubmittable() {
+        Sample sample = createSample();
+        SubmittedSampleValidationEnvelope envelope = new SubmittedSampleValidationEnvelope();
+        envelope.setEntityToValidate(sample);
+
+        try {
+            coordinator.processSampleSubmission(envelope);
+        } catch (IllegalStateException exception) {
+            assertTrue(exception.getMessage().startsWith("Could not find ValidationResult for submittable with ID"));
+        }
     }
 }
