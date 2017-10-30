@@ -3,7 +3,6 @@ package uk.ac.ebi.subs.validator.flipper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
@@ -17,13 +16,13 @@ import static uk.ac.ebi.subs.validator.messaging.StatusFlipperQueues.VALIDATION_
  * then the status will change to {@code Complete}, otherwise it will stay {@code Pending} as initially.
  */
 @Service
-public class StatusUpdateListener {
-    public static final Logger logger = LoggerFactory.getLogger(StatusUpdateListener.class);
+public class StatusFlipperListener {
+    public static final Logger logger = LoggerFactory.getLogger(StatusFlipperListener.class);
 
     private StatusFlipperValidationResultService statusFlipperValidationResultService;
 
     @Autowired
-    public StatusUpdateListener(StatusFlipperValidationResultService statusFlipperValidationResultService ) {
+    public StatusFlipperListener(StatusFlipperValidationResultService statusFlipperValidationResultService ) {
         this.statusFlipperValidationResultService = statusFlipperValidationResultService;
     }
 

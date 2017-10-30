@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.coordinator;
+package uk.ac.ebi.subs.validator;
 
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
