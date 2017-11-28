@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
@@ -37,7 +38,8 @@ public class StudyHandler extends AbstractHandler {
     @Override
     List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
         Study study = getStudyFromEnvelope(envelope);
-        return attributeValidator.validate(study.getAttributes(), study.getId());
+
+        return ValidatorHelper.validateAttribute(study.getAttributes(), study.getId(), attributeValidator);
     }
 
     private Study getStudyFromEnvelope(ValidationMessageEnvelope envelope) {

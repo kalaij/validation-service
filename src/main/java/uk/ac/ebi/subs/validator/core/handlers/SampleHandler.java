@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
@@ -42,7 +43,8 @@ public class SampleHandler extends AbstractHandler {
     @Override
     List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
         Sample sample = getSampleFromEnvelope(envelope);
-        return attributeValidator.validate(sample.getAttributes(), sample.getId());
+
+        return ValidatorHelper.validateAttribute(sample.getAttributes(), sample.getId(), attributeValidator);
     }
 
     private Sample getSampleFromEnvelope(ValidationMessageEnvelope envelope) {

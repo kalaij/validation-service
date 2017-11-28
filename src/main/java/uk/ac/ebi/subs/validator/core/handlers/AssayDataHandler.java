@@ -1,11 +1,11 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.validator.core.validators.AssayRefValidator;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
@@ -49,7 +49,8 @@ public class AssayDataHandler extends AbstractHandler {
     @Override
     List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
         AssayData assayData = getAssayDataFromEnvelope(envelope);
-        return attributeValidator.validate(assayData.getAttributes(), assayData.getId());
+
+        return ValidatorHelper.validateAttribute(assayData.getAttributes(), assayData.getId(), attributeValidator);
     }
 
     private AssayData getAssayDataFromEnvelope(ValidationMessageEnvelope envelope) {

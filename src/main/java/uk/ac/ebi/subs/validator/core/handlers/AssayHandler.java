@@ -5,6 +5,7 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyRefValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
@@ -47,7 +48,8 @@ public class AssayHandler extends AbstractHandler {
     @Override
     List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope) {
         Assay assay = getAssayFromEnvelope(envelope);
-        return attributeValidator.validate(assay.getAttributes(), assay.getId());
+
+        return ValidatorHelper.validateAttribute(assay.getAttributes(), assay.getId(), attributeValidator);
     }
 
     private Assay getAssayFromEnvelope(ValidationMessageEnvelope envelope) {
