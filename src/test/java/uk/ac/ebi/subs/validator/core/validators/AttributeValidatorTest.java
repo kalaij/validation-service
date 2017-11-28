@@ -8,7 +8,10 @@ import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -27,21 +30,24 @@ public class AttributeValidatorTest {
 
     @Test
     public void emptyAttributesListTest() {
-        List<SingleValidationResult> resultList = attributeValidator.validate(new ArrayList<>(), "1234");
+        List<SingleValidationResult> resultList =
+                attributeValidator.validate("", new ArrayList<>(), "1234");
 
         assertTrue(resultList.isEmpty());
     }
 
     @Test
     public void nullAttributeListTest() {
-        List<SingleValidationResult> resultList = attributeValidator.validate(null, "1234");
+        List<SingleValidationResult> resultList =
+                attributeValidator.validate("", null, "1234");
 
         assertTrue(resultList.isEmpty());
     }
 
     @Test
     public void oneEmptyAttributeInListTest() {
-        List<SingleValidationResult> resultList = attributeValidator.validate(Arrays.asList(new Attribute()), "1234");
+        List<SingleValidationResult> resultList =
+                attributeValidator.validate("attributeName", Arrays.asList(new Attribute()), "1234");
 
         assertFalse(resultList.isEmpty());
         assertNotNull(resultList.get(0).getMessage());
@@ -50,16 +56,18 @@ public class AttributeValidatorTest {
 
     @Test
     public void listOfAttributesTest() {
-        List<SingleValidationResult> resultList = attributeValidator.validate(generateListOfAttributes(), "1234");
+        List<SingleValidationResult> resultList =
+                ValidatorHelper.validateAttribute(generateListOfAttributes(), "1234", attributeValidator);
 
         assertTrue(resultList.isEmpty());
     }
 
     @Test
     public void listOfAttributesOneBadAttributeTest() {
-        List<Attribute> attributes = generateListOfAttributes();
-        attributes.add(new Attribute());
-        List<SingleValidationResult> resultList = attributeValidator.validate(attributes, "1234");
+        Map<String, Collection<Attribute>> attributes = generateListOfAttributes();
+        attributes.put(null, Collections.singletonList(new Attribute()));
+        List<SingleValidationResult> resultList =
+                ValidatorHelper.validateAttribute(attributes, "1234", attributeValidator);
 
         assertFalse(resultList.isEmpty());
         assertEquals(2, resultList.size());

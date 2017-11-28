@@ -6,6 +6,7 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static uk.ac.ebi.subs.validator.core.validators.ValidatorHelper.getDefaultSingleValidationResult;
@@ -16,14 +17,15 @@ public class AttributeValidator {
     private static final String NULL_NAME_MESSAGE = "An attribute name can't be null.";
     private static final String NULL_VALUE_MESSAGE = "An attribute value can't be null. Attribute - {}";
 
-    public List<SingleValidationResult> validate(List<Attribute> attributes, String id) {
+    public List<SingleValidationResult> validate(String attributeName, Collection<Attribute> attributes, String id) {
         List<SingleValidationResult> validationResults = new ArrayList<>();
+
+        if (attributeName == null) {
+            validationResults.add(createSingleValidationResult(id, NULL_NAME_MESSAGE));
+        }
 
         if (attributes != null) {
             attributes.forEach(attribute -> {
-                if (attribute.getName() == null) {
-                    validationResults.add(createSingleValidationResult(id, NULL_NAME_MESSAGE));
-                }
                 if (attribute.getValue() == null) {
                     validationResults.add(createSingleValidationResult(id, NULL_VALUE_MESSAGE));
                 }
