@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
+import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.data.submittable.Submittable;
@@ -23,6 +24,16 @@ public class CoordinatorValidationResultService {
     public CoordinatorValidationResultService(ValidationResultRepository repository) {
         this.repository = repository;
     }
+
+    public ValidationResult generateValidationResultDocument(Project project){
+        ValidationResult validationResult = findAndUpdateValidationResult(project);
+        validationResult.setExpectedResults(BlankValidationResultMaps.forProject());
+
+        repository.save(validationResult);
+
+        return validationResult;
+    }
+
 
     public ValidationResult generateValidationResultDocument(Sample sample){
         ValidationResult validationResult = findAndUpdateValidationResult(sample);

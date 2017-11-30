@@ -24,6 +24,8 @@ public class BlankValidationResultMaps {
     private static final List<ValidationAuthor> ASSAY_DATA_VALIDATION_SERVICES_REQUIRED =
             Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Ena);
 
+    private static final List<ValidationAuthor> PROJECT_VALIDATION_SERVICES_REQUIRED = Arrays.asList(ValidationAuthor.BioStudies);
+
     /**
      * Generates an initial default or "blank" map to hold results of validation outcomes required for
      * BioSample submissions
@@ -32,6 +34,10 @@ public class BlankValidationResultMaps {
      */
     public static Map<ValidationAuthor, List<SingleValidationResult>> forSample() {
         return generateDefaultMap(SAMPLE_VALIDATION_SERVICES_REQUIRED);
+    }
+
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forProject() {
+        return generateDefaultMap(PROJECT_VALIDATION_SERVICES_REQUIRED);
     }
 
     public static Map<ValidationAuthor, List<SingleValidationResult>> forStudy() {
