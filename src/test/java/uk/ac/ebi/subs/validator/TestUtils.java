@@ -1,9 +1,11 @@
 package uk.ac.ebi.subs.validator;
 
 import uk.ac.ebi.subs.data.component.Team;
+import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -34,5 +36,13 @@ public final class TestUtils {
         validationResult.setEntityUuid(submittableUuid);
 
         return validationResult;
+    }
+
+    public static Project createProject() {
+        Project project = new Project();
+        String id = UUID.randomUUID().toString();
+        project.setId("TEST_PROJECT_" + id);
+        project.setReleaseDate(LocalDate.now());
+        return project;
     }
 }

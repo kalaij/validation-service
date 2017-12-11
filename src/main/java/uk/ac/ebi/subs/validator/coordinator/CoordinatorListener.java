@@ -38,7 +38,7 @@ public class CoordinatorListener {
      */
     @RabbitListener(queues = SUBMISSION_PROJECT_VALIDATOR)
     public void processProjectSubmission(SubmittedProjectValidationEnvelope envelope) {
-        Project project= envelope.getEntityToValidate();
+        Project project = envelope.getEntityToValidate();
 
         if (project == null) {
             throw new IllegalArgumentException("The envelop should contain a project.");
@@ -47,7 +47,7 @@ public class CoordinatorListener {
         logger.info("Received validation request on project {}", project.getId());
 
         if (!handleProject(project)) {
-            logger.error("Error handling assay with id {}", project.getId());
+            logger.error("Error handling project with id {}", project.getId());
         }
     }
 
