@@ -149,4 +149,19 @@ public class CoordinatorMessagingConfiguration {
         return BindingBuilder.bind(submissionAssayDataValidatorQueue).to(submissionExchange)
                 .with(SUBMITTABLE_ASSAYDATA_UPDATED);
     }
+
+    @Bean
+    Queue submissionProjectValidatorQueue(){ return Queues.buildQueueWithDlx(SUBMISSION_PROJECT_VALIDATOR);}
+
+    @Bean
+    Binding validationForCreatedProjectSubmissionBinding(Queue submissionProjectValidatorQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(submissionProjectValidatorQueue).to(submissionExchange)
+                .with(SUBMITTABLE_PROJECT_CREATED);
+    }
+
+    @Bean
+    Binding validationForUpdatedProjectSubmissionBinding(Queue submissionProjectValidatorQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(submissionProjectValidatorQueue).to(submissionExchange)
+                .with(SUBMITTABLE_PROJECT_UPDATED);
+    }
 }

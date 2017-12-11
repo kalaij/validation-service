@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
+import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.messaging.Exchanges;
@@ -28,6 +29,41 @@ public class CoordinatorListener {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
         this.coordinatorValidationResultService = coordinatorValidationResultService;
     }
+
+    /**
+     * Project validator data entry point.
+     * @param envelope contains the {@link Assay} entity to validate
+     * @return true if it could create a {@link ValidationMessageEnvelope} with the {@link Assay} entity and
+     * the UUID of the {@link ValidationResult}
+     */
+    @RabbitListener(queues = SUBMISSION_PROJECT_VALIDATOR)
+    public void processProjectSubmission(SubmittedProjectValidationEnvelope envelope) {
+        Project project = envelope.getEntityToValidate();
+
+        if (project == null) {
+            throw new IllegalArgumentException("The envelop should contain a project.");
+        }
+
+        logger.info("Received validation request on project {}", project.getId());
+
+        if (!handleProject(project)) {
+            logger.error("Error handling project with id {}", project.getId());
+        }
+    }
+
+    private boolean handleProject(Project project) {
+        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(project);
+
+        logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+
+        ValidationMessageEnvelope<Project> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), project);
+
+        logger.debug("Sending project to validation queue");
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_BIOSTUDIES_PROJECT_VALIDATION, messageEnvelope);
+
+        return validationResult.getEntityUuid() != null;
+    }
+
 
     /**
      * Sample validator data entry point.
