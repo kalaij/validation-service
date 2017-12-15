@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.aggregator;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -9,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.subs.validator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
+import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
@@ -25,59 +25,72 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = AggregatorValidationResultService.class)
 public class AggregatorValidationResultServiceTest {
 
-    String exampleDoc1;
-    String exampleDoc2;
-
     @Autowired
-    ValidationResultRepository repository;
-
+    private ValidationResultRepository repository;
     @Autowired
-    AggregatorValidationResultService service;
+    private AggregatorValidationResultService service;
+
+    private static final String UUID_1 = UUID.randomUUID().toString();
+    private static final String UUID_2 = UUID.randomUUID().toString();
+    private static final String entityUUID_1 = "22334455";
+    private static final String entityUUID_2 = "99882255";
 
     @Before
     public void setUp() {
         repository.deleteAll();
-        List<ValidationResult> validationResults = generateValidationResults();
-        repository.insert(validationResults);
+        repository.insert(generateValidationResults());
     }
 
     /**
      * Update validation result document successfully.
      */
     @Test
-    public void updateValidationResultTest1() {
+    public void updateValidationResultSuccessfully() {
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = new SingleValidationResultsEnvelope(
-                Arrays.asList(generateSingleValidationResult(1, exampleDoc1)),
+                Arrays.asList(generateSingleValidationResult(entityUUID_1)),
                 1,
-                exampleDoc1,
-                ValidationAuthor.Biosamples);
+                UUID_1,
+                ValidationAuthor.Biosamples
+        );
+        assertTrue(service.updateValidationResult(singleValidationResultsEnvelope));
 
-        boolean success = service.updateValidationResult(singleValidationResultsEnvelope);
-
-        Assert.assertTrue(success);
+        ValidationResult validationResult = repository.findOne(UUID_1);
+        assertFalse(validationResult.getExpectedResults().get(ValidationAuthor.Biosamples).isEmpty());
     }
 
     /**
      * Ignore entity validation result that refers to an older version and skip the validation result document update.
      */
     @Test
-    public void updateValidationResultTest2() {
+    public void ignoreObsoleteSingleValidationResult() {
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = new SingleValidationResultsEnvelope(
-                Arrays.asList(generateSingleValidationResult(1, exampleDoc2)),
+                Arrays.asList(generateSingleValidationResult(entityUUID_2)),
                 1,
-                exampleDoc2,
-                ValidationAuthor.Biosamples);
+                UUID_2,
+                ValidationAuthor.Biosamples
+        );
+        assertFalse(service.updateValidationResult(singleValidationResultsEnvelope));
+    }
 
-        Assert.assertTrue(!service.updateValidationResult(singleValidationResultsEnvelope));
+    /**
+     * Ignore if it can't find the Validation Result.
+     */
+    @Test
+    public void handleDeletedSubmittable() {
+        SingleValidationResultsEnvelope envelope = new SingleValidationResultsEnvelope();
+        envelope.setValidationResultUUID("missing");
+
+        assertFalse(service.updateValidationResult(envelope));
     }
 
     private List<ValidationResult> generateValidationResults() {
@@ -89,40 +102,29 @@ public class AggregatorValidationResultServiceTest {
 
         // First
         ValidationResult validationResult1 = new ValidationResult();
-        validationResult1.setUuid(UUID.randomUUID().toString());
-        exampleDoc1 = validationResult1.getUuid();
+        validationResult1.setUuid(UUID_1);
         validationResult1.setExpectedResults(validationAuthorListMap);
         validationResult1.setVersion(1);
         validationResult1.setSubmissionId("123");
-        validationResult1.setEntityUuid("44566");
-
+        validationResult1.setEntityUuid(entityUUID_1);
         validationResults.add(validationResult1);
 
         // Second
         ValidationResult validationResult2 = new ValidationResult();
-        validationResult2.setUuid(UUID.randomUUID().toString());
-        exampleDoc2 = validationResult2.getUuid();
+        validationResult2.setUuid(UUID_2);
         validationResult2.setExpectedResults(validationAuthorListMap);
         validationResult2.setVersion(2);
         validationResult2.setSubmissionId("123");
-        validationResult2.setEntityUuid("66977");
-
+        validationResult2.setEntityUuid(entityUUID_2);
         validationResults.add(validationResult2);
 
         return validationResults;
     }
 
-    @Test
-    public void handleDeletedSubmittable() {
-        SingleValidationResultsEnvelope envelope = new SingleValidationResultsEnvelope();
-        envelope.setValidationResultUUID("missing");
-
-        assertFalse(service.updateValidationResult(envelope));
-    }
-
-    private SingleValidationResult generateSingleValidationResult(int version, String docUUID) {
+    private SingleValidationResult generateSingleValidationResult(String entityUUID) {
         SingleValidationResult singleValidationResult = new SingleValidationResult();
-        singleValidationResult.setEntityUuid("44566");
+        singleValidationResult.setEntityUuid(entityUUID);
+        singleValidationResult.setValidationStatus(SingleValidationResultStatus.Pass);
         singleValidationResult.setValidationAuthor(ValidationAuthor.Biosamples);
         return singleValidationResult;
     }
