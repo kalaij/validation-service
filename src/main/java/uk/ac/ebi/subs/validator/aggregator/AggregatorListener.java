@@ -4,13 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.messaging.Exchanges;
-import uk.ac.ebi.subs.validator.messaging.AggregatorQueues;
-import uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys;
 import uk.ac.ebi.subs.validator.data.AggregatorToFlipperEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
+import uk.ac.ebi.subs.validator.messaging.AggregatorQueues;
+import uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys;
 
 /**
  * This class is listening on events on the validation result {@code Queue}.
@@ -50,7 +49,7 @@ public class AggregatorListener {
     }
 
     private void sendValidationResultDocumentUpdate(SingleValidationResultsEnvelope singleValidationResultsEnvelope) {
-        logger.debug("Sending message: validation result document has been updated in MongoDB.");
+        logger.debug("Sending message: validation result {} document has been updated in MongoDB.", singleValidationResultsEnvelope.getValidationResultUUID());
 
         AggregatorToFlipperEnvelope envelope = new AggregatorToFlipperEnvelope(
                 singleValidationResultsEnvelope.getValidationResultUUID(),

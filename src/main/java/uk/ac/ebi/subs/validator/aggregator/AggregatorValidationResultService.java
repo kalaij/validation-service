@@ -1,31 +1,36 @@
 package uk.ac.ebi.subs.validator.aggregator;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
-import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 @Service
 public class AggregatorValidationResultService {
 
-    private ValidationResultRepository repository;
+    private MongoTemplate mongoTemplate;
 
-    public AggregatorValidationResultService(ValidationResultRepository repository) {
-        this.repository = repository;
+    public AggregatorValidationResultService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 
     public boolean updateValidationResult(SingleValidationResultsEnvelope envelope) {
-        ValidationResult validationResult = repository.findOne(envelope.getValidationResultUUID());
 
-        if (validationResult != null) {
-            if (validationResult.getVersion() == envelope.getValidationResultVersion()) {
-                validationResult.getExpectedResults().put(envelope.getValidationAuthor(), envelope.getSingleValidationResults());
-                repository.save(validationResult);
-                return true;
-            }
+        Query query = new Query(Criteria.where("_id").is(envelope.getValidationResultUUID())
+                .and("version").is(envelope.getValidationResultVersion()));
+
+        Update update = new Update().set("expectedResults." + envelope.getValidationAuthor(), envelope.getSingleValidationResults());
+
+        ValidationResult validationResult = mongoTemplate.findAndModify(query, update, ValidationResult.class);
+
+        if(validationResult != null) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
 }
