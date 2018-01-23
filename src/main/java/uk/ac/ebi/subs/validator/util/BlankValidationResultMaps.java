@@ -24,14 +24,19 @@ public class BlankValidationResultMaps {
     private static final List<ValidationAuthor> ASSAY_DATA_VALIDATION_SERVICES_REQUIRED =
             Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Ena);
 
+    private static final List<ValidationAuthor> PROJECT_VALIDATION_SERVICES_REQUIRED = Arrays.asList(ValidationAuthor.BioStudies);
+
     /**
-     * Generates an initial default or "blank" map to hold results of validation outcomes required for
-     * BioSample submissions
+     * Generates an initial default or "blank" map to hold results of validation outcomes required for each submittable.
      *
      * @return an initialised mapping from the required Validation service(ValidationAuthor) to it's respected validation result(boolean, false by default)
      */
     public static Map<ValidationAuthor, List<SingleValidationResult>> forSample() {
         return generateDefaultMap(SAMPLE_VALIDATION_SERVICES_REQUIRED);
+    }
+
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forProject() {
+        return generateDefaultMap(PROJECT_VALIDATION_SERVICES_REQUIRED);
     }
 
     public static Map<ValidationAuthor, List<SingleValidationResult>> forStudy() {
