@@ -9,8 +9,10 @@ import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class TestUtils {
@@ -67,18 +69,16 @@ public class TestUtils {
         return assayRef;
     }
 
-    public static List<Attribute> generateListOfAttributes() {
-        List<Attribute> attributes = new ArrayList<>();
+    public static Map<String, Collection<Attribute>> generateListOfAttributes() {
+        Map<String, Collection<Attribute>> attributes = new HashMap<>();
 
         Attribute att = new Attribute();
-        att.setName("name");
         att.setValue("my name");
-        attributes.add(att);
+        attributes.put("name", Collections.singletonList(att));
 
         Attribute att1 = new Attribute();
-        att1.setName("name123456");
         att1.setValue("my name now");
-        attributes.add(att1);
+        attributes.put("name123456", Collections.singletonList(att1));
 
         return attributes;
     }
