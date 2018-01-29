@@ -16,6 +16,8 @@ public class CoordinatorRoutingKeys {
     public static final String EVENT_CORE_ASSAYDATA_VALIDATION = "core.assaydata.validation";
     public static final String EVENT_ENA_ASSAYDATA_VALIDATION = "ena.assaydata.validation";
 
+    public static final String EVENT_BIOSTUDIES_PROJECT_VALIDATION = "biostudies.project.validation";
+
     private static final String SUBMITTABLE_CREATED = "usi.submittable.created";
     private static final String SUBMITTABLE_UPDATED = "usi.submittable.updated";
 
@@ -30,4 +32,7 @@ public class CoordinatorRoutingKeys {
 
     static final String SUBMITTABLE_ASSAYDATA_CREATED = SUBMITTABLE_CREATED + ".assaydata";
     static final String SUBMITTABLE_ASSAYDATA_UPDATED = SUBMITTABLE_UPDATED + ".assaydata";
+
+    static final String SUBMITTABLE_PROJECT_CREATED = SUBMITTABLE_CREATED + ".project";
+    static final String SUBMITTABLE_PROJECT_UPDATED = SUBMITTABLE_UPDATED + ".project";
 }
