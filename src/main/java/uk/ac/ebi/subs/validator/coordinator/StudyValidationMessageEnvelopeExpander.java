@@ -1,7 +1,6 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
 import uk.ac.ebi.subs.data.component.ProjectRef;
-import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.repository.model.Project;
 import uk.ac.ebi.subs.repository.repos.submittables.ProjectRepository;
 import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
