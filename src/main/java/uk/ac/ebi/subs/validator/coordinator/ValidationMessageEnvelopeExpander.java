@@ -13,7 +13,7 @@ public abstract class ValidationMessageEnvelopeExpander<T extends ValidationMess
     abstract void expandEnvelope(T validationMessageEnvelope, String submissionId);
 
     boolean addToValidationEnvelope(StoredSubmittable storedSubmittable, String submissionId) {
-        return storedSubmittable.getId().equals(submissionId) ? true : false;
+        return storedSubmittable.getSubmission().getId().equals(submissionId) ? true : false;
     }
 
 }
