@@ -1,5 +1,6 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.data.submittable.Assay;
@@ -11,12 +12,13 @@ import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 
 import java.util.List;
 
-public class AssayValidatorMessageEnvelopeExpander extends ValidationMessageEnvelopeExpander<AssayValidationMessageEnvelope> {
+@Service
+public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnvelopeExpander<AssayValidationMessageEnvelope> {
 
     SampleRepository sampleRepository;
     StudyRepository studyRepository;
 
-    public AssayValidatorMessageEnvelopeExpander(SampleRepository sampleRepository, StudyRepository studyRepository) {
+    public AssayValidationMessageEnvelopeExpander(SampleRepository sampleRepository, StudyRepository studyRepository) {
         this.sampleRepository = sampleRepository;
         this.studyRepository = studyRepository;
     }
