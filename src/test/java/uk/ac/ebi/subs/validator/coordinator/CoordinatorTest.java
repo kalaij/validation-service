@@ -32,7 +32,7 @@ import static uk.ac.ebi.subs.validator.TestUtils.createValidationResult;
 @EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
 @Category(RabbitMQDependentTest.class)
-@SpringBootTest("uk.ac.ebi.subs.validator")
+@SpringBootTest(classes =  {CoordinatorListener.class,CoordinatorValidationResultService.class})
 public class CoordinatorTest {
 
     @Autowired
