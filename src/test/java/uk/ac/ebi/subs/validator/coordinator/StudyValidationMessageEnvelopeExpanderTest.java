@@ -1,5 +1,7 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -44,14 +46,25 @@ public class StudyValidationMessageEnvelopeExpanderTest {
     StudyValidationMessageEnvelopeExpander studyValidationMessageEnvelopeExpander;
 
     Team team;
+    Submission submission;
+    Project savedProject;
 
+    @Before
+    public void setup() {
+        team = MesssageEnvelopeTestHelper.createTeam();
+        submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
+        savedProject = createAndSaveProject(submission,team);
+    }
 
+    @After
+    public void finish() {
+        projectRepository.delete(savedProject);
+        submissionRepository.delete(submission);
+        submissionStatusRepository.delete(submission.getSubmissionStatus());
+    }
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAccession() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Project savedProject = createAndSaveProject(submission,team);
         StudyValidationMessageEnvelope studyValidationMessageEnvelope = createStudyValidationMessageEnvelope();
         ProjectRef projectRef = new ProjectRef();
         projectRef.setAccession(savedProject.getAccession());
@@ -63,9 +76,6 @@ public class StudyValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAlias() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Project savedProject = createAndSaveProject(submission,team);
         StudyValidationMessageEnvelope studyValidationMessageEnvelope = createStudyValidationMessageEnvelope();
         ProjectRef projectRef = new ProjectRef();
         projectRef.setAlias(savedProject.getAlias());
@@ -78,9 +88,6 @@ public class StudyValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Project savedProject = createAndSaveProject(submission,team);
         StudyValidationMessageEnvelope studyValidationMessageEnvelope = createStudyValidationMessageEnvelope();
         ProjectRef projectRef = new ProjectRef();
         projectRef.setAccession(savedProject.getAccession());

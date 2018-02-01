@@ -1,5 +1,7 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -48,17 +50,30 @@ public class AssayValidationMessageEnvelopeExpanderTest {
     AssayValidationMessageEnvelopeExpander assayValidatorMessageEnvelopeExpander;
 
     Team team;
+    Submission submission;
+    List<Sample> savedSampleList;
+    Study savedStudy;
 
+    @Before
+    public void setup() {
+        team = MesssageEnvelopeTestHelper.createTeam();
+        submission = MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository, submissionRepository, team);
+        savedStudy = createAndSaveStudy(submission,team);
+        savedSampleList = createAndSaveSamples(submission, team, 1);
+    }
+
+    @After
+    public void finish() {
+        studyRepository.delete(savedStudy);
+        sampleRepository.delete(savedSampleList);
+        submissionRepository.delete(submission);
+        submissionStatusRepository.delete(submission.getSubmissionStatus());
+    }
 
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAccession() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
-        final Study savedStudy = createAndSaveStudy(submission,team);
-
-        final List<Sample> savedSampleList = createAndSaveSamples(submission, team, 1);
 
         for (Sample sample : savedSampleList) {
             SampleRef sampleRef = new SampleRef();
@@ -76,12 +91,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAlias() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
-        final Study savedStudy = createAndSaveStudy(submission,team);
-
-        final List<Sample> savedSampleList = createAndSaveSamples(submission, team, 1);
 
         for (Sample sample : savedSampleList) {
             SampleRef sampleRef = new SampleRef();
@@ -100,12 +110,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
-        final Study savedStudy = createAndSaveStudy(submission,team);
-
-        final List<Sample> savedSampleList = createAndSaveSamples(submission, team, 1);
 
         for (Sample sample : savedSampleList) {
             SampleRef sampleRef = new SampleRef();

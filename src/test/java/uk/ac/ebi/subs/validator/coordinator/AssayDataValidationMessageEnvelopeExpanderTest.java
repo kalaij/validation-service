@@ -1,5 +1,7 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -44,11 +46,25 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
     AssayDataValidationMessageEnvelopeExpander assayDataValidationMessageEnvelopeExpander;
 
     Team team;
+    Submission submission;
+    Assay savedAssay;
+
+    @Before
+    public void setup() {
+        team = MesssageEnvelopeTestHelper.createTeam();
+        submission = MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository, submissionRepository, team);
+        savedAssay = createAndSaveAssay(submission,team);
+    }
+
+    @After
+    public void finish() {
+        assayRepository.delete(savedAssay);
+        submissionRepository.delete(submission);
+        submissionStatusRepository.delete(submission.getSubmissionStatus());
+    }
+
     @Test
     public void testExpandEnvelopeSameSubmissionByAccession() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Assay savedAssay = createAndSaveAssay(submission,team);
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
         AssayRef assayRef = new AssayRef();
         assayRef.setAccession(savedAssay.getAccession());
@@ -59,9 +75,6 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAlias() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Assay savedAssay = createAndSaveAssay(submission,team);
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
         AssayRef assayRef = new AssayRef();
         assayRef.setAlias(savedAssay.getAlias());
@@ -74,9 +87,6 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
 
     @Test
     public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
-        Team team = MesssageEnvelopeTestHelper.createTeam();
-        final Submission submission= MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository,submissionRepository,team);
-        final Assay savedAssay = createAndSaveAssay(submission,team);
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
         AssayRef assayRef = new AssayRef();
         assayRef.setAccession(savedAssay.getAccession());
