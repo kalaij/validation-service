@@ -1,10 +1,12 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.ProjectRef;
 import uk.ac.ebi.subs.repository.model.Project;
 import uk.ac.ebi.subs.repository.repos.submittables.ProjectRepository;
 import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
 
+@Service
 public class StudyValidationMessageEnvelopeExpander extends ValidationMessageEnvelopeExpander<StudyValidationMessageEnvelope> {
     ProjectRepository projectRepository;
 
