@@ -70,7 +70,7 @@ public class StudyValidationMessageEnvelopeExpanderTest {
         projectRef.setAccession(savedProject.getAccession());
         studyValidationMessageEnvelope.getEntityToValidate().setProjectRef(projectRef);
         studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,submission.getId());
-        assertThat(savedProject,is(studyValidationMessageEnvelope.getProject()));
+        assertThat(savedProject,is(studyValidationMessageEnvelope.getProject().getBaseSubmittable()));
 
     }
 
@@ -82,18 +82,7 @@ public class StudyValidationMessageEnvelopeExpanderTest {
         projectRef.setTeam(team.getName());
         studyValidationMessageEnvelope.getEntityToValidate().setProjectRef(projectRef);
         studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,submission.getId());
-        assertThat(savedProject,is(studyValidationMessageEnvelope.getProject()));
-
-    }
-
-    @Test
-    public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
-        StudyValidationMessageEnvelope studyValidationMessageEnvelope = createStudyValidationMessageEnvelope();
-        ProjectRef projectRef = new ProjectRef();
-        projectRef.setAccession(savedProject.getAccession());
-        studyValidationMessageEnvelope.getEntityToValidate().setProjectRef(projectRef);
-        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,"SUB001");
-        assertThat(studyValidationMessageEnvelope.getProject(),is(nullValue()));
+        assertThat(savedProject,is(studyValidationMessageEnvelope.getProject().getBaseSubmittable()));
 
     }
 
