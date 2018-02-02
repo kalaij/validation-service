@@ -11,23 +11,30 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.data.component.AssayRef;
+import uk.ac.ebi.subs.data.component.SampleRef;
+import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.repository.model.Assay;
+import uk.ac.ebi.subs.repository.model.Sample;
 import uk.ac.ebi.subs.repository.model.Submission;
 import uk.ac.ebi.subs.repository.repos.SubmissionRepository;
 import uk.ac.ebi.subs.repository.repos.status.SubmissionStatusRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.AssayRepository;
+import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.model.Submittable;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableMongoRepositories(basePackageClasses = {AssayRepository.class, SubmissionRepository.class, SubmissionStatusRepository.class})
+@EnableMongoRepositories(basePackageClasses = {SampleRepository.class, AssayRepository.class, SubmissionRepository.class, SubmissionStatusRepository.class})
 @Category(MongoDBDependentTest.class)
 @EnableAutoConfiguration
 @SpringBootTest(classes = AssayDataValidationMessageEnvelopeExpander.class)
@@ -35,6 +42,9 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
 
     @Autowired
     AssayRepository assayRepository;
+
+    @Autowired
+    SampleRepository sampleRepository;
 
     @Autowired
     SubmissionStatusRepository submissionStatusRepository;
@@ -48,52 +58,65 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
     Team team;
     Submission submission;
     Assay savedAssay;
+    Sample savedSample;
 
     @Before
     public void setup() {
         team = MesssageEnvelopeTestHelper.createTeam();
         submission = MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository, submissionRepository, team);
         savedAssay = createAndSaveAssay(submission,team);
+        savedSample = MesssageEnvelopeTestHelper.createAndSaveSamples(sampleRepository, submission, team, 1).get(0);
     }
 
     @After
     public void finish() {
         assayRepository.delete(savedAssay);
+        sampleRepository.delete(savedSample);
         submissionRepository.delete(submission);
         submissionStatusRepository.delete(submission.getSubmissionStatus());
     }
 
     @Test
-    public void testExpandEnvelopeSameSubmissionByAccession() throws Exception {
+    public void testExpandEnvelopeSameSubmissionByAccessionForAssay() throws Exception {
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
         AssayRef assayRef = new AssayRef();
         assayRef.setAccession(savedAssay.getAccession());
         assayDataValidationMessageEnvelope.getEntityToValidate().setAssayRef(assayRef);
         assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
-        assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay()));
+        assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay().getBaseSubmittable()));
     }
 
     @Test
-    public void testExpandEnvelopeSameSubmissionByAlias() throws Exception {
+    public void testExpandEnvelopeSameSubmissionByAliasForAssay() throws Exception {
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
         AssayRef assayRef = new AssayRef();
         assayRef.setAlias(savedAssay.getAlias());
         assayRef.setTeam(team.getName());
         assayDataValidationMessageEnvelope.getEntityToValidate().setAssayRef(assayRef);
         assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
-        assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay()));
+        assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay().getBaseSubmittable()));
 
     }
 
     @Test
-    public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
+    public void testExpandEnvelopeSameSubmissionByAccessionForSample() throws Exception {
         AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
-        AssayRef assayRef = new AssayRef();
-        assayRef.setAccession(savedAssay.getAccession());
-        assayDataValidationMessageEnvelope.getEntityToValidate().setAssayRef(assayRef);
-        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,"SUB001");
-        assertThat(assayDataValidationMessageEnvelope.getAssay(),is(nullValue()));
+        SampleRef sampleRef = new SampleRef();
+        sampleRef.setAccession(savedSample.getAccession());
+        assayDataValidationMessageEnvelope.getEntityToValidate().setSampleRef(sampleRef);
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assertThat(savedSample,is(assayDataValidationMessageEnvelope.getSample().getBaseSubmittable()));
+    }
 
+    @Test
+    public void testExpandEnvelopeSameSubmissionByAliasForSample() throws Exception {
+        AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = createAssayDataValidationMessageEnvelope();
+        SampleRef sampleRef = new SampleRef();
+        sampleRef.setAlias(savedSample.getAlias());
+        sampleRef.setTeam(savedSample.getTeam().getName());
+        assayDataValidationMessageEnvelope.getEntityToValidate().setSampleRef(sampleRef);
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assertThat(savedSample,is(assayDataValidationMessageEnvelope.getSample().getBaseSubmittable()));
     }
 
     private AssayDataValidationMessageEnvelope createAssayDataValidationMessageEnvelope() {
