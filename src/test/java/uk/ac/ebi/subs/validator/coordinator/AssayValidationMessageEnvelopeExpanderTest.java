@@ -18,10 +18,12 @@ import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
 import uk.ac.ebi.subs.validator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -59,7 +61,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
         team = MesssageEnvelopeTestHelper.createTeam();
         submission = MesssageEnvelopeTestHelper.saveNewSubmission(submissionStatusRepository, submissionRepository, team);
         savedStudy = createAndSaveStudy(submission,team);
-        savedSampleList = createAndSaveSamples(submission, team, 1);
+        savedSampleList = MesssageEnvelopeTestHelper.createAndSaveSamples(sampleRepository, submission, team, 1);
     }
 
     @After
@@ -72,7 +74,17 @@ public class AssayValidationMessageEnvelopeExpanderTest {
 
 
     @Test
-    public void testExpandEnvelopeSameSubmissionByAccession() throws Exception {
+    public void testExpandEnvelopeSameSubmissionByAccessionForStudy() throws Exception {
+        AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
+        StudyRef studyRef = new StudyRef();
+        studyRef.setAccession(savedStudy.getAccession());
+        assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy().getBaseSubmittable()));
+    }
+
+    @Test
+    public void testExpandEnvelopeSameSubmissionByAccessionForSampleList() throws Exception {
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
 
         for (Sample sample : savedSampleList) {
@@ -81,16 +93,24 @@ public class AssayValidationMessageEnvelopeExpanderTest {
             assayValidationMessageEnvelope.getEntityToValidate().getSampleUses().add(new SampleUse(sampleRef));
         }
 
-        StudyRef studyRef = new StudyRef();
-        studyRef.setAccession(savedStudy.getAccession());
-        assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
         assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
-        assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy()));
-        assertThat(savedSampleList, is(assayValidationMessageEnvelope.getSampleList()));
+        final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = assayValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
+        assertThat(savedSampleList, is(sampleList));
     }
 
     @Test
-    public void testExpandEnvelopeSameSubmissionByAlias() throws Exception {
+    public void testExpandEnvelopeSameSubmissionByAliasForStudy() throws Exception {
+        AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
+        StudyRef studyRef = new StudyRef();
+        studyRef.setAlias(savedStudy.getAlias());
+        studyRef.setTeam(savedStudy.getTeam().getName());
+        assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy().getBaseSubmittable()));
+    }
+
+    @Test
+    public void testExpandEnvelopeSameSubmissionByAliasForSampleList() throws Exception {
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
 
         for (Sample sample : savedSampleList) {
@@ -100,30 +120,9 @@ public class AssayValidationMessageEnvelopeExpanderTest {
             assayValidationMessageEnvelope.getEntityToValidate().getSampleUses().add(new SampleUse(sampleRef));
         }
 
-        StudyRef studyRef = new StudyRef();
-        studyRef.setAccession(savedStudy.getAccession());
-        assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
         assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
-        assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy()));
-        assertThat(savedSampleList, is(assayValidationMessageEnvelope.getSampleList()));
-    }
-
-    @Test
-    public void testExpandEnvelopeSameSubmissionByAccessionDifferentSubmission() throws Exception {
-        AssayValidationMessageEnvelope assayValidationMessageEnvelope = createAssayValidationMessageEnvelope();
-
-        for (Sample sample : savedSampleList) {
-            SampleRef sampleRef = new SampleRef();
-            sampleRef.setAccession(sample.getAccession());
-            assayValidationMessageEnvelope.getEntityToValidate().getSampleUses().add(new SampleUse(sampleRef));
-        }
-
-        StudyRef studyRef = new StudyRef();
-        studyRef.setAccession(savedStudy.getAccession());
-        assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
-        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,"SUB001");
-        assertThat(assayValidationMessageEnvelope.getStudy(),is(nullValue()));
-        assertThat(assayValidationMessageEnvelope.getSampleList().isEmpty(), is(true));
+        final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = assayValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
+        assertThat(savedSampleList, is(sampleList));
     }
 
     private AssayValidationMessageEnvelope createAssayValidationMessageEnvelope() {
@@ -134,21 +133,6 @@ public class AssayValidationMessageEnvelopeExpanderTest {
         submittableAssay.setAlias(UUID.randomUUID().toString());
         assayValidationMessageEnvelope.setEntityToValidate(submittableAssay);
         return assayValidationMessageEnvelope;
-    }
-
-    private List<Sample> createAndSaveSamples (Submission submission, Team team, int sampleNumber) {
-        List<Sample> sampleList = new ArrayList<>(sampleNumber);
-        for (int i = 0; i < sampleNumber; i++ ) {
-            Sample sample = new Sample();
-            sample.setTeam(team);
-            String alias = UUID.randomUUID().toString();
-            String accession = UUID.randomUUID().toString();
-            sample.setAlias(alias);
-            sample.setAccession(accession);
-            sample.setSubmission(submission);
-            sampleList.add(sampleRepository.save(sample));
-        }
-        return sampleList;
     }
 
     private Study createAndSaveStudy (Submission submission, Team team) {
