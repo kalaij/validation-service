@@ -3,7 +3,7 @@ package uk.ac.ebi.subs.validator.core.validators;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.subs.data.component.StudyDataType;
-import uk.ac.ebi.subs.repository.model.Study;
+import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
