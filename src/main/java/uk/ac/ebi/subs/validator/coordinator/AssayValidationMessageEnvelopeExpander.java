@@ -4,11 +4,13 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.repository.model.Sample;
-import uk.ac.ebi.subs.repository.model.Study;
+
+import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.List;
 
@@ -39,9 +41,10 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleUse.getSampleRef().getTeam(), sampleUse.getSampleRef().getAlias());
             }
 
-            if (sample.getSubmission().getId().equals(submissionId)) {
-                validationMessageEnvelope.getSampleList().add(sample);
-            }
+            Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
+
+            validationMessageEnvelope.getSampleList().add(sampleSubmittable);
+
         }
 
         final StudyRef studyRef = entityToValidate.getStudyRef();
@@ -54,9 +57,9 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
             study = studyRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(studyRef.getTeam(), studyRef.getAlias());
         }
 
-       if (addToValidationEnvelope(study,submissionId)) {
-           validationMessageEnvelope.setStudy(study);
-       }
+        Submittable<Study> studySubmittable = new Submittable<>(study,submissionId);
+        validationMessageEnvelope.setStudy(studySubmittable);
+
 
     }
 }
