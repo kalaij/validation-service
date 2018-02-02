@@ -137,7 +137,7 @@ public class CoordinatorListener {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        StudyValidationMessageEnvelope studyValidationMessageEnvelope = new StudyValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), study);
+        StudyValidationMessageEnvelope studyValidationMessageEnvelope = new StudyValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), study,submissionId);
         studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,submissionId);
 
         logger.debug("Sending study to validation queues");
@@ -172,7 +172,7 @@ public class CoordinatorListener {
         ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assay);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
-        AssayValidationMessageEnvelope assayValidationMessageEnvelope = new AssayValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assay);
+        AssayValidationMessageEnvelope assayValidationMessageEnvelope = new AssayValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assay,submissionId);
         assayValidationMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submissionId);
 
         logger.debug("Sending assay to validation queues");
@@ -208,7 +208,7 @@ public class CoordinatorListener {
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData);
+        AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
         assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submissionId);
 
         logger.debug("Sending assay data to validation queues");
