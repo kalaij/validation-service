@@ -9,13 +9,13 @@ import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractHandler {
+public abstract class AbstractHandler<T extends ValidationMessageEnvelope> {
 
-    abstract SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope);
+    abstract SingleValidationResult validateSubmittable(T envelope);
 
     abstract List<SingleValidationResult> validateAttributes(ValidationMessageEnvelope envelope);
 
-    public SingleValidationResultsEnvelope handleValidationRequest(ValidationMessageEnvelope envelope) {
+    public SingleValidationResultsEnvelope handleValidationRequest(T envelope) {
         List<SingleValidationResult> resultList = new ArrayList<>();
 
         SingleValidationResult singleValidationResult = validateSubmittable(envelope);
