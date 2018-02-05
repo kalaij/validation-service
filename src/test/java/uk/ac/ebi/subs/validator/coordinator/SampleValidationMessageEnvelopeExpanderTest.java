@@ -52,7 +52,6 @@ public class SampleValidationMessageEnvelopeExpanderTest {
     Team team;
     Submission submission;
     List<Sample> savedSampleList;
-    Study savedStudy;
 
     @Before
     public void setup() {
