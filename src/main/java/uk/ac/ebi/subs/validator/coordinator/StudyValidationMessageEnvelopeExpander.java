@@ -27,9 +27,10 @@ public class StudyValidationMessageEnvelopeExpander extends ValidationMessageEnv
             project = projectRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(projectRef.getTeam(), projectRef.getAlias());
         }
 
-        Submittable<Project> projectSubmittable = new Submittable<>(project,submissionId);
-
-        validationMessageEnvelope.setProject(projectSubmittable);
+        if (project != null) {
+            Submittable<Project> projectSubmittable = new Submittable<>(project, submissionId);
+            validationMessageEnvelope.setProject(projectSubmittable);
+        }
 
     }
 }

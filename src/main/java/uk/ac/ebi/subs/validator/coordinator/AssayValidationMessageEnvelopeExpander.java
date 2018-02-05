@@ -42,7 +42,6 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
             }
 
             Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
-
             validationMessageEnvelope.getSampleList().add(sampleSubmittable);
 
         }
@@ -57,9 +56,10 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
             study = studyRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(studyRef.getTeam(), studyRef.getAlias());
         }
 
-        Submittable<Study> studySubmittable = new Submittable<>(study,submissionId);
-        validationMessageEnvelope.setStudy(studySubmittable);
-
+        if (study != null) {
+            Submittable<Study> studySubmittable = new Submittable<>(study,submissionId);
+            validationMessageEnvelope.setStudy(studySubmittable);
+        }
 
     }
 }

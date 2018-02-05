@@ -31,9 +31,10 @@ public class SampleValidationMessageEnvelopeExpander extends ValidationMessageEn
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRelationship.getTeam(), sampleRelationship.getAlias());
             }
 
-            Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
-
-            validationMessageEnvelope.getSampleList().add(sampleSubmittable);
+            if (sample != null) {
+                Submittable<Sample> sampleSubmittable = new Submittable<>(sample, submissionId);
+                validationMessageEnvelope.getSampleList().add(sampleSubmittable);
+            }
 
         }
 

@@ -38,16 +38,18 @@ public class AssayDataValidationMessageEnvelopeExpander extends ValidationMessag
 
         final SampleRef sampleRef = assayDataValidationMessageEnvelope.getEntityToValidate().getSampleRef();
 
-        uk.ac.ebi.subs.repository.model.Sample sampleStoredSubmittable;
+        uk.ac.ebi.subs.repository.model.Sample sample;
 
         if (sampleRef.getAccession() != null && !sampleRef.getAccession().isEmpty()) {
-            sampleStoredSubmittable = sampleRepository.findFirstByAccessionOrderByCreatedDateDesc(sampleRef.getAccession());
+            sample = sampleRepository.findFirstByAccessionOrderByCreatedDateDesc(sampleRef.getAccession());
         } else {
-            sampleStoredSubmittable = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRef.getTeam(), sampleRef.getAlias());
+            sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleRef.getTeam(), sampleRef.getAlias());
         }
 
-        Submittable<Sample> sampleSubmittable = new Submittable<>(sampleStoredSubmittable,submissionId);
-        assayDataValidationMessageEnvelope.setSample(sampleSubmittable);
+        if (sample != null) {
+            Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
+            assayDataValidationMessageEnvelope.setSample(sampleSubmittable);
+        }
 
     }
 
