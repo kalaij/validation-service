@@ -82,7 +82,7 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
         AssayRef assayRef = new AssayRef();
         assayRef.setAccession(savedAssay.getAccession());
         assayDataValidationMessageEnvelope.getEntityToValidate().setAssayRef(assayRef);
-        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
         assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay().getBaseSubmittable()));
     }
 
@@ -93,7 +93,7 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
         assayRef.setAlias(savedAssay.getAlias());
         assayRef.setTeam(team.getName());
         assayDataValidationMessageEnvelope.getEntityToValidate().setAssayRef(assayRef);
-        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
         assertThat(savedAssay,is(assayDataValidationMessageEnvelope.getAssay().getBaseSubmittable()));
 
     }
@@ -104,7 +104,7 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
         SampleRef sampleRef = new SampleRef();
         sampleRef.setAccession(savedSample.getAccession());
         assayDataValidationMessageEnvelope.getEntityToValidate().setSampleRef(sampleRef);
-        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
         assertThat(savedSample,is(assayDataValidationMessageEnvelope.getSample().getBaseSubmittable()));
     }
 
@@ -115,7 +115,7 @@ public class AssayDataValidationMessageEnvelopeExpanderTest {
         sampleRef.setAlias(savedSample.getAlias());
         sampleRef.setTeam(savedSample.getTeam().getName());
         assayDataValidationMessageEnvelope.getEntityToValidate().setSampleRef(sampleRef);
-        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope,submission.getId());
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
         assertThat(savedSample,is(assayDataValidationMessageEnvelope.getSample().getBaseSubmittable()));
     }
 

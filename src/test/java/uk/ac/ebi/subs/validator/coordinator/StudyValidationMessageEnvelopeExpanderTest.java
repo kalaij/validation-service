@@ -69,7 +69,7 @@ public class StudyValidationMessageEnvelopeExpanderTest {
         ProjectRef projectRef = new ProjectRef();
         projectRef.setAccession(savedProject.getAccession());
         studyValidationMessageEnvelope.getEntityToValidate().setProjectRef(projectRef);
-        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,submission.getId());
+        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope);
         assertThat(savedProject,is(studyValidationMessageEnvelope.getProject().getBaseSubmittable()));
 
     }
@@ -81,7 +81,7 @@ public class StudyValidationMessageEnvelopeExpanderTest {
         projectRef.setAlias(savedProject.getAlias());
         projectRef.setTeam(team.getName());
         studyValidationMessageEnvelope.getEntityToValidate().setProjectRef(projectRef);
-        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope,submission.getId());
+        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope);
         assertThat(savedProject,is(studyValidationMessageEnvelope.getProject().getBaseSubmittable()));
 
     }

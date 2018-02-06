@@ -78,7 +78,7 @@ public class SampleValidationMessageEnvelopeExpanderTest {
             sampleValidationMessageEnvelope.getEntityToValidate().getSampleRelationships().add(sampleRelationship);
         }
 
-        sampleValidatorMessageEnvelopeExpander.expandEnvelope(sampleValidationMessageEnvelope, submission.getId());
+        sampleValidatorMessageEnvelopeExpander.expandEnvelope(sampleValidationMessageEnvelope);
         final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = sampleValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
         assertThat(savedSampleList, is(sampleList));
     }
@@ -95,7 +95,7 @@ public class SampleValidationMessageEnvelopeExpanderTest {
             sampleValidationMessageEnvelope.getEntityToValidate().getSampleRelationships().add(sampleRelationship);
         }
 
-        sampleValidatorMessageEnvelopeExpander.expandEnvelope(sampleValidationMessageEnvelope, submission.getId());
+        sampleValidatorMessageEnvelopeExpander.expandEnvelope(sampleValidationMessageEnvelope);
         final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = sampleValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
         assertThat(savedSampleList, is(sampleList));
     }

@@ -79,7 +79,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
         StudyRef studyRef = new StudyRef();
         studyRef.setAccession(savedStudy.getAccession());
         assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
-        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope);
         assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy().getBaseSubmittable()));
     }
 
@@ -93,7 +93,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
             assayValidationMessageEnvelope.getEntityToValidate().getSampleUses().add(new SampleUse(sampleRef));
         }
 
-        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope);
         final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = assayValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
         assertThat(savedSampleList, is(sampleList));
     }
@@ -105,7 +105,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
         studyRef.setAlias(savedStudy.getAlias());
         studyRef.setTeam(savedStudy.getTeam().getName());
         assayValidationMessageEnvelope.getEntityToValidate().setStudyRef(studyRef);
-        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope);
         assertThat(savedStudy,is(assayValidationMessageEnvelope.getStudy().getBaseSubmittable()));
     }
 
@@ -120,7 +120,7 @@ public class AssayValidationMessageEnvelopeExpanderTest {
             assayValidationMessageEnvelope.getEntityToValidate().getSampleUses().add(new SampleUse(sampleRef));
         }
 
-        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope,submission.getId());
+        assayValidatorMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope);
         final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = assayValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
         assertThat(savedSampleList, is(sampleList));
     }
