@@ -4,6 +4,6 @@ import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 
 
 public abstract class ValidationMessageEnvelopeExpander<T extends ValidationMessageEnvelope> {
-    abstract void expandEnvelope(T validationMessageEnvelope, String submissionId);
+    abstract void expandEnvelope(T validationMessageEnvelope);
 
 }
