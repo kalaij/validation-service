@@ -3,8 +3,6 @@ package uk.ac.ebi.subs.validator.coordinator;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.AssayRef;
 import uk.ac.ebi.subs.data.component.SampleRef;
-import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.repository.repos.submittables.AssayRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
@@ -22,7 +20,7 @@ public class AssayDataValidationMessageEnvelopeExpander extends ValidationMessag
     }
 
     @Override
-    public void expandEnvelope(AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope, String submissionId) {
+    public void expandEnvelope(AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope) {
         final AssayRef assayRef = assayDataValidationMessageEnvelope.getEntityToValidate().getAssayRef();
 
         uk.ac.ebi.subs.repository.model.Assay assayStoredSubmittable;
@@ -33,8 +31,10 @@ public class AssayDataValidationMessageEnvelopeExpander extends ValidationMessag
             assayStoredSubmittable = assayRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(assayRef.getTeam(), assayRef.getAlias());
         }
 
-        Submittable<Assay> assaySubmittable = new Submittable<>(assayStoredSubmittable,submissionId);
-        assayDataValidationMessageEnvelope.setAssay(assaySubmittable);
+        if (assayStoredSubmittable != null) {
+            Submittable<uk.ac.ebi.subs.data.submittable.Assay> assaySubmittable = new Submittable<>(assayStoredSubmittable,assayStoredSubmittable.getSubmission().getId());
+            assayDataValidationMessageEnvelope.setAssay(assaySubmittable);
+        }
 
         final SampleRef sampleRef = assayDataValidationMessageEnvelope.getEntityToValidate().getSampleRef();
 
@@ -47,7 +47,7 @@ public class AssayDataValidationMessageEnvelopeExpander extends ValidationMessag
         }
 
         if (sample != null) {
-            Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
+            Submittable<uk.ac.ebi.subs.data.submittable.Sample> sampleSubmittable = new Submittable<>(sample,sample.getSubmission().getId());
             assayDataValidationMessageEnvelope.setSample(sampleSubmittable);
         }
 

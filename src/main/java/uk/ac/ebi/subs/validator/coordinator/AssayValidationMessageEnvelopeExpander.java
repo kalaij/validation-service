@@ -5,8 +5,8 @@ import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.component.StudyRef;
 import uk.ac.ebi.subs.data.submittable.Assay;
 
-import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.repository.model.Sample;
+import uk.ac.ebi.subs.repository.model.Study;
 import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.StudyRepository;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
@@ -26,7 +26,7 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
     }
 
     @Override
-    public void expandEnvelope(AssayValidationMessageEnvelope validationMessageEnvelope, String submissionId) {
+    public void expandEnvelope(AssayValidationMessageEnvelope validationMessageEnvelope) {
         final Assay entityToValidate = validationMessageEnvelope.getEntityToValidate();
 
         final List<SampleUse> sampleUses = entityToValidate.getSampleUses();
@@ -41,7 +41,7 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleUse.getSampleRef().getTeam(), sampleUse.getSampleRef().getAlias());
             }
 
-            Submittable<Sample> sampleSubmittable = new Submittable<>(sample,submissionId);
+            Submittable<uk.ac.ebi.subs.data.submittable.Sample> sampleSubmittable = new Submittable<>(sample,sample.getSubmission().getId());
             validationMessageEnvelope.getSampleList().add(sampleSubmittable);
 
         }
@@ -57,7 +57,7 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
         }
 
         if (study != null) {
-            Submittable<Study> studySubmittable = new Submittable<>(study,submissionId);
+            Submittable<uk.ac.ebi.subs.data.submittable.Study> studySubmittable = new Submittable<>(study,study.getSubmission().getId());
             validationMessageEnvelope.setStudy(studySubmittable);
         }
 
