@@ -23,11 +23,23 @@ public class CoordinatorListener {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
 
     private CoordinatorValidationResultService coordinatorValidationResultService;
+    private StudyValidationMessageEnvelopeExpander studyValidationMessageEnvelopeExpander;
+    private AssayValidationMessageEnvelopeExpander assayValidationMessageEnvelopeExpander;
+    private AssayDataValidationMessageEnvelopeExpander assayDataValidationMessageEnvelopeExpander;
+    private SampleValidationMessageEnvelopeExpander sampleValidationMessageEnvelopeExpander;
 
     public CoordinatorListener(RabbitMessagingTemplate rabbitMessagingTemplate,
-                               CoordinatorValidationResultService coordinatorValidationResultService) {
+                               CoordinatorValidationResultService coordinatorValidationResultService,
+                               StudyValidationMessageEnvelopeExpander studyValidationMessageEnvelopeExpander,
+                               AssayValidationMessageEnvelopeExpander assayValidationMessageEnvelopeExpander,
+                               AssayDataValidationMessageEnvelopeExpander assayDataValidationMessageEnvelopeExpander,
+                               SampleValidationMessageEnvelopeExpander sampleValidationMessageEnvelopeExpander) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
         this.coordinatorValidationResultService = coordinatorValidationResultService;
+        this.studyValidationMessageEnvelopeExpander = studyValidationMessageEnvelopeExpander;
+        this.assayValidationMessageEnvelopeExpander = assayValidationMessageEnvelopeExpander;
+        this.assayDataValidationMessageEnvelopeExpander = assayDataValidationMessageEnvelopeExpander;
+        this.sampleValidationMessageEnvelopeExpander = sampleValidationMessageEnvelopeExpander;
     }
 
     /**
@@ -81,17 +93,18 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on sample with id {}", sample.getId());
 
-        if (!handleSample(sample)) {
+        if (!handleSample(sample, envelope.getSubmissionId())) {
             logger.error("Error handling sample with id {}", sample.getId());
         }
     }
 
-    private boolean handleSample(Sample sample) {
+    private boolean handleSample(Sample sample, String submissionId) {
         ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(sample);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Sample> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), sample);
+        SampleValidationMessageEnvelope messageEnvelope = new SampleValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), sample,submissionId);
+        sampleValidationMessageEnvelopeExpander.expandEnvelope(messageEnvelope);
 
         logger.debug("Sending sample to validation queues");
         rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_SAMPLE_VALIDATION, messageEnvelope);
@@ -118,21 +131,22 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on study with id {}", study.getId());
 
-        if (!handleStudy(study)) {
+        if (!handleStudy(study,envelope.getSubmissionId())) {
             logger.error("Error handling study with id {}", study.getId());
         }
     }
 
-    private boolean handleStudy(Study study) {
+    private boolean handleStudy(Study study, String submissionId) {
         ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(study);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<Study> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), study);
+        StudyValidationMessageEnvelope studyValidationMessageEnvelope = new StudyValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), study,submissionId);
+        studyValidationMessageEnvelopeExpander.expandEnvelope(studyValidationMessageEnvelope);
 
         logger.debug("Sending study to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_STUDY_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_STUDY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_STUDY_VALIDATION, studyValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_STUDY_VALIDATION, studyValidationMessageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -153,21 +167,21 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on assay {}", assay.getId());
 
-        if (!handleAssay(assay)) {
+        if (!handleAssay(assay,envelope.getSubmissionId())) {
             logger.error("Error handling assay with id {}", assay.getId());
         }
     }
 
-    private boolean handleAssay(Assay assay) {
+    private boolean handleAssay(Assay assay, String submissionId) {
         ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assay);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
-
-        ValidationMessageEnvelope<Assay> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assay);
+        AssayValidationMessageEnvelope assayValidationMessageEnvelope = new AssayValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assay,submissionId);
+        assayValidationMessageEnvelopeExpander.expandEnvelope(assayValidationMessageEnvelope);
 
         logger.debug("Sending assay to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAY_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAY_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAY_VALIDATION, assayValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAY_VALIDATION, assayValidationMessageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }
@@ -188,21 +202,22 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on assay data {}", assayData.getId());
 
-        if (!handleAssayData(assayData)) {
+        if (!handleAssayData(assayData,envelope.getSubmissionId())) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         }
     }
 
-    private boolean handleAssayData(AssayData assayData) {
+    private boolean handleAssayData(AssayData assayData, String submissionId) {
         ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assayData);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
-        ValidationMessageEnvelope<AssayData> messageEnvelope = new ValidationMessageEnvelope<>(validationResult.getUuid(), validationResult.getVersion(), assayData);
+        AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
+        assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
 
         logger.debug("Sending assay data to validation queues");
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, messageEnvelope);
-        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, messageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
 
         return validationResult.getEntityUuid() != null;
     }

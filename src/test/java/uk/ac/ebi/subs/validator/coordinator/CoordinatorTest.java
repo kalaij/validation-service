@@ -12,10 +12,16 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.subs.ValidationServiceApplication;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.repository.repos.status.ProcessingStatusRepository;
+import uk.ac.ebi.subs.repository.repos.submittables.AssayRepository;
+import uk.ac.ebi.subs.repository.repos.submittables.ProjectRepository;
+import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.TestUtils;
 import uk.ac.ebi.subs.validator.config.RabbitMQDependentTest;
+import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SubmittedProjectValidationEnvelope;
 import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
@@ -29,10 +35,9 @@ import static uk.ac.ebi.subs.validator.TestUtils.createValidationResult;
  * Created by karoly on 30/05/2017.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableMongoRepositories(basePackageClasses = ValidationResultRepository.class)
 @EnableAutoConfiguration
 @Category(RabbitMQDependentTest.class)
-@SpringBootTest("uk.ac.ebi.subs.validator")
+@SpringBootTest(classes = ValidationServiceApplication.class )
 public class CoordinatorTest {
 
     @Autowired
