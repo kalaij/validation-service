@@ -37,6 +37,16 @@ public class MesssageEnvelopeTestHelper {
     }
 
     static List<Sample> createAndSaveSamples (SampleRepository sampleRepository, Submission submission, Team team, int sampleNumber) {
+        List<Sample> sampleList = createSamples(submission,team,sampleNumber);
+
+        for (Sample sample : sampleList) {
+            sampleRepository.save(sample);
+        }
+
+        return sampleList;
+    }
+
+    static List<Sample> createSamples (Submission submission, Team team, int sampleNumber) {
         List<Sample> sampleList = new ArrayList<>(sampleNumber);
         for (int i = 0; i < sampleNumber; i++ ) {
             Sample sample = new Sample();
@@ -46,7 +56,7 @@ public class MesssageEnvelopeTestHelper {
             sample.setAlias(alias);
             sample.setAccession(accession);
             sample.setSubmission(submission);
-            sampleList.add(sampleRepository.save(sample));
+            sampleList.add(sample);
         }
         return sampleList;
     }
