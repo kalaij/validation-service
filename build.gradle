@@ -12,7 +12,7 @@ targetCompatibility = 1.8
 ext.gradle_env = hasProperty('env') ? env : 'dev'
 
 bootRepackage {
-    mainClass = "uk.ac.ebi.subs.validator.ValidationServiceApplication"
+    mainClass = "uk.ac.ebi.subs.ValidationServiceApplication"
 }
 springBoot {
     executable = true
