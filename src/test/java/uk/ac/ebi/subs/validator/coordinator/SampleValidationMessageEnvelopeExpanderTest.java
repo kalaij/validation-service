@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -108,6 +109,22 @@ public class SampleValidationMessageEnvelopeExpanderTest {
         submittableSample.setAlias(UUID.randomUUID().toString());
         sampleValidationMessageEnvelope.setEntityToValidate(submittableSample);
         return sampleValidationMessageEnvelope;
+    }
+
+    @Test
+    public void testExpandEnvelopeSameSubmissionByAccessionNotInRepo() throws Exception {
+        final SampleValidationMessageEnvelope sampleValidationMessageEnvelope = createSampleValidationMessageEnvelope();
+        List<Sample>notSavedSampleList = MesssageEnvelopeTestHelper.createSamples(submission, team, 1);
+
+        for (Sample sample : notSavedSampleList) {
+            SampleRelationship sampleRelationship = new SampleRelationship();
+            sampleRelationship.setAccession(sample.getAccession());
+            sampleValidationMessageEnvelope.getEntityToValidate().getSampleRelationships().add(sampleRelationship);
+        }
+
+        sampleValidatorMessageEnvelopeExpander.expandEnvelope(sampleValidationMessageEnvelope);
+        final List<uk.ac.ebi.subs.data.submittable.Sample> sampleList = sampleValidationMessageEnvelope.getSampleList().stream().map(Submittable::getBaseSubmittable).collect(Collectors.toList());
+        assertThat(sampleList, is(empty()));
     }
 
 
