@@ -41,8 +41,10 @@ public class AssayValidationMessageEnvelopeExpander extends ValidationMessageEnv
                 sample = sampleRepository.findFirstByTeamNameAndAliasOrderByCreatedDateDesc(sampleUse.getSampleRef().getTeam(), sampleUse.getSampleRef().getAlias());
             }
 
-            Submittable<uk.ac.ebi.subs.data.submittable.Sample> sampleSubmittable = new Submittable<>(sample,sample.getSubmission().getId());
-            validationMessageEnvelope.getSampleList().add(sampleSubmittable);
+            if (sample != null ) {
+                Submittable<uk.ac.ebi.subs.data.submittable.Sample> sampleSubmittable = new Submittable<>(sample, sample.getSubmission().getId());
+                validationMessageEnvelope.getSampleList().add(sampleSubmittable);
+            }
 
         }
 
