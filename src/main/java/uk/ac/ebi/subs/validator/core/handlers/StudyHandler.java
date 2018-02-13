@@ -3,6 +3,7 @@ package uk.ac.ebi.subs.validator.core.handlers;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
+import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
 import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
@@ -22,10 +23,14 @@ public class StudyHandler extends AbstractHandler {
     private StudyTypeValidator studyTypeValidator;
 
     private AttributeValidator attributeValidator;
+    // wired in but not used
+    private ReferenceValidator projectRefValidator;
 
-    public StudyHandler(StudyTypeValidator studyTypeValidator, AttributeValidator attributeValidator) {
+    public StudyHandler(StudyTypeValidator studyTypeValidator, AttributeValidator attributeValidator, ReferenceValidator projectRefValidator) {
         this.studyTypeValidator = studyTypeValidator;
         this.attributeValidator = attributeValidator;
+        this.projectRefValidator = projectRefValidator;
+
     }
 
     @Override
