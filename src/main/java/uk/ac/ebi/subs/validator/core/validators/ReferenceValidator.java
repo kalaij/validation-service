@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReferenceValidator {
-    String FAIL_MESSAGE = "Could not find reference target: %s .";
-    String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s .";
+    String FAIL_MESSAGE = "Could not find reference target: %s ";
+    String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s ";
 
     public void validate(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
 
@@ -73,6 +73,7 @@ public class ReferenceValidator {
     }
 
     void initializeSingleValidationResult(Submittable submittable, AbstractSubsRef abstractSubsRef, SingleValidationResult singleValidationResult) {
+
         if(submittable == null) {
             if(abstractSubsRef.getAccession() == null || abstractSubsRef.getAccession().isEmpty()) {
                 singleValidationResult.setMessage(String.format(FAIL_TEAM_AND_ALIAS_MESSAGE, abstractSubsRef.getAlias(), abstractSubsRef.getTeam()));
@@ -111,11 +112,17 @@ public class ReferenceValidator {
 
     void updateSingleValidationResult(StringBuilder referencesTargets, SingleValidationResult singleValidationResult) {
         if (!referencesTargets.toString().isEmpty()) {
-            StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
-            message.append(" " + referencesTargets);
+            if (singleValidationResult.getMessage() == null) {
+                singleValidationResult.setMessage(referencesTargets.toString());
+            } else {
+                StringBuilder message = new StringBuilder(singleValidationResult.getMessage());
 
-            singleValidationResult.setMessage(message.toString());
+                message.append(" " + referencesTargets);
+
+                singleValidationResult.setMessage(message.toString());
+            }
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
+
     }
 }
