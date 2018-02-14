@@ -2,10 +2,8 @@ package uk.ac.ebi.subs.validator.core.handlers;
 
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.AssayData;
-import uk.ac.ebi.subs.validator.core.validators.AssayRefValidator;
-import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
-import uk.ac.ebi.subs.validator.core.validators.SampleRefValidator;
-import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
+import uk.ac.ebi.subs.validator.core.validators.*;
+import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
@@ -19,15 +17,15 @@ import java.util.List;
  * a Sample via {@link uk.ac.ebi.subs.data.component.SampleRef SampleRef}.
  */
 @Service
-public class AssayDataHandler extends AbstractHandler {
+public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessageEnvelope> {
 
-    private AssayRefValidator assayRefValidator;
+    private ReferenceValidator assayRefValidator;
 
-    private SampleRefValidator sampleRefValidator;
+    private ReferenceValidator sampleRefValidator;
 
     private AttributeValidator attributeValidator;
 
-    public AssayDataHandler(AssayRefValidator assayRefValidator, SampleRefValidator sampleRefValidator,
+    public AssayDataHandler(ReferenceValidator assayRefValidator, ReferenceValidator sampleRefValidator,
                             AttributeValidator attributeValidator) {
         this.assayRefValidator = assayRefValidator;
         this.sampleRefValidator = sampleRefValidator;
@@ -35,13 +33,14 @@ public class AssayDataHandler extends AbstractHandler {
     }
 
     @Override
-    SingleValidationResult validateSubmittable(ValidationMessageEnvelope envelope) {
+    SingleValidationResult validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
         AssayData assayData = getAssayDataFromEnvelope(envelope);
 
         SingleValidationResult singleValidationResult =
                 new SingleValidationResult(ValidationAuthor.Core, assayData.getId());
-        assayRefValidator.validate(assayData.getAssayRef(), singleValidationResult);
-        sampleRefValidator.validate(assayData.getSampleRef(), singleValidationResult);
+
+        assayRefValidator.validate(envelope.getAssay(),  assayData.getAssayRef(), singleValidationResult);
+        sampleRefValidator.validate(envelope.getSample(), assayData.getSampleRef(), singleValidationResult);
 
         return singleValidationResult;
     }
