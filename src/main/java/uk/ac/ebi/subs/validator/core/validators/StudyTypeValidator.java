@@ -20,14 +20,17 @@ public class StudyTypeValidator {
      * @return singleValidationResult
      */
     public SingleValidationResult validate(Study study) {
+        SingleValidationResult singleValidationResult = ValidatorHelper.getDefaultSingleValidationResult(study.getId());
         StudyDataType studyDataType = study.getStudyType();
-
-        SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(study.getId());
 
         if (studyDataType == null) {
             singleValidationResult.setMessage(FAIL_MESSAGE);
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
         }
+        else {
+            singleValidationResult.setValidationStatus(SingleValidationResultStatus.Pass);
+        }
+
 
         return singleValidationResult;
     }

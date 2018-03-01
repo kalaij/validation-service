@@ -2,8 +2,11 @@ package uk.ac.ebi.subs.validator.core.validators;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.subs.data.component.StudyDataType;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.core.utils.TestUtils;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 
@@ -11,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+@RunWith(SpringRunner.class)
 public class StudyTypeValidatorTest {
 
     private StudyTypeValidator studyTypeValidator = new StudyTypeValidator();
@@ -26,20 +30,22 @@ public class StudyTypeValidatorTest {
     public void studyTypePresentSoPass() {
         study.setStudyType(StudyDataType.Metabolomics);
 
-        SingleValidationResult singleValidationResult = studyTypeValidator.validate(study);
+        SingleValidationResult result = studyTypeValidator.validate(study);
 
-        assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
-        assertNull(singleValidationResult.getMessage());
+        assertEquals(SingleValidationResultStatus.Pass, result.getValidationStatus());
+        assertNull(result.getMessage());
+        assertEquals(study.getId(), result.getEntityUuid());
     }
 
     @Test
     public void studyTypeAbsentSoFail() {
         study.setStudyType(null);
 
-        SingleValidationResult singleValidationResult = studyTypeValidator.validate(study);
+        SingleValidationResult result = studyTypeValidator.validate(study);
 
-        assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
-        assertNotNull(singleValidationResult.getMessage());
+        assertEquals(SingleValidationResultStatus.Error, result.getValidationStatus());
+        assertNotNull(result.getMessage());
+        assertEquals(study.getId(), result.getEntityUuid());
     }
 
 }

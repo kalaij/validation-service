@@ -8,6 +8,8 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,30 +21,27 @@ import java.util.List;
 @Service
 public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessageEnvelope> {
 
-    private ReferenceValidator assayRefValidator;
 
-    private ReferenceValidator sampleRefValidator;
+    private ReferenceValidator refValidator;
 
     private AttributeValidator attributeValidator;
 
-    public AssayDataHandler(ReferenceValidator assayRefValidator, ReferenceValidator sampleRefValidator,
+    public AssayDataHandler(ReferenceValidator refValidator,
                             AttributeValidator attributeValidator) {
-        this.assayRefValidator = assayRefValidator;
-        this.sampleRefValidator = sampleRefValidator;
+        this.refValidator = refValidator;
         this.attributeValidator = attributeValidator;
     }
 
     @Override
-    SingleValidationResult validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
+    List<SingleValidationResult> validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
         AssayData assayData = getAssayDataFromEnvelope(envelope);
 
-        SingleValidationResult singleValidationResult =
-                new SingleValidationResult(ValidationAuthor.Core, assayData.getId());
+        List<SingleValidationResult> results = Arrays.asList(
+                refValidator.validate(assayData.getId(), assayData.getAssayRef(), envelope.getAssay()),
+                refValidator.validate(assayData.getId(), assayData.getSampleRef(), envelope.getSample())
+        );
 
-        assayRefValidator.validate(envelope.getAssay(),  assayData.getAssayRef(), singleValidationResult);
-        sampleRefValidator.validate(envelope.getSample(), assayData.getSampleRef(), singleValidationResult);
-
-        return singleValidationResult;
+        return results;
     }
 
     @Override

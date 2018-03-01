@@ -2,6 +2,9 @@ package uk.ac.ebi.subs.validator.core.validators;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.subs.data.component.Attribute;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
@@ -19,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateListOfAttributes;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class AttributeValidatorTest {
 
     private AttributeValidator attributeValidator;

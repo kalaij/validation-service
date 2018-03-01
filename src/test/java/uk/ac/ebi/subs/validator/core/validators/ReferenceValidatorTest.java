@@ -6,25 +6,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.TestAnnotationUtils;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.subs.data.Submission;
+import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.validator.core.utils.TestUtils;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
-import static uk.ac.ebi.subs.validator.core.utils.TestUtils.*;
-
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ReferenceValidator.class)
 public class ReferenceValidatorTest {
 
@@ -33,39 +28,52 @@ public class ReferenceValidatorTest {
 
     Team team;
     static final String TEAM_NAME = "Test-Team";
-    SingleValidationResult singleValidationResult;
+
+    static final String EXPECTED_ID = "foo";
 
     @Before
     public void setup () {
         team = createTeam("TEAM_NAME");
-        singleValidationResult = generateSingleValidationResult();
     }
 
     @Test
     public void validateBySampleAcc() throws Exception {
-        Sample sample = createSample(team);
+
+        Submittable<Sample> sample = createSample(team);
         SampleRef sampleRef = new SampleRef();
         sampleRef.setAccession(sample.getAccession());
-        referenceValidator.validate(sample,sampleRef,singleValidationResult);
-        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
+
+        SingleValidationResult result = referenceValidator.validate(EXPECTED_ID,sampleRef, sample);
+
+        Assert.assertEquals(SingleValidationResultStatus.Pass, result.getValidationStatus());
+        Assert.assertEquals(EXPECTED_ID, result.getEntityUuid());
+        Assert.assertNull(result.getMessage());
     }
 
     @Test
     public void validateBySampleAlias() throws Exception {
-        Sample sample = createSample(team);
+        Submittable<Sample> sample = createSample(team);
         SampleRef sampleRef = new SampleRef();
         sampleRef.setAlias(sample.getAlias());
         sampleRef.setTeam(team.getName());
-        referenceValidator.validate(sample,sampleRef,singleValidationResult);
-        Assert.assertEquals(SingleValidationResultStatus.Pass, singleValidationResult.getValidationStatus());
+
+        SingleValidationResult result = referenceValidator.validate(EXPECTED_ID, sampleRef, sample);
+
+        Assert.assertEquals(SingleValidationResultStatus.Pass, result.getValidationStatus());
+        Assert.assertEquals(EXPECTED_ID, result.getEntityUuid());
+        Assert.assertNull(result.getMessage());
     }
 
     @Test
     public void validateByNotSampleAcc() throws Exception {
         SampleRef sampleRef = new SampleRef();
         sampleRef.setAccession(UUID.randomUUID().toString());
-        referenceValidator.validate(null,sampleRef,singleValidationResult);
-        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
+
+        Submittable<Sample> nullSample = null;
+
+        SingleValidationResult result = referenceValidator.validate(EXPECTED_ID, sampleRef, nullSample);
+
+        Assert.assertEquals(SingleValidationResultStatus.Error, result.getValidationStatus());
     }
 
     @Test
@@ -73,13 +81,17 @@ public class ReferenceValidatorTest {
         SampleRef sampleRef = new SampleRef();
         sampleRef.setAlias(UUID.randomUUID().toString());
         sampleRef.setTeam(team.getName());
-        referenceValidator.validate(null,sampleRef,singleValidationResult);
-        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
+
+        Submittable<Sample> nullSample = null;
+
+        SingleValidationResult result = referenceValidator.validate(EXPECTED_ID, sampleRef, nullSample);
+
+        Assert.assertEquals(SingleValidationResultStatus.Error, result.getValidationStatus());
     }
 
     @Test
     public void validateSampleRefNotinList() throws Exception {
-        final List<Sample> sampleList = createSamples(team, 10);
+        final List<Submittable<Sample>> sampleList = createSamples(team, 10);
 
         final List<SampleRef> sampleRefList = sampleList.stream().map(sample -> {
             SampleRef sampleRef = new SampleRef();
@@ -90,31 +102,35 @@ public class ReferenceValidatorTest {
         SampleRef sampleRefNotFound = new SampleRef();
         sampleRefNotFound.setAccession(UUID.randomUUID().toString());
         sampleRefList.add(sampleRefNotFound);
-        referenceValidator.validate(sampleList.toArray(
-                new Sample[sampleList.size()]),
-                sampleRefList.toArray(new SampleRef[sampleRefList.size()]),
-                singleValidationResult
-        );
-        Assert.assertEquals(SingleValidationResultStatus.Error, singleValidationResult.getValidationStatus());
+
+
+        List<SingleValidationResult> results = referenceValidator.validate(EXPECTED_ID, sampleRefList, sampleList);
+
+        long errorCount = results.stream().filter(r -> r.getValidationStatus().equals(SingleValidationResultStatus.Error)).count();
+
+
+        Assert.assertEquals(1L, errorCount);
 
     }
 
-    static List<Sample> createSamples (Team team, int sampleNumber) {
-        List<Sample> sampleList = new ArrayList<>(sampleNumber);
+    static List<Submittable<Sample>> createSamples (Team team, int sampleNumber) {
+        List<Submittable<Sample>> sampleList = new ArrayList<>(sampleNumber);
         for (int i = 0; i < sampleNumber; i++ ) {
             sampleList.add(createSample(team));
         }
         return sampleList;
     }
 
-    static Sample createSample (Team team) {
+    static Submittable<Sample> createSample (Team team) {
         Sample sample = new Sample();
         sample.setTeam(team);
         String alias = UUID.randomUUID().toString();
         String accession = UUID.randomUUID().toString();
         sample.setAlias(alias);
         sample.setAccession(accession);
-        return  sample;
+
+        return new Submittable<>(sample,"testSubId");
+
     }
 
     static Team createTeam (String teamName) {
