@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static uk.ac.ebi.subs.validator.core.utils.TestUtils.generateListOfAttributes;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class AttributeValidatorTest {
 
     private AttributeValidator attributeValidator;
