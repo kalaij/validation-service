@@ -4,14 +4,12 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.data.submittable.Study;
-import uk.ac.ebi.subs.data.submittable.Submittable;
-import uk.ac.ebi.subs.validator.core.validators.*;
+import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
+import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class responsible for handle {@link Assay} validation.
- *
+ * <p>
  * An assay refers to a study via {@link uk.ac.ebi.subs.data.component.StudyRef StudyRef} and to
  * one or multiple samples via {@link uk.ac.ebi.subs.data.component.SampleUse SampleUse}.
  */
@@ -56,7 +54,9 @@ public class AssayHandler extends AbstractHandler<AssayValidationMessageEnvelope
                 .collect(Collectors.toList());
 
 
-        refValidator.validate(assay.getId(),sampleRefs,envelope.getSampleList());
+        results.addAll(
+                refValidator.validate(assay.getId(), sampleRefs, envelope.getSampleList())
+        );
 
         return results;
     }

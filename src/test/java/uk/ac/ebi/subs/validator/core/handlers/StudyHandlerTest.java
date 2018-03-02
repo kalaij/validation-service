@@ -6,28 +6,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.subs.data.component.AssayRef;
-import uk.ac.ebi.subs.data.component.SampleRef;
-import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.data.submittable.AssayData;
-import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.data.component.ProjectRef;
+import uk.ac.ebi.subs.data.component.StudyDataType;
+import uk.ac.ebi.subs.data.submittable.Project;
+import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
-import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.core.validators.StudyTypeValidator;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
+import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-public class AssayDataHandlerTest {
+public class StudyHandlerTest {
 
-    private AssayDataHandler assayDataHandler;
+    private StudyHandler studyHandler;
 
     @MockBean
     private ReferenceValidator referenceValidator;
@@ -35,71 +36,54 @@ public class AssayDataHandlerTest {
     @MockBean
     private AttributeValidator attributeValidator;
 
-    private final String assayDataId = "assayDataID";
+    @MockBean
+    private StudyTypeValidator studyTypeValidator;
+
+    private final String studyId = "studyId";
     private final String validationResultId = "vrID";
     private final int validationVersion = 42;
 
-    private AssayDataValidationMessageEnvelope envelope;
+    private StudyValidationMessageEnvelope envelope;
 
-    private AssayRef assayRef;
-    private SampleRef sampleRef;
+    private ProjectRef projectRef;
+    private Submittable<Project> wrappedProject;
 
-    private Submittable<Assay> wrappedAssay;
-    private Submittable<Sample> wrappedSample;
+    private Study study;
+
 
     @Before
     public void buildUp() {
 
         //setup the handler
-        assayDataHandler = new AssayDataHandler(referenceValidator, attributeValidator);
+        studyHandler = new StudyHandler(studyTypeValidator, attributeValidator, referenceValidator);
 
         //refs
-        assayRef = new AssayRef();
-        sampleRef = new SampleRef();
+        projectRef = new ProjectRef();
 
         //entity to be validated
-        AssayData assayData = new AssayData();
-        assayData.setId(assayDataId);
-        assayData.setAssayRef(assayRef);
-        assayData.setSampleRef(sampleRef);
+        study = new Study();
+        study.setId(studyId);
+        study.setProjectRef(projectRef);
+        study.setStudyType(StudyDataType.Metabolomics);
 
         //reference data for the envelope
-        Assay assay = new Assay();
+        Project project = new Project();
         String submissionId = "subID";
-        wrappedAssay = new Submittable<>(assay, submissionId);
-        Sample sample = new Sample();
-        wrappedSample = new Submittable<>(sample, submissionId);
+        wrappedProject = new Submittable<>(project, submissionId);
 
         //envelope
-        envelope = new AssayDataValidationMessageEnvelope();
+        envelope = new StudyValidationMessageEnvelope();
         envelope.setValidationResultUUID(validationResultId);
         envelope.setValidationResultVersion(validationVersion);
-        envelope.setEntityToValidate(assayData);
-        envelope.setAssay(wrappedAssay);
-        envelope.setSample(wrappedSample);
-    }
-
-    private SingleValidationResult pass() {
-        return createResult(SingleValidationResultStatus.Pass);
-    }
-
-    private SingleValidationResult fail() {
-        return createResult(SingleValidationResultStatus.Error);
-    }
-
-    private SingleValidationResult createResult(SingleValidationResultStatus status) {
-        SingleValidationResult result = new SingleValidationResult();
-        result.setEntityUuid(assayDataId);
-        result.setValidationStatus(status);
-        result.setValidationAuthor(ValidationAuthor.Core);
-        return result;
+        envelope.setEntityToValidate(study);
+        envelope.setProject(wrappedProject);
     }
 
     @Test
-    public void testHandler_bothRefCallsPass() {
-        mockRefValidatorCalls(pass(), pass());
+    public void testHandler_bothCallsPass() {
+        mockValidatorCalls(pass(), pass());
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
+        SingleValidationResultsEnvelope resultsEnvelope = studyHandler.handleValidationRequest(envelope);
 
 
         commonEnvelopeAsserts(resultsEnvelope);
@@ -114,10 +98,10 @@ public class AssayDataHandlerTest {
 
 
     @Test
-    public void testHandler_sampleFails() {
-        mockRefValidatorCalls(fail(), pass());
+    public void testHandler_projectFails() {
+        mockValidatorCalls(fail(), pass());
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
+        SingleValidationResultsEnvelope resultsEnvelope = studyHandler.handleValidationRequest(envelope);
 
 
         commonEnvelopeAsserts(resultsEnvelope);
@@ -130,10 +114,10 @@ public class AssayDataHandlerTest {
     }
 
     @Test
-    public void testHandler_assayFails() {
-        mockRefValidatorCalls(pass(), fail());
+    public void testHandler_studyTypeFails() {
+        mockValidatorCalls(pass(), fail());
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
+        SingleValidationResultsEnvelope resultsEnvelope = studyHandler.handleValidationRequest(envelope);
 
 
         commonEnvelopeAsserts(resultsEnvelope);
@@ -147,9 +131,9 @@ public class AssayDataHandlerTest {
 
     @Test
     public void testHandler_bothFail() {
-        mockRefValidatorCalls(fail(),fail());
+        mockValidatorCalls(fail(),fail());
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayDataHandler.handleValidationRequest(envelope);
+        SingleValidationResultsEnvelope resultsEnvelope = studyHandler.handleValidationRequest(envelope);
 
 
         commonEnvelopeAsserts(resultsEnvelope);
@@ -170,22 +154,38 @@ public class AssayDataHandlerTest {
         Assert.assertEquals(validationVersion, envelope.getValidationResultVersion());
 
         for (SingleValidationResult result : resultsEnvelope.getSingleValidationResults()) {
-            Assert.assertEquals(assayDataId, result.getEntityUuid());
+            Assert.assertEquals(studyId, result.getEntityUuid());
         }
 
     }
 
-    private void mockRefValidatorCalls(SingleValidationResult assayResult, SingleValidationResult sampleResult) {
+    private void mockValidatorCalls(SingleValidationResult projectResult, SingleValidationResult studyTypeResult) {
         when(
-                referenceValidator.validate(assayDataId, sampleRef, wrappedSample)
+                referenceValidator.validate(studyId, projectRef, wrappedProject)
         ).thenReturn(
-                assayResult
+                projectResult
         );
 
         when(
-                referenceValidator.validate(assayDataId, assayRef, wrappedAssay)
+                studyTypeValidator.validate(study)
         ).thenReturn(
-                sampleResult
+                studyTypeResult
         );
+    }
+    
+    private SingleValidationResult pass() {
+        return createResult(SingleValidationResultStatus.Pass);
+    }
+
+    private SingleValidationResult fail() {
+        return createResult(SingleValidationResultStatus.Error);
+    }
+
+    private SingleValidationResult createResult(SingleValidationResultStatus status) {
+        SingleValidationResult result = new SingleValidationResult();
+        result.setEntityUuid(studyId);
+        result.setValidationStatus(status);
+        result.setValidationAuthor(ValidationAuthor.Core);
+        return result;
     }
 }
