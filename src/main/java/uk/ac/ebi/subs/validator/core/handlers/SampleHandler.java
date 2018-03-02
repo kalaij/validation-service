@@ -1,19 +1,20 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.data.component.SampleRef;
-import uk.ac.ebi.subs.data.component.SampleRelationship;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
 import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
+import uk.ac.ebi.subs.validator.model.Submittable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class responsible for handle {@link Sample} validation.
@@ -24,26 +25,26 @@ import java.util.List;
 @Service
 public class SampleHandler extends AbstractHandler<SampleValidationMessageEnvelope> {
 
-    private ReferenceValidator sampleRefValidator;
+    private ReferenceValidator referenceValidator;
 
     private AttributeValidator attributeValidator;
 
-    public SampleHandler(ReferenceValidator sampleRefValidator, AttributeValidator attributeValidator) {
-        this.sampleRefValidator = sampleRefValidator;
+    public SampleHandler(ReferenceValidator referenceValidator, AttributeValidator attributeValidator) {
+        this.referenceValidator = referenceValidator;
         this.attributeValidator = attributeValidator;
     }
 
     @Override
-    SingleValidationResult validateSubmittable(SampleValidationMessageEnvelope envelope) {
+    List<SingleValidationResult> validateSubmittable(SampleValidationMessageEnvelope envelope) {
         Sample sample = getSampleFromEnvelope(envelope);
 
-        SingleValidationResult singleValidationResult =
-                new SingleValidationResult(ValidationAuthor.Core, sample.getId());
-        final Submittable[] submittables = envelope.getSampleList().toArray(new Submittable[envelope.getSampleList().size()]);
-        final SampleRef[] sampleRefs = sample.getSampleRelationships().toArray(new SampleRelationship[sample.getSampleRelationships().size()]);
-        sampleRefValidator.validate(submittables, sampleRefs, singleValidationResult);
+        List<SingleValidationResult> results = referenceValidator.validate(
+                sample.getId(),
+                sample.getSampleRelationships(),
+                envelope.getSampleList()
+        );
 
-        return singleValidationResult;
+        return results;
     }
 
     @Override

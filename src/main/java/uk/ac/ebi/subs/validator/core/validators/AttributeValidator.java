@@ -21,20 +21,20 @@ public class AttributeValidator {
         List<SingleValidationResult> validationResults = new ArrayList<>();
 
         if (attributeName == null) {
-            validationResults.add(createSingleValidationResult(id, NULL_NAME_MESSAGE));
+            validationResults.add(createSingleErrorResult(id, NULL_NAME_MESSAGE));
         }
 
         if (attributes != null) {
             attributes.forEach(attribute -> {
                 if (attribute.getValue() == null) {
-                    validationResults.add(createSingleValidationResult(id, NULL_VALUE_MESSAGE));
+                    validationResults.add(createSingleErrorResult(id, NULL_VALUE_MESSAGE));
                 }
             });
         }
         return validationResults;
     }
 
-    private SingleValidationResult createSingleValidationResult(String id, String message) {
+    private SingleValidationResult createSingleErrorResult(String id, String message) {
         SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
         singleValidationResult.setMessage(message);
         singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);

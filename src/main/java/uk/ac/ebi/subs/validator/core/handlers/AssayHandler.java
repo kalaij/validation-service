@@ -4,48 +4,61 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.SampleUse;
 import uk.ac.ebi.subs.data.submittable.Assay;
-import uk.ac.ebi.subs.data.submittable.Submittable;
-import uk.ac.ebi.subs.validator.core.validators.*;
+import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
+import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class responsible for handle {@link Assay} validation.
- *
+ * <p>
  * An assay refers to a study via {@link uk.ac.ebi.subs.data.component.StudyRef StudyRef} and to
  * one or multiple samples via {@link uk.ac.ebi.subs.data.component.SampleUse SampleUse}.
  */
 @Service
 public class AssayHandler extends AbstractHandler<AssayValidationMessageEnvelope> {
 
-    private ReferenceValidator studyRefValidator;
+    private ReferenceValidator refValidator;
 
-    private ReferenceValidator sampleRefValidator;
 
     private AttributeValidator attributeValidator;
 
-    public AssayHandler(ReferenceValidator studyRefValidator, ReferenceValidator sampleRefValidator,
+    public AssayHandler(ReferenceValidator refValidator,
                         AttributeValidator attributeValidator) {
-        this.studyRefValidator = studyRefValidator;
-        this.sampleRefValidator = sampleRefValidator;
+        this.refValidator = refValidator;
         this.attributeValidator = attributeValidator;
     }
 
     @Override
-    SingleValidationResult validateSubmittable(AssayValidationMessageEnvelope envelope) {
+    List<SingleValidationResult> validateSubmittable(AssayValidationMessageEnvelope envelope) {
         Assay assay = getAssayFromEnvelope(envelope);
 
-        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, assay.getId());
-        studyRefValidator.validate(envelope.getStudy(), assay.getStudyRef(), singleValidationResult);
-        final Submittable[] submittables = envelope.getSampleList().toArray(new Submittable[envelope.getSampleList().size()]);
-        final SampleRef[] sampleRefs = assay.getSampleUses().stream().map(SampleUse::getSampleRef).toArray(SampleRef[]::new);
-        sampleRefValidator.validate(submittables, sampleRefs, singleValidationResult);
+        List<SingleValidationResult> results = new ArrayList<>();
 
-        return singleValidationResult;
+        results.add(
+                refValidator.validate(
+                        assay.getId(),
+                        assay.getStudyRef(),
+                        envelope.getStudy())
+        );
+
+        Collection<SampleRef> sampleRefs = assay.getSampleUses().stream()
+                .map(SampleUse::getSampleRef)
+                .collect(Collectors.toList());
+
+
+        results.addAll(
+                refValidator.validate(assay.getId(), sampleRefs, envelope.getSampleList())
+        );
+
+        return results;
     }
 
     @Override
