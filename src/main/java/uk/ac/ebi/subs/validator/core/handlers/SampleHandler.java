@@ -37,7 +37,6 @@ public class SampleHandler extends AbstractHandler<SampleValidationMessageEnvelo
     @Override
     List<SingleValidationResult> validateSubmittable(SampleValidationMessageEnvelope envelope) {
         Sample sample = getSampleFromEnvelope(envelope);
-        final String submissionId = envelope.getSubmissionId();
 
         List<SingleValidationResult> results = referenceValidator.validate(
                 sample.getId(),
