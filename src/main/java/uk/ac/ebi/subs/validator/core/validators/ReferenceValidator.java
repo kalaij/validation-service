@@ -2,7 +2,6 @@ package uk.ac.ebi.subs.validator.core.validators;
 
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.AbstractSubsRef;
-import uk.ac.ebi.subs.data.submittable.BaseSubmittable;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.model.Submittable;
@@ -17,15 +16,15 @@ import java.util.stream.Collectors;
 import static uk.ac.ebi.subs.validator.core.validators.ValidatorHelper.getDefaultSingleValidationResult;
 
 @Service
-public class ReferenceValidator<T extends BaseSubmittable> {
+public class ReferenceValidator {
     String FAIL_MESSAGE = "Could not find reference target: %s ";
     String FAIL_TEAM_AND_ALIAS_MESSAGE = "Could not find reference for ALIAS: %s in TEAM: %s ";
 
 
     public List<SingleValidationResult> validate(
             String idOfSubmittableBeingValidated,
-            Collection<AbstractSubsRef> referencesToSubmittables,
-            Collection<Submittable> referencedSubmittables) {
+            Collection<? extends AbstractSubsRef> referencesToSubmittables,
+            Collection<? extends Submittable> referencedSubmittables) {
 
         List<SingleValidationResult> results = new ArrayList<>();
 

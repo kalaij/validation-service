@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.data.component.SampleRef;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Sample;
@@ -91,9 +92,9 @@ public class ReferenceValidatorTest {
 
     @Test
     public void validateSampleRefNotinList() throws Exception {
-        final List<Submittable<Sample>> sampleList = createSamples(team, 10);
+        final List<Submittable> sampleList = createSamples(team, 10);
 
-        final List<SampleRef> sampleRefList = sampleList.stream().map(sample -> {
+        final List<AbstractSubsRef> sampleRefList = sampleList.stream().map(sample -> {
             SampleRef sampleRef = new SampleRef();
             sampleRef.setAccession(sample.getAccession());
             return sampleRef;
@@ -104,7 +105,11 @@ public class ReferenceValidatorTest {
         sampleRefList.add(sampleRefNotFound);
 
 
-        List<SingleValidationResult> results = referenceValidator.validate(EXPECTED_ID, sampleRefList, sampleList);
+        List<SingleValidationResult> results = referenceValidator.validate(
+                EXPECTED_ID,
+                sampleRefList,
+                sampleList
+        );
 
         long errorCount = results.stream().filter(r -> r.getValidationStatus().equals(SingleValidationResultStatus.Error)).count();
 
@@ -113,8 +118,8 @@ public class ReferenceValidatorTest {
 
     }
 
-    static List<Submittable<Sample>> createSamples (Team team, int sampleNumber) {
-        List<Submittable<Sample>> sampleList = new ArrayList<>(sampleNumber);
+    static List<Submittable> createSamples (Team team, int sampleNumber) {
+        List<Submittable> sampleList = new ArrayList<>(sampleNumber);
         for (int i = 0; i < sampleNumber; i++ ) {
             sampleList.add(createSample(team));
         }
