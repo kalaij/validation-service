@@ -66,6 +66,7 @@ task('externalCiTest', type: Test) {
         group = "verification"
         description = 'Run tests appropriate for our external CI environment'
     }
+    runWithMongoDb = true
 }
 
 ssh.settings {
