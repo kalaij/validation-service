@@ -50,7 +50,7 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(project)) {
             logger.error("Error handling project with id {}", project.getId());
         } else {
-            logger.trace("Triggering chained validation from project " + project.getId());
+            logger.trace("Triggering chained validation from project {}", project.getId());
             chainedValidationService.triggerChainedValidation(project, envelope.getSubmissionId());
         }
     }
@@ -72,7 +72,7 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(sample, envelope.getSubmissionId())) {
             logger.error("Error handling sample with id {}", sample.getId());
         } else {
-            logger.trace("Triggering chained validation from sample " + sample.getId());
+            logger.trace("Triggering chained validation from sample {}", sample.getId());
             chainedValidationService.triggerChainedValidation(sample, envelope.getSubmissionId());
         }
     }
@@ -94,7 +94,7 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(study,envelope.getSubmissionId())) {
             logger.error("Error handling study with id {}", study.getId());
         } else {
-            logger.trace("Triggering chained validation from study " + study.getId());
+            logger.trace("Triggering chained validation from study {}", study.getId());
             chainedValidationService.triggerChainedValidation(study, envelope.getSubmissionId());
         }
     }
@@ -116,7 +116,7 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(assay,envelope.getSubmissionId())) {
             logger.error("Error handling assay with id {}", assay.getId());
         } else {
-            logger.trace("Triggering chained validation from assay " + assay.getId());
+            logger.trace("Triggering chained validation from assay {}", assay.getId());
             chainedValidationService.triggerChainedValidation(assay, envelope.getSubmissionId());
         }
     }
@@ -138,7 +138,7 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(assayData,envelope.getSubmissionId())) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         } else {
-            logger.trace("Triggering chained validation from assayData " + assayData.getId());
+            logger.trace("Triggering chained validation from assayData {}", assayData.getId());
             chainedValidationService.triggerChainedValidation(assayData, envelope.getSubmissionId());
         }
     }
