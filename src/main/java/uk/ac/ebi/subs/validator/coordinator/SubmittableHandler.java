@@ -9,6 +9,7 @@ import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.repository.model.StoredSubmittable;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
@@ -160,8 +161,19 @@ public class SubmittableHandler {
         return validationResult.getEntityUuid() != null;
     }
 
-    protected boolean handleStoredSubmittable(StoredSubmittable storedSubmittable) {
-        // TODO some magic here
-        return false;
+    protected void handleSubmittable(Submittable submittable, String submissionId) {
+        if(submittable instanceof Project) {
+            handleSubmittable((Project) submittable);
+        } else if(submittable instanceof Sample) {
+            handleSubmittable((Sample) submittable, submissionId);
+        } else if(submittable instanceof Study) {
+            handleSubmittable((Study) submittable, submissionId);
+        } else if(submittable instanceof Assay) {
+            handleSubmittable((Assay) submittable, submissionId);
+        } else if(submittable instanceof AssayData) {
+            handleSubmittable((AssayData) submittable, submissionId);
+        } else {
+            logger.error("Could not understand submittable {}", submittable);
+        }
     }
 }
