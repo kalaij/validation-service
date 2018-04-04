@@ -10,7 +10,6 @@ import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.filereference.FileReferenceValidator;
 
 import java.util.Arrays;
 import java.util.List;
