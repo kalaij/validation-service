@@ -25,7 +25,7 @@ public class CoordinatorValidationResultService {
         this.repository = repository;
     }
 
-    public ValidationResult generateValidationResultDocument(Project project){
+    public ValidationResult fetchValidationResultDocument(Project project){
         ValidationResult validationResult = findAndUpdateValidationResult(project);
         validationResult.setExpectedResults(BlankValidationResultMaps.forProject());
 
@@ -35,7 +35,7 @@ public class CoordinatorValidationResultService {
     }
 
 
-    public ValidationResult generateValidationResultDocument(Sample sample){
+    public ValidationResult fetchValidationResultDocument(Sample sample) {
         ValidationResult validationResult = findAndUpdateValidationResult(sample);
         validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
 
@@ -44,7 +44,7 @@ public class CoordinatorValidationResultService {
         return validationResult;
     }
 
-    public ValidationResult generateValidationResultDocument(Study study){
+    public ValidationResult fetchValidationResultDocument(Study study) {
         ValidationResult validationResult = findAndUpdateValidationResult(study);
         validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
 
@@ -53,7 +53,7 @@ public class CoordinatorValidationResultService {
         return validationResult;
     }
 
-    public ValidationResult generateValidationResultDocument(Assay assay){
+    public ValidationResult fetchValidationResultDocument(Assay assay) {
         ValidationResult validationResult = findAndUpdateValidationResult(assay);
         validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
 
@@ -62,7 +62,7 @@ public class CoordinatorValidationResultService {
         return validationResult;
     }
 
-    public ValidationResult generateValidationResultDocument(AssayData assayData){
+    public ValidationResult fetchValidationResultDocument(AssayData assayData) {
         ValidationResult validationResult = findAndUpdateValidationResult(assayData);
         validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
 

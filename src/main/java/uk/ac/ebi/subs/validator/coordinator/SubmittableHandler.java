@@ -11,7 +11,6 @@ import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.messaging.Exchanges;
-import uk.ac.ebi.subs.repository.model.StoredSubmittable;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
@@ -64,7 +63,7 @@ public class SubmittableHandler {
      * the UUID of the {@link ValidationResult}
      */
     protected boolean handleSubmittable(Project project) {
-        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(project);
+        ValidationResult validationResult = coordinatorValidationResultService.fetchValidationResultDocument(project);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -83,7 +82,7 @@ public class SubmittableHandler {
      * the UUID of the {@link ValidationResult}
      */
     protected boolean handleSubmittable(Sample sample, String submissionId) {
-        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(sample);
+        ValidationResult validationResult = coordinatorValidationResultService.fetchValidationResultDocument(sample);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -106,7 +105,7 @@ public class SubmittableHandler {
      * the UUID of the {@link ValidationResult}
      */
     protected boolean handleSubmittable(Study study, String submissionId) {
-        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(study);
+        ValidationResult validationResult = coordinatorValidationResultService.fetchValidationResultDocument(study);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 
@@ -127,7 +126,7 @@ public class SubmittableHandler {
      * the UUID of the {@link ValidationResult}
      */
     protected boolean handleSubmittable(Assay assay, String submissionId) {
-        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assay);
+        ValidationResult validationResult = coordinatorValidationResultService.fetchValidationResultDocument(assay);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
         AssayValidationMessageEnvelope assayValidationMessageEnvelope = new AssayValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assay,submissionId);
@@ -147,7 +146,7 @@ public class SubmittableHandler {
      * the UUID of the {@link ValidationResult}
      */
     protected boolean handleSubmittable(AssayData assayData, String submissionId) {
-        ValidationResult validationResult = coordinatorValidationResultService.generateValidationResultDocument(assayData);
+        ValidationResult validationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
 
         logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
 

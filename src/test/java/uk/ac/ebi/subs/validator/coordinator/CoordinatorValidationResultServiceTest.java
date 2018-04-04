@@ -45,7 +45,7 @@ public class CoordinatorValidationResultServiceTest {
         ValidationResult validationResult = new ValidationResult();
 
         for (int i = 0; i < 5; i++) {
-            validationResult = service.generateValidationResultDocument(sample);
+            validationResult = service.fetchValidationResultDocument(sample);
         }
 
         Assert.assertEquals(5, validationResult.getVersion());
