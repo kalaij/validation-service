@@ -1,11 +1,15 @@
 package uk.ac.ebi.subs.validator;
 
+import uk.ac.ebi.subs.data.component.File;
 import uk.ac.ebi.subs.data.component.Team;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
+import uk.ac.ebi.subs.repository.model.AssayData;
+import uk.ac.ebi.subs.repository.model.Submission;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,5 +48,14 @@ public final class TestUtils {
         project.setId("TEST_PROJECT_" + id);
         project.setReleaseDate(LocalDate.now());
         return project;
+    }
+
+    public static AssayData createAssayData(String assayDataId, Submission submission, List<File> files) {
+        AssayData assayData = new AssayData();
+        assayData.setId(assayDataId);
+        assayData.setSubmission(submission);
+        assayData.setFiles(files);
+
+        return assayData;
     }
 }

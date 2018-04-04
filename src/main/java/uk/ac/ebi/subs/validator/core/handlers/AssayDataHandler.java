@@ -1,14 +1,16 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.AssayData;
-import uk.ac.ebi.subs.validator.core.validators.*;
+import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
+import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
+import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,18 +21,14 @@ import java.util.List;
  * a Sample via {@link uk.ac.ebi.subs.data.component.SampleRef SampleRef}.
  */
 @Service
+@RequiredArgsConstructor
 public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessageEnvelope> {
 
-
+    @NonNull
     private ReferenceValidator refValidator;
 
+    @NonNull
     private AttributeValidator attributeValidator;
-
-    public AssayDataHandler(ReferenceValidator refValidator,
-                            AttributeValidator attributeValidator) {
-        this.refValidator = refValidator;
-        this.attributeValidator = attributeValidator;
-    }
 
     @Override
     List<SingleValidationResult> validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
