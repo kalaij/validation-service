@@ -16,15 +16,16 @@ import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
-import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
-import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethod;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.fail;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.pass;
 
 @RunWith(SpringRunner.class)
 public class AssayHandlerTest {
@@ -90,32 +91,23 @@ public class AssayHandlerTest {
 
     @Test
     public void testHandler_bothRefCallsPass() {
-        mockRefValidatorCalls(pass(), pass());
+        mockRefValidatorCalls(pass(assayId), pass(assayId));
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayHandler.handleValidationRequest(envelope);
-
-
-        commonEnvelopeAsserts(resultsEnvelope);
-
-        List<SingleValidationResult> actualResults = resultsEnvelope.getSingleValidationResults();
+        List<SingleValidationResult> actualResults =
+                commonTestMethod(assayHandler, envelope, validationResultId, validationVersion, assayId);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(1, actualResults.size());
         Assert.assertEquals(SingleValidationResultStatus.Pass, actualResults.get(0).getValidationStatus());
+
     }
-
-
 
     @Test
     public void testHandler_sampleFails() {
-        mockRefValidatorCalls(fail(), pass());
+        mockRefValidatorCalls(fail(assayId), pass(assayId));
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayHandler.handleValidationRequest(envelope);
-
-
-        commonEnvelopeAsserts(resultsEnvelope);
-
-        List<SingleValidationResult> actualResults = resultsEnvelope.getSingleValidationResults();
+        List<SingleValidationResult> actualResults =
+                commonTestMethod(assayHandler, envelope, validationResultId, validationVersion, assayId);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(1, actualResults.size());
@@ -124,14 +116,10 @@ public class AssayHandlerTest {
 
     @Test
     public void testHandler_assayFails() {
-        mockRefValidatorCalls(pass(), fail());
+        mockRefValidatorCalls(pass(assayId), fail(assayId));
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayHandler.handleValidationRequest(envelope);
-
-
-        commonEnvelopeAsserts(resultsEnvelope);
-
-        List<SingleValidationResult> actualResults = resultsEnvelope.getSingleValidationResults();
+        List<SingleValidationResult> actualResults =
+                commonTestMethod(assayHandler, envelope, validationResultId, validationVersion, assayId);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(1, actualResults.size());
@@ -140,14 +128,10 @@ public class AssayHandlerTest {
 
     @Test
     public void testHandler_bothFail() {
-        mockRefValidatorCalls(fail(),fail());
+        mockRefValidatorCalls(fail(assayId), fail(assayId));
 
-        SingleValidationResultsEnvelope resultsEnvelope = assayHandler.handleValidationRequest(envelope);
-
-
-        commonEnvelopeAsserts(resultsEnvelope);
-
-        List<SingleValidationResult> actualResults = resultsEnvelope.getSingleValidationResults();
+        List<SingleValidationResult> actualResults =
+                commonTestMethod(assayHandler, envelope, validationResultId, validationVersion, assayId);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(2, actualResults.size());
@@ -155,18 +139,6 @@ public class AssayHandlerTest {
         Assert.assertEquals(SingleValidationResultStatus.Error, actualResults.get(1).getValidationStatus());
     }
 
-    private void commonEnvelopeAsserts(SingleValidationResultsEnvelope resultsEnvelope) {
-        Assert.assertNotNull(resultsEnvelope);
-        Assert.assertNotNull(resultsEnvelope.getSingleValidationResults());
-        Assert.assertEquals(ValidationAuthor.Core, resultsEnvelope.getValidationAuthor());
-        Assert.assertEquals(validationResultId, envelope.getValidationResultUUID());
-        Assert.assertEquals(validationVersion, envelope.getValidationResultVersion());
-
-        for (SingleValidationResult result : resultsEnvelope.getSingleValidationResults()) {
-            Assert.assertEquals(assayId, result.getEntityUuid());
-        }
-
-    }
 
     private void mockRefValidatorCalls(SingleValidationResult studyResult, SingleValidationResult sampleresult) {
         when(
@@ -180,21 +152,5 @@ public class AssayHandlerTest {
         ).thenReturn(
                 Arrays.asList(sampleresult)
         );
-    }
-    
-    private SingleValidationResult pass() {
-        return createResult(SingleValidationResultStatus.Pass);
-    }
-
-    private SingleValidationResult fail() {
-        return createResult(SingleValidationResultStatus.Error);
-    }
-
-    private SingleValidationResult createResult(SingleValidationResultStatus status) {
-        SingleValidationResult result = new SingleValidationResult();
-        result.setEntityUuid(assayId);
-        result.setValidationStatus(status);
-        result.setValidationAuthor(ValidationAuthor.Core);
-        return result;
     }
 }
