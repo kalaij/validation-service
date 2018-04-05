@@ -1,10 +1,11 @@
 package uk.ac.ebi.subs.validator.core;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.core.handlers.AssayDataHandler;
@@ -13,31 +14,36 @@ import uk.ac.ebi.subs.validator.core.handlers.SampleHandler;
 import uk.ac.ebi.subs.validator.core.handlers.StudyHandler;
 import uk.ac.ebi.subs.validator.core.messaging.Queues;
 import uk.ac.ebi.subs.validator.core.messaging.RoutingKeys;
-import uk.ac.ebi.subs.validator.data.*;
+import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
+import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.filereference.FileReferenceHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(ValidatorListener.class);
 
-    @Autowired
+    @NonNull
     private AssayHandler assayHandler;
-    @Autowired
+    @NonNull
     private AssayDataHandler assayDataHandler;
-    @Autowired
+    @NonNull
     private SampleHandler sampleHandler;
-    @Autowired
+    @NonNull
     private StudyHandler studyHandler;
+    @NonNull
+    private FileReferenceHandler fileReferenceHandler;
 
+    @NonNull
     private RabbitMessagingTemplate rabbitMessagingTemplate;
-
-    @Autowired
-    public ValidatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
-        this.rabbitMessagingTemplate = rabbitMessagingTemplate;
-    }
 
     @RabbitListener(queues = Queues.CORE_ASSAY_VALIDATION)
     public void handleAssayValidationRequest(AssayValidationMessageEnvelope envelope) {
@@ -70,6 +76,16 @@ public class ValidatorListener {
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = studyHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
     }
+
+    @RabbitListener(queues = Queues.FILE_REFERENCE_ASSAYDATA_VALIDATION)
+    public void handleAssayDataFileReferenceValidationRequest(AssayDataValidationMessageEnvelope envelope) {
+        logger.debug("AssayData file reference validation request received with ID: {}.",
+                envelope.getEntityToValidate().getId());
+
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope = fileReferenceHandler.handleValidationRequest(envelope);
+        sendResults(singleValidationResultsEnvelope);
+    }
+
 
     private void sendResults(SingleValidationResultsEnvelope envelope) {
         List<SingleValidationResult> errorResults = envelope.getSingleValidationResults().stream().filter(svr -> svr.getValidationStatus().equals(SingleValidationResultStatus.Error)).collect(Collectors.toList());

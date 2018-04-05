@@ -12,7 +12,9 @@ import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
 import uk.ac.ebi.subs.validator.core.validators.ReferenceValidator;
 import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
+import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethod;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.fail;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.getValidationResultFromSubmittables;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.pass;
 
 @RunWith(SpringRunner.class)
@@ -37,6 +40,7 @@ public class SampleHandlerTest {
     private final String sampleId = "sampleId";
     private final String validationResultId = "vrID";
     private final int validationVersion = 42;
+    private static final ValidationAuthor VALIDATION_AUTHOR_CORE = ValidationAuthor.Core;
 
     private SampleValidationMessageEnvelope envelope;
 
@@ -71,10 +75,13 @@ public class SampleHandlerTest {
 
     @Test
     public void testHandler_pass() {
-        mockValidatorCalls(pass(sampleId));
+        mockValidatorCalls(pass(sampleId, VALIDATION_AUTHOR_CORE));
+
+        SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(sampleHandler, envelope, validationResultId, validationVersion, sampleId);
+                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                        VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(1, actualResults.size());
@@ -83,10 +90,13 @@ public class SampleHandlerTest {
 
     @Test
     public void testHandler_partialFailure() {
-        mockValidatorCalls(fail(sampleId), pass(sampleId));
+        mockValidatorCalls(fail(sampleId, VALIDATION_AUTHOR_CORE), pass(sampleId, VALIDATION_AUTHOR_CORE));
+
+        SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(sampleHandler, envelope, validationResultId, validationVersion, sampleId);
+                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                        VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(1, actualResults.size());
@@ -95,10 +105,13 @@ public class SampleHandlerTest {
 
     @Test
     public void testHandler_bothFail() {
-        mockValidatorCalls(fail(sampleId),fail(sampleId));
+        mockValidatorCalls(fail(sampleId, VALIDATION_AUTHOR_CORE),fail(sampleId, VALIDATION_AUTHOR_CORE));
+
+        SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(sampleHandler, envelope, validationResultId, validationVersion, sampleId);
+                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                        VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
         Assert.assertEquals(2, actualResults.size());

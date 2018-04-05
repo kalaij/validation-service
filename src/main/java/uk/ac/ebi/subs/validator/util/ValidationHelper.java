@@ -17,13 +17,14 @@ public final class ValidationHelper {
     }
 
     public static SingleValidationResultsEnvelope generateSingleValidationResultsEnvelope(
-            ValidationMessageEnvelope envelope, List<SingleValidationResult> singleValidationResults) {
+            ValidationMessageEnvelope envelope, List<SingleValidationResult> singleValidationResults,
+            ValidationAuthor validationAuthor) {
 
         return new SingleValidationResultsEnvelope(
                 singleValidationResults,
                 envelope.getValidationResultVersion(),
                 envelope.getValidationResultUUID(),
-                ValidationAuthor.Core
+                validationAuthor
         );
     }
 }
