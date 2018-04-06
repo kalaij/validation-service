@@ -39,8 +39,6 @@ public class ValidatorListener {
     private SampleHandler sampleHandler;
     @NonNull
     private StudyHandler studyHandler;
-    @NonNull
-    private FileReferenceHandler fileReferenceHandler;
 
     @NonNull
     private RabbitMessagingTemplate rabbitMessagingTemplate;
@@ -76,16 +74,6 @@ public class ValidatorListener {
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = studyHandler.handleValidationRequest(envelope);
         sendResults(singleValidationResultsEnvelope);
     }
-
-    @RabbitListener(queues = Queues.FILE_REFERENCE_ASSAYDATA_VALIDATION)
-    public void handleAssayDataFileReferenceValidationRequest(AssayDataValidationMessageEnvelope envelope) {
-        logger.debug("AssayData file reference validation request received with ID: {}.",
-                envelope.getEntityToValidate().getId());
-
-        SingleValidationResultsEnvelope singleValidationResultsEnvelope = fileReferenceHandler.handleValidationRequest(envelope);
-        sendResults(singleValidationResultsEnvelope);
-    }
-
 
     private void sendResults(SingleValidationResultsEnvelope envelope) {
         List<SingleValidationResult> errorResults = envelope.getSingleValidationResults().stream().filter(svr -> svr.getValidationStatus().equals(SingleValidationResultStatus.Error)).collect(Collectors.toList());
