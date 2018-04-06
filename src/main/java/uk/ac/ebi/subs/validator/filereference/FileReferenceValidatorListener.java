@@ -3,8 +3,6 @@ package uk.ac.ebi.subs.validator.filereference;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -17,16 +15,14 @@ import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static uk.ac.ebi.subs.validator.filereference.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
-import static uk.ac.ebi.subs.validator.filereference.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_ERROR;
-import static uk.ac.ebi.subs.validator.filereference.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_SUCCESS;
+import static uk.ac.ebi.subs.validator.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_ERROR;
+import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FileReferenceValidatorListener {
-
-    private static Logger logger = LoggerFactory.getLogger(FileReferenceValidatorListener.class);
 
     @NonNull
     private RabbitMessagingTemplate rabbitMessagingTemplate;
@@ -36,7 +32,7 @@ public class FileReferenceValidatorListener {
 
     @RabbitListener(queues = FILE_REFERENCE_ASSAYDATA_VALIDATION)
     public void handleAssayDataFileReferenceValidationRequest(AssayDataValidationMessageEnvelope envelope) {
-        logger.debug("AssayData file reference validation request received with ID: {}.",
+        log.debug("AssayData file reference validation request received with ID: {}.",
                 envelope.getEntityToValidate().getId());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope = fileReferenceHandler.handleValidationRequest(envelope);

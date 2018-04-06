@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.filereference.messaging;
+package uk.ac.ebi.subs.validator.messaging;
 
 /**
  * This class holds the validation routing keys for the core-validator.

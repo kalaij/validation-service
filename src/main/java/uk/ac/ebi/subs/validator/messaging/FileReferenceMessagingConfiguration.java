@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.filereference.messaging;
+package uk.ac.ebi.subs.validator.messaging;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -11,7 +11,7 @@ import uk.ac.ebi.subs.messaging.ExchangeConfig;
 
 import static uk.ac.ebi.subs.messaging.Queues.buildQueueWithDlx;
 import static uk.ac.ebi.subs.validator.core.messaging.RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION;
-import static uk.ac.ebi.subs.validator.filereference.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
 
 @Configuration
 @ComponentScan(basePackageClasses = ExchangeConfig.class)
