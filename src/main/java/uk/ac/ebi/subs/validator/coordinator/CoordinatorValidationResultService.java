@@ -2,7 +2,6 @@ package uk.ac.ebi.subs.validator.coordinator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
@@ -77,10 +76,10 @@ public class CoordinatorValidationResultService {
         if (validationResult != null) {
             validationResult.setValidationStatus(GlobalValidationStatus.Pending);
             validationResult.setVersion(validationResult.getVersion() + 1);
-            logger.debug("ValidationResult has been changed to status: {} and version: {}",
+            logger.trace("ValidationResult has been changed to status: {} and version: {}",
                     validationResult.getValidationStatus().name(), validationResult.getVersion());
         } else {
-            throw new IllegalStateException(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
+            logger.error(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
         }
 
         return validationResult;
