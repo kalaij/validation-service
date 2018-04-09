@@ -2,7 +2,6 @@ package uk.ac.ebi.subs.validator.coordinator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
@@ -15,6 +14,8 @@ import uk.ac.ebi.subs.validator.data.structures.GlobalValidationStatus;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 import uk.ac.ebi.subs.validator.util.BlankValidationResultMaps;
 
+import java.util.Optional;
+
 @Service
 public class CoordinatorValidationResultService {
     private static Logger logger = LoggerFactory.getLogger(CoordinatorValidationResultService.class);
@@ -25,64 +26,83 @@ public class CoordinatorValidationResultService {
         this.repository = repository;
     }
 
-    public ValidationResult generateValidationResultDocument(Project project){
-        ValidationResult validationResult = findAndUpdateValidationResult(project);
-        validationResult.setExpectedResults(BlankValidationResultMaps.forProject());
+    public Optional<ValidationResult> fetchValidationResultDocument(Project project){
+        Optional<ValidationResult> optionalValidationResult = findAndUpdateValidationResult(project);
+        ValidationResult validationResult = null;
 
-        repository.save(validationResult);
+        if (optionalValidationResult.isPresent()) {
+            validationResult = optionalValidationResult.get();
+            validationResult.setExpectedResults(BlankValidationResultMaps.forProject());
 
-        return validationResult;
+            repository.save(validationResult);
+        }
+        return Optional.ofNullable(validationResult);
     }
 
 
-    public ValidationResult generateValidationResultDocument(Sample sample){
-        ValidationResult validationResult = findAndUpdateValidationResult(sample);
-        validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
+    public Optional<ValidationResult> fetchValidationResultDocument(Sample sample) {
+        Optional<ValidationResult> optionalValidationResult = findAndUpdateValidationResult(sample);
+        ValidationResult validationResult = null;
 
-        repository.save(validationResult);
+        if (optionalValidationResult.isPresent()) {
+            validationResult = optionalValidationResult.get();
+            validationResult.setExpectedResults(BlankValidationResultMaps.forSample());
 
-        return validationResult;
+            repository.save(validationResult);
+        }
+        return Optional.ofNullable(validationResult);
     }
 
-    public ValidationResult generateValidationResultDocument(Study study){
-        ValidationResult validationResult = findAndUpdateValidationResult(study);
-        validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
+    public Optional<ValidationResult> fetchValidationResultDocument(Study study) {
+        Optional<ValidationResult> optionalValidationResult = findAndUpdateValidationResult(study);
+        ValidationResult validationResult = null;
 
-        repository.save(validationResult);
+        if (optionalValidationResult.isPresent()) {
+            validationResult = optionalValidationResult.get();
+            validationResult.setExpectedResults(BlankValidationResultMaps.forStudy());
 
-        return validationResult;
+            repository.save(validationResult);
+        }
+        return Optional.ofNullable(validationResult);
     }
 
-    public ValidationResult generateValidationResultDocument(Assay assay){
-        ValidationResult validationResult = findAndUpdateValidationResult(assay);
-        validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
+    public Optional<ValidationResult> fetchValidationResultDocument(Assay assay) {
+        Optional<ValidationResult> optionalValidationResult = findAndUpdateValidationResult(assay);
+        ValidationResult validationResult = null;
 
-        repository.save(validationResult);
+        if(optionalValidationResult.isPresent()) {
+            validationResult = optionalValidationResult.get();
+            validationResult.setExpectedResults(BlankValidationResultMaps.forAssay());
 
-        return validationResult;
+            repository.save(validationResult);
+        }
+        return Optional.ofNullable(validationResult);
     }
 
-    public ValidationResult generateValidationResultDocument(AssayData assayData){
-        ValidationResult validationResult = findAndUpdateValidationResult(assayData);
-        validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
+    public Optional<ValidationResult> fetchValidationResultDocument(AssayData assayData) {
+        Optional<ValidationResult> optionalValidationResult = findAndUpdateValidationResult(assayData);
+        ValidationResult validationResult = null;
 
-        repository.save(validationResult);
+        if (optionalValidationResult.isPresent()) {
+            validationResult = optionalValidationResult.get();
+            validationResult.setExpectedResults(BlankValidationResultMaps.forAssayData());
 
-        return validationResult;
+            repository.save(validationResult);
+        }
+        return Optional.ofNullable(validationResult);
     }
 
-    private ValidationResult findAndUpdateValidationResult(Submittable submittable) {
+    private Optional<ValidationResult> findAndUpdateValidationResult(Submittable submittable) {
         String submittableUuid = submittable.getId();
         ValidationResult validationResult = repository.findByEntityUuid(submittableUuid);
         if (validationResult != null) {
             validationResult.setValidationStatus(GlobalValidationStatus.Pending);
             validationResult.setVersion(validationResult.getVersion() + 1);
-            logger.debug("ValidationResult has been changed to status: {} and version: {}",
+            logger.trace("ValidationResult has been changed to status: {} and version: {}",
                     validationResult.getValidationStatus().name(), validationResult.getVersion());
         } else {
-            throw new IllegalStateException(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
+            logger.error(String.format("Could not find ValidationResult for submittable with ID: %s", submittable.getId()));
         }
-
-        return validationResult;
+        return Optional.ofNullable(validationResult);
     }
 }
