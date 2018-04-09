@@ -18,6 +18,7 @@ import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class FileReferenceHandlerTest {
     private AssayDataValidationMessageEnvelope envelope;
 
     private AssayRef assayRef;
-    private SampleRef sampleRef;
 
     private Submittable<Assay> wrappedAssay;
     private Submittable<Sample> wrappedSample;
@@ -56,13 +56,11 @@ public class FileReferenceHandlerTest {
 
         //refs
         assayRef = new AssayRef();
-        sampleRef = new SampleRef();
 
         //entity to be validated
         AssayData assayData = new AssayData();
         assayData.setId(assayDataId);
-        assayData.setAssayRef(assayRef);
-        assayData.setSampleRef(sampleRef);
+        assayData.setAssayRefs(Arrays.asList(assayRef));
 
         //reference data for the envelope
         Assay assay = new Assay();
@@ -75,8 +73,7 @@ public class FileReferenceHandlerTest {
         envelope.setValidationResultUUID(validationResultId);
         envelope.setValidationResultVersion(validationVersion);
         envelope.setEntityToValidate(assayData);
-        envelope.setAssay(wrappedAssay);
-        envelope.setSample(wrappedSample);
+        envelope.setAssays(Arrays.asList(wrappedAssay));
         envelope.setSubmissionId(submissionId);
     }
 
