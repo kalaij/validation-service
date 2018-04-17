@@ -13,6 +13,7 @@ import static uk.ac.ebi.subs.messaging.Queues.buildQueueWithDlx;
 import static uk.ac.ebi.subs.validator.core.messaging.RoutingKeys.EVENT_CORE_ASSAYDATA_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
 
+
 @Configuration
 @ComponentScan(basePackageClasses = ExchangeConfig.class)
 public class FileReferenceMessagingConfiguration {
@@ -27,5 +28,14 @@ public class FileReferenceMessagingConfiguration {
         return BindingBuilder.bind(fileReferenceAssayDataValidationQueue).to(submissionExchange).with(EVENT_CORE_ASSAYDATA_VALIDATION);
     }
 
+    @Bean
+    public Queue fileReferenceValidationQueue() {
+        return buildQueueWithDlx(FileReferenceQueues.FILE_REFERENCE_VALIDATION);
+    }
 
+    @Bean
+    public Binding fileReferenceValidationBinding(Queue fileReferenceValidationQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(fileReferenceValidationQueue)
+                .to(submissionExchange).with(FileReferenceRoutingKeys.EVENT_FILE_REFERENCE_VALIDATION);
+    }
 }

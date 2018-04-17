@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethod;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethodForEntities;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.fail;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.getValidationResultFromSubmittables;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.pass;
@@ -97,7 +97,7 @@ public class AssayHandlerTest {
         mockRefValidatorCalls(pass(assayId, VALIDATION_AUTHOR_CORE), pass(assayId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(assayHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(assayHandler, envelope),
                         envelope, validationResultId, validationVersion, assayId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -111,7 +111,7 @@ public class AssayHandlerTest {
         mockRefValidatorCalls(fail(assayId, VALIDATION_AUTHOR_CORE), pass(assayId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(assayHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(assayHandler, envelope),
                         envelope, validationResultId, validationVersion, assayId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -124,7 +124,7 @@ public class AssayHandlerTest {
         mockRefValidatorCalls(pass(assayId, VALIDATION_AUTHOR_CORE), fail(assayId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(assayHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(assayHandler, envelope),
                         envelope, validationResultId, validationVersion, assayId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -137,7 +137,7 @@ public class AssayHandlerTest {
         mockRefValidatorCalls(fail(assayId, VALIDATION_AUTHOR_CORE), fail(assayId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(assayHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(assayHandler, envelope),
                         envelope, validationResultId, validationVersion, assayId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass

@@ -9,4 +9,6 @@ public class FileReferenceRoutingKeys {
     public static final String EVENT_VALIDATION_SUCCESS = "validation.success";
 
     public static final String EVENT_VALIDATION_ERROR = "validation.error";
+
+    public static final String EVENT_FILE_REFERENCE_VALIDATION = "file.reference.validation";
 }
