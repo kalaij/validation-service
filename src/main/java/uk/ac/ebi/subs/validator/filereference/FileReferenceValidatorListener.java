@@ -8,9 +8,11 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.FileUploadValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.messaging.FileReferenceQueues;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,8 +36,25 @@ public class FileReferenceValidatorListener {
     public void handleAssayDataFileReferenceValidationRequest(AssayDataValidationMessageEnvelope envelope) {
         log.debug("AssayData file reference validation request received with ID: {}.",
                 envelope.getEntityToValidate().getId());
+        FileReferenceValidationDTO validationDTO = new FileReferenceValidationDTO(
+                envelope.getEntityToValidate(), envelope.getSubmissionId(), envelope.getValidationResultVersion(),
+                envelope.getValidationResultUUID());
 
-        SingleValidationResultsEnvelope singleValidationResultsEnvelope = fileReferenceHandler.handleValidationRequest(envelope);
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope =
+                fileReferenceHandler.handleValidationRequest(validationDTO, FileReferenceValidationType.ASSAY_DATA);
+        sendResults(singleValidationResultsEnvelope);
+    }
+
+    @RabbitListener(queues = FileReferenceQueues.FILE_REFERENCE_VALIDATION)
+    public void handleFileReferenceValidationRequest(FileUploadValidationMessageEnvelope envelope) {
+        log.debug("File reference validation request received with ID: {}.",
+                envelope.getfileToValidate().getId());
+        FileReferenceValidationDTO validationDTO = new FileReferenceValidationDTO(
+                envelope.getfileToValidate(), envelope.getSubmissionId(), envelope.getValidationResultVersion(),
+                envelope.getValidationResultUUID());
+
+        SingleValidationResultsEnvelope singleValidationResultsEnvelope =
+                fileReferenceHandler.handleValidationRequest(validationDTO, FileReferenceValidationType.UPLOADED_FILE);
         sendResults(singleValidationResultsEnvelope);
     }
 
@@ -48,5 +67,4 @@ public class FileReferenceValidatorListener {
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_VALIDATION_SUCCESS, envelope);
         }
     }
-
 }

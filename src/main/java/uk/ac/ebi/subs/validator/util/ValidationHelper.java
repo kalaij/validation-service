@@ -2,7 +2,6 @@ package uk.ac.ebi.subs.validator.util;
 
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
-import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
@@ -17,13 +16,13 @@ public final class ValidationHelper {
     }
 
     public static SingleValidationResultsEnvelope generateSingleValidationResultsEnvelope(
-            ValidationMessageEnvelope envelope, List<SingleValidationResult> singleValidationResults,
+            int validationResultVersion, String validationResultUUID, List<SingleValidationResult> singleValidationResults,
             ValidationAuthor validationAuthor) {
 
         return new SingleValidationResultsEnvelope(
                 singleValidationResults,
-                envelope.getValidationResultVersion(),
-                envelope.getValidationResultUUID(),
+                validationResultVersion,
+                validationResultUUID,
                 validationAuthor
         );
     }

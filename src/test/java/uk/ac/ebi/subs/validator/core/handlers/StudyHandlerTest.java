@@ -22,7 +22,7 @@ import uk.ac.ebi.subs.validator.model.Submittable;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethod;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethodForEntities;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.fail;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.getValidationResultFromSubmittables;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.pass;
@@ -86,7 +86,7 @@ public class StudyHandlerTest {
         mockValidatorCalls(pass(studyId, VALIDATION_AUTHOR_CORE), pass(studyId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(studyHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(studyHandler, envelope),
                         envelope, validationResultId, validationVersion, studyId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -99,7 +99,7 @@ public class StudyHandlerTest {
         mockValidatorCalls(fail(studyId, VALIDATION_AUTHOR_CORE), pass(studyId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(studyHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(studyHandler, envelope),
                         envelope, validationResultId, validationVersion, studyId, VALIDATION_AUTHOR_CORE);
 
         Assert.assertEquals(1, actualResults.size());
@@ -111,7 +111,7 @@ public class StudyHandlerTest {
         mockValidatorCalls(pass(studyId, VALIDATION_AUTHOR_CORE), fail(studyId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(studyHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(studyHandler, envelope),
                         envelope, validationResultId, validationVersion, studyId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -124,7 +124,7 @@ public class StudyHandlerTest {
         mockValidatorCalls(fail(studyId, VALIDATION_AUTHOR_CORE), fail(studyId, VALIDATION_AUTHOR_CORE));
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(getValidationResultFromSubmittables(studyHandler, envelope),
+                commonTestMethodForEntities(getValidationResultFromSubmittables(studyHandler, envelope),
                         envelope, validationResultId, validationVersion, studyId, VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass

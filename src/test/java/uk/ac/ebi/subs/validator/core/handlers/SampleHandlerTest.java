@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethod;
+import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.commonTestMethodForEntities;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.fail;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.getValidationResultFromSubmittables;
 import static uk.ac.ebi.subs.validator.core.handlers.ValidationTestHelper.pass;
@@ -80,7 +80,7 @@ public class SampleHandlerTest {
         SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                commonTestMethodForEntities(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
                         VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -95,7 +95,7 @@ public class SampleHandlerTest {
         SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                commonTestMethodForEntities(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
                         VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
@@ -110,7 +110,7 @@ public class SampleHandlerTest {
         SingleValidationResultsEnvelope resultsEnvelope = getValidationResultFromSubmittables(sampleHandler, envelope);
 
         List<SingleValidationResult> actualResults =
-                commonTestMethod(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
+                commonTestMethodForEntities(resultsEnvelope, envelope, validationResultId, validationVersion, sampleId,
                         VALIDATION_AUTHOR_CORE);
 
         //there should be one result (even though the handler received two passes) and it should be a pass
