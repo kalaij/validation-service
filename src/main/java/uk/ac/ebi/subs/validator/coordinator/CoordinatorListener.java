@@ -9,11 +9,11 @@ import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
-import uk.ac.ebi.subs.validator.data.SubmittedAssayDataValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedAssayValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedProjectValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedStudyValidationEnvelope;
+import uk.ac.ebi.subs.validator.data.AssayDataValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.AssayValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.ProjectValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.SampleValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.StudyValidationEnvelopeToCoordinator;
 
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_DATA_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_VALIDATOR;
@@ -38,7 +38,7 @@ public class CoordinatorListener {
      * @param envelope contains the {@link Project} entity to validate
      */
     @RabbitListener(queues = SUBMISSION_PROJECT_VALIDATOR)
-    public void processProjectSubmission(SubmittedProjectValidationEnvelope envelope) {
+    public void processProjectSubmission(ProjectValidationEnvelopeToCoordinator envelope) {
         Project project = envelope.getEntityToValidate();
 
         if (project == null) {
@@ -60,7 +60,7 @@ public class CoordinatorListener {
      * @param envelope contains the {@link Sample} entity to validate
      */
     @RabbitListener(queues = SUBMISSION_SAMPLE_VALIDATOR)
-    public void processSampleSubmission(SubmittedSampleValidationEnvelope envelope) {
+    public void processSampleSubmission(SampleValidationEnvelopeToCoordinator envelope) {
         Sample sample = envelope.getEntityToValidate();
 
         if (sample == null) {
@@ -82,7 +82,7 @@ public class CoordinatorListener {
      * @param envelope contains the {@link Study} entity to validate
      */
     @RabbitListener(queues = SUBMISSION_STUDY_VALIDATOR)
-    public void processStudySubmission(SubmittedStudyValidationEnvelope envelope){
+    public void processStudySubmission(StudyValidationEnvelopeToCoordinator envelope){
         Study study = envelope.getEntityToValidate();
 
         if (study == null) {
@@ -104,7 +104,7 @@ public class CoordinatorListener {
      * @param envelope contains the {@link Assay} entity to validate
      */
     @RabbitListener(queues = SUBMISSION_ASSAY_VALIDATOR)
-    public void processAssaySubmission(SubmittedAssayValidationEnvelope envelope) {
+    public void processAssaySubmission(AssayValidationEnvelopeToCoordinator envelope) {
         Assay assay = envelope.getEntityToValidate();
 
         if (assay == null) {
@@ -126,7 +126,7 @@ public class CoordinatorListener {
      * @param envelope contains the {@link AssayData} entity to validate
      */
     @RabbitListener(queues = SUBMISSION_ASSAY_DATA_VALIDATOR)
-    public void processAssayDataSubmission(SubmittedAssayDataValidationEnvelope envelope) {
+    public void processAssayDataSubmission(AssayDataValidationEnvelopeToCoordinator envelope) {
         AssayData assayData = envelope.getEntityToValidate();
 
         if (assayData == null) {

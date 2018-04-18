@@ -10,20 +10,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.subs.ValidationServiceApplication;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
-import uk.ac.ebi.subs.repository.repos.status.ProcessingStatusRepository;
-import uk.ac.ebi.subs.repository.repos.submittables.AssayRepository;
-import uk.ac.ebi.subs.repository.repos.submittables.ProjectRepository;
-import uk.ac.ebi.subs.repository.repos.submittables.SampleRepository;
 import uk.ac.ebi.subs.validator.TestUtils;
 import uk.ac.ebi.subs.validator.config.RabbitMQDependentTest;
-import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedProjectValidationEnvelope;
-import uk.ac.ebi.subs.validator.data.SubmittedSampleValidationEnvelope;
+import uk.ac.ebi.subs.validator.data.ProjectValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.SampleValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.repository.ValidationResultRepository;
 
 import static org.junit.Assert.assertTrue;
@@ -69,13 +63,13 @@ public class CoordinatorTest {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(expectedErrorMessage);
 
-        SubmittedSampleValidationEnvelope submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
+        SampleValidationEnvelopeToCoordinator submittableEnvelopWithoutSample = createSubmittableEnvelopeWithoutSample();
         coordinator.processSampleSubmission(submittableEnvelopWithoutSample);
     }
 
     @Test
     public void testSubmissionWithSample() {
-        SubmittedSampleValidationEnvelope submittableValidationEnvelope = createSubmittableEnvelopeWithSample(sample);
+        SampleValidationEnvelopeToCoordinator submittableValidationEnvelope = createSubmittableEnvelopeWithSample(sample);
 
         try {
             coordinator.processSampleSubmission(submittableValidationEnvelope);
@@ -87,7 +81,7 @@ public class CoordinatorTest {
     @Test
     public void handleDeletedSubmittable() {
         Sample sample = createSample();
-        SubmittedSampleValidationEnvelope envelope = new SubmittedSampleValidationEnvelope();
+        SampleValidationEnvelopeToCoordinator envelope = new SampleValidationEnvelopeToCoordinator();
         envelope.setEntityToValidate(sample);
 
         try {
@@ -99,7 +93,7 @@ public class CoordinatorTest {
 
     @Test
     public void testSubmissionWithProject() {
-        SubmittedProjectValidationEnvelope envelope = new SubmittedProjectValidationEnvelope();
+        ProjectValidationEnvelopeToCoordinator envelope = new ProjectValidationEnvelopeToCoordinator();
         envelope.setEntityToValidate(project);
 
         try {
@@ -109,17 +103,17 @@ public class CoordinatorTest {
         }
     }
 
-    private SubmittedSampleValidationEnvelope createSubmittableEnvelopeWithoutSample() {
+    private SampleValidationEnvelopeToCoordinator createSubmittableEnvelopeWithoutSample() {
         String submissionId = "testSubmissionId1";
 
-        SubmittedSampleValidationEnvelope envelope = new SubmittedSampleValidationEnvelope();
+        SampleValidationEnvelopeToCoordinator envelope = new SampleValidationEnvelopeToCoordinator();
         envelope.setSubmissionId(submissionId);
 
         return envelope;
     }
 
-    private SubmittedSampleValidationEnvelope createSubmittableEnvelopeWithSample(Sample sample) {
-        SubmittedSampleValidationEnvelope envelope = createSubmittableEnvelopeWithoutSample();
+    private SampleValidationEnvelopeToCoordinator createSubmittableEnvelopeWithSample(Sample sample) {
+        SampleValidationEnvelopeToCoordinator envelope = createSubmittableEnvelopeWithoutSample();
         envelope.setEntityToValidate(sample);
 
         return envelope;
