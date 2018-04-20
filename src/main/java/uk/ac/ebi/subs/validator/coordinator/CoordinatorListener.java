@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.subs.data.fileupload.File;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Project;
@@ -11,10 +12,12 @@ import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.AssayValidationEnvelopeToCoordinator;
+import uk.ac.ebi.subs.validator.data.FileUploadValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.ProjectValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.SampleValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.StudyValidationEnvelopeToCoordinator;
 
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.FILE_REF_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_DATA_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_PROJECT_VALIDATOR;
@@ -143,4 +146,22 @@ public class CoordinatorListener {
         }
     }
 
+    /**
+     * File reference existence validator data entry point.
+     * @param envelope contains the {@link File} entity to validate
+     */
+    @RabbitListener(queues = FILE_REF_VALIDATOR)
+    public void processFileReferenceValidationRequest(FileUploadValidationEnvelopeToCoordinator envelope) {
+        File fileToValidate = envelope.getFileToValidate();
+
+        if (fileToValidate == null) {
+            throw new IllegalArgumentException("The envelop should contain a file to validate.");
+        }
+
+        logger.info("Received validation request on file [id: {}]", fileToValidate.getId());
+
+        if (!submittableHandler.handleSubmittable(fileToValidate,envelope.getSubmissionId())) {
+            logger.error("Error handling file to validate with id {}", fileToValidate.getId());
+        }
+    }
 }

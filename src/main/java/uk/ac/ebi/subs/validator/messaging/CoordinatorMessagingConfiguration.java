@@ -164,4 +164,29 @@ public class CoordinatorMessagingConfiguration {
         return BindingBuilder.bind(submissionProjectValidatorQueue).to(submissionExchange)
                 .with(SUBMITTABLE_PROJECT_UPDATED);
     }
+
+    /**
+     * Instantiate a {@link Queue} for validate file reference existence.
+     *
+     * @return an instance of a {@link Queue} for validate file reference existence.
+     */
+    @Bean
+    Queue fileReferenceValidatorQueue() {
+        return Queues.buildQueueWithDlx(FILE_REF_VALIDATOR);
+    }
+
+    /**
+     * Create a {@link Binding} between the submission exchange and validation queue using the routing key of file
+     * reference validation.
+     *
+     * @param fileReferenceValidatorQueue {@link Queue} for validating file reference existence before submitting them
+     * @param submissionExchange {@link TopicExchange} for submissions
+     * @return a {@link Binding} between the submission exchange and validation queue using the routing key of file
+     * reference validation.
+     */
+    @Bean
+    Binding validationForFileReferenceExistenceBinding(Queue fileReferenceValidatorQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(fileReferenceValidatorQueue).to(submissionExchange)
+                .with(EVENT_FILE_REF_VALIDATION);
+    }
 }

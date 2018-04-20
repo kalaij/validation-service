@@ -18,6 +18,8 @@ public class CoordinatorRoutingKeys {
 
     public static final String EVENT_BIOSTUDIES_PROJECT_VALIDATION = "biostudies.project.validation";
 
+    public static final String EVENT_FILE_REF_VALIDATION = "file.reference.validation";
+
     private static final String SUBMITTABLE_CREATED = "usi.submittable.created";
     private static final String SUBMITTABLE_UPDATED = "usi.submittable.updated";
 
@@ -35,4 +37,5 @@ public class CoordinatorRoutingKeys {
 
     static final String SUBMITTABLE_PROJECT_CREATED = SUBMITTABLE_CREATED + ".project";
     static final String SUBMITTABLE_PROJECT_UPDATED = SUBMITTABLE_UPDATED + ".project";
+
 }
