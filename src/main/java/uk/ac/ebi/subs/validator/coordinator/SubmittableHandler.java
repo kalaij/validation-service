@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.subs.data.fileupload.File;
 import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Project;
@@ -13,6 +14,7 @@ import uk.ac.ebi.subs.data.submittable.Submittable;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.FileUploadValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
@@ -30,6 +32,7 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_EN
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_ASSAY_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_SAMPLE_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_STUDY_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_FILE_REF_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION;
 
 @Component
@@ -176,6 +179,31 @@ public class SubmittableHandler {
         }
         return false;
     }
+
+    /**
+     * @param file
+     * @param submissionId
+     * @return true if it could create a {@link FileUploadValidationMessageEnvelope} with the {@link File} entity and
+     * the UUID of the {@link ValidationResult}
+     */
+    protected boolean handleSubmittable(File file, String submissionId) {
+        Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(file);
+        if (optionalValidationResult.isPresent()) {
+            ValidationResult validationResult = optionalValidationResult.get();
+            logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+
+            FileUploadValidationMessageEnvelope fileUploadValidationMessageEnvelope =
+                    new FileUploadValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(),
+                            file, submissionId);
+
+            logger.debug("Sending file to validation queues");
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_FILE_REF_VALIDATION, fileUploadValidationMessageEnvelope);
+
+            return validationResult.getEntityUuid() != null;
+        }
+        return false;
+    }
+
 
     protected void handleSubmittable(Submittable submittable, String submissionId) {
         if(submittable instanceof Project) {
