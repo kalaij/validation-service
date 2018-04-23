@@ -8,6 +8,6 @@ public class CoordinatorQueues {
     public static final String SUBMISSION_ASSAY_VALIDATOR = "usi-submission-assay-validator";
     public static final String SUBMISSION_ASSAY_DATA_VALIDATOR = "usi-submission-assaydata-validator";
 
-    public static final String FILE_REF_VALIDATOR = "file-reference-validator";
+    public static final String FILE_REF_VALIDATOR = "coordinator-file-reference-validator";
 
 }
