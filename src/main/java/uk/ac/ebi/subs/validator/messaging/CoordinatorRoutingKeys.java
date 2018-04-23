@@ -18,6 +18,7 @@ public class CoordinatorRoutingKeys {
 
     public static final String EVENT_BIOSTUDIES_PROJECT_VALIDATION = "biostudies.project.validation";
 
+    public static final String EVENT_FILE_CREATED = "usi.file.created";
     public static final String EVENT_FILE_REF_VALIDATION = "file.reference.validation";
 
     private static final String SUBMITTABLE_CREATED = "usi.submittable.created";
