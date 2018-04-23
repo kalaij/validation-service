@@ -187,6 +187,6 @@ public class CoordinatorMessagingConfiguration {
     @Bean
     Binding validationForFileReferenceExistenceBinding(Queue fileReferenceValidatorQueue, TopicExchange submissionExchange) {
         return BindingBuilder.bind(fileReferenceValidatorQueue).to(submissionExchange)
-                .with(EVENT_FILE_REF_VALIDATION);
+                .with(EVENT_FILE_CREATED);
     }
 }
