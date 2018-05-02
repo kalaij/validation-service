@@ -28,7 +28,7 @@ public class FileReferenceValidator {
     private AssayDataRepository assayDataRepository;
 
     final static String STORED_FILE_NOT_REFERENCED = "The [%s] uploaded file is not referenced in any of the run.";
-    final static String FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE = "The [%s] file metadata is not exists as a file in the file storage area.";
+    final static String FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE = "The file [%s] referenced in the metadata is not exists on the file storage area.";
     static final String SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA = "All referenced files exists on the file storage.";
     static final String SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE = "All file uploaded file(s) referenced in file metadata";
 
@@ -59,9 +59,14 @@ public class FileReferenceValidator {
                 .map(uk.ac.ebi.subs.data.component.File::getName)
                 .collect(Collectors.toList());
 
-        for (String filepath : filePathsFromEntity) {
-            singleValidationResults.add(validateIfReferencedFileExistsOnStorage(entityToValidate.getId(), filepath,
-                    filePathsFromUploadedFile));
+        if (filePathsFromEntity.size() > 0) {
+            for (String filepath : filePathsFromEntity) {
+                singleValidationResults.add(validateIfReferencedFileExistsOnStorage(entityToValidate.getId(), filepath,
+                        filePathsFromUploadedFile));
+            }
+        } else {
+            singleValidationResults.add(generateDefaultSingleValidationResult(
+                    entityToValidate.getId(), SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA));
         }
 
         return singleValidationResults;

@@ -48,67 +48,42 @@ public class FileReferenceValidatorTest {
     private final String TARGET_BASE_PATH = "/target/base/path";
 
     private List<File> uploadedFiles;
+    private File uploadedFile1;
+    private File uploadedFile2;
     private List<AssayData> assayDataList;
     private List<AssayData> assayDataListWithFiles;
+    private AssayData assayDataWithoutFile1;
+    private AssayData assayDataWithoutFile2;
+    private AssayData assayDataWithFile1;
+    private AssayData assayDataWithFile2;
 
     private List<uk.ac.ebi.subs.data.component.File> emptyFileList = Collections.emptyList();
 
     @Before
     public void setup() {
         Submission submission = submissionRepository.findOne(SUBMISSION_ID);
-        final File uploadedFile1 = createFile(FILE_IDS[0], FILENAMES[0], TARGET_BASE_PATH);
-        final File uploadedFile2 = createFile(FILE_IDS[1], FILENAMES[1], TARGET_BASE_PATH);
+        uploadedFile1 = createFile(FILE_IDS[0], FILENAMES[0], TARGET_BASE_PATH);
+        uploadedFile2 = createFile(FILE_IDS[1], FILENAMES[1], TARGET_BASE_PATH);
         final uk.ac.ebi.subs.data.component.File fileMetaData1 = createFileMetadata(FILENAMES[0], TARGET_BASE_PATH);
         final uk.ac.ebi.subs.data.component.File fileMetaData2 = createFileMetadata(FILENAMES[1], TARGET_BASE_PATH);
 
         uploadedFiles = Arrays.asList(uploadedFile1, uploadedFile2);
-        assayDataList = Arrays.asList(
-                createAssayData(ASSAYDATA_IDS[0], submission, emptyFileList),
-                createAssayData(ASSAYDATA_IDS[1], submission, emptyFileList)
-        );
-        assayDataListWithFiles = Arrays.asList(
-                createAssayData(ASSAYDATA_IDS[0], submission, Collections.singletonList(fileMetaData1)),
-                createAssayData(ASSAYDATA_IDS[1], submission, Collections.singletonList(fileMetaData2))
-        );
+        assayDataWithoutFile1 = createAssayData(ASSAYDATA_IDS[0], submission, emptyFileList);
+        assayDataWithoutFile2 = createAssayData(ASSAYDATA_IDS[1], submission, emptyFileList);
 
+        assayDataWithFile1 = createAssayData(ASSAYDATA_IDS[0], submission, Collections.singletonList(fileMetaData1));
+        assayDataWithFile2 = createAssayData(ASSAYDATA_IDS[1], submission, Collections.singletonList(fileMetaData2));
+
+        assayDataList = Arrays.asList( assayDataWithoutFile1, assayDataWithoutFile2 );
+        assayDataListWithFiles = Arrays.asList( assayDataWithFile1, assayDataWithFile2 );
 
         fileReferenceValidator = new FileReferenceValidator(fileRepository, assayDataRepository);
     }
 
     @Test
-    public void whenSubmissionHasNoStorageFilesAndNoFileMetadata_ThenValidationShouldSucceed() {
-        given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
-                .willReturn(Collections.emptyList());
-
-        given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
-                .willReturn(assayDataList);
-
-        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(SUBMISSION_ID);
-
-        assertThat(validationResults.size(), is(equalTo(2)));
-
-        int i = 0;
-        for (SingleValidationResult validationResult : validationResults) {
-            assertThat(validationResult.getValidationStatus(), is(equalTo(SingleValidationResultStatus.Pass)));
-            assertThat(validationResult.getValidationAuthor(), is(equalTo(ValidationAuthor.FileReference)));
-            assertThat(validationResult.getEntityUuid(), is(equalTo(ASSAYDATA_IDS[i++])));
-            assertThat(validationResult.getMessage(), is(FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA));
-        }
-    }
-
-    @Test
-    public void whenStorageFileNotReferencedInFileMetadata_ThenFileValidationShouldFail() {
+    public void whenStorageFileNotReferencedInFileMetadata_ThenUploadedFileValidationShouldFail() {
         SingleValidationResult singleValidationResultTestFile1 = createSingleValidationResult(
                 FILE_IDS[0], SingleValidationResultStatus.Error, String.format(FileReferenceValidator.STORED_FILE_NOT_REFERENCED, FILENAMES[0])
-        );
-        SingleValidationResult singleValidationResultTestFile2 = createSingleValidationResult(
-                FILE_IDS[1], SingleValidationResultStatus.Error, String.format(FileReferenceValidator.STORED_FILE_NOT_REFERENCED, FILENAMES[1])
-        );
-        SingleValidationResult singleValidationResultAssayData1 = createSingleValidationResult(
-                ASSAYDATA_IDS[0], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA
-        );
-        SingleValidationResult singleValidationResultAssayData2 = createSingleValidationResult(
-                ASSAYDATA_IDS[1], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA
         );
 
         given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
@@ -117,26 +92,38 @@ public class FileReferenceValidatorTest {
         given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
                 .willReturn(assayDataList);
 
-        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(SUBMISSION_ID);
+        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(uploadedFile1);
 
-        assertThat(validationResults.size(), is(equalTo(4)));
+        assertThat(validationResults.size(), is(equalTo(1)));
 
         assertThat(validationResults, hasItem(singleValidationResultTestFile1));
-        assertThat(validationResults, hasItem(singleValidationResultTestFile2));
-        assertThat(validationResults, hasItem(singleValidationResultAssayData1));
-        assertThat(validationResults, hasItem(singleValidationResultAssayData2));
     }
 
     @Test
-    public void whenFileMetadataReferenceAFileThatNotInStorage_ThenAssayDataValidationShouldFail() {
+    public void whenThereAreUploadedFileButAssayDataHasNotGotAnyFileReferences_ThenAssayDataValidationShouldPass() {
+        SingleValidationResult singleValidationResultAssayData1 = createSingleValidationResult(
+                ASSAYDATA_IDS[0], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA
+        );
+
+        given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
+                .willReturn(uploadedFiles);
+
+        given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
+                .willReturn(assayDataList);
+
+        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(assayDataWithoutFile1, SUBMISSION_ID);
+
+        assertThat(validationResults.size(), is(equalTo(1)));
+
+        assertThat(validationResults, hasItem(singleValidationResultAssayData1));
+    }
+
+    @Test
+    public void whenFileMetadataReferenceAFileThatIsNotInStorage_ThenAssayDataValidationShouldFail() {
         SingleValidationResult singleValidationResultAssayData1 = createSingleValidationResult(
                 ASSAYDATA_IDS[0], SingleValidationResultStatus.Error,
                 String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[0]))
         );
-        SingleValidationResult singleValidationResultAssayData2 = createSingleValidationResult(
-                ASSAYDATA_IDS[1], SingleValidationResultStatus.Error,
-                String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[1]))
-        );
 
         given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
                 .willReturn(Collections.emptyList());
@@ -144,25 +131,34 @@ public class FileReferenceValidatorTest {
         given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
                 .willReturn(assayDataListWithFiles);
 
-        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(SUBMISSION_ID);
+        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(assayDataWithFile1, SUBMISSION_ID);
 
-        assertThat(validationResults.size(), is(equalTo(2)));
+        assertThat(validationResults.size(), is(equalTo(1)));
 
         assertThat(validationResults, hasItem(singleValidationResultAssayData1));
-        assertThat(validationResults, hasItem(singleValidationResultAssayData2));
     }
 
     @Test
-    public void whenAllStorageFilesReferenced_And_AllFileMetadataReferenceAFileInStorage_ThenValidationShouldSucceed() {
+    public void whenAllStorageFilesReferenced_And_AllFileMetadataReferenceAFileInStorage_ThenUploadedFileValidationShouldSucceed() {
         SingleValidationResult singleValidationResultTestFile1 = createSingleValidationResult(
                 FILE_IDS[0], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE
         );
-        SingleValidationResult singleValidationResultTestFile2 = createSingleValidationResult(
-                FILE_IDS[1], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE
-        );
-        SingleValidationResult singleValidationResultAssayData1 = createSingleValidationResult(
-                ASSAYDATA_IDS[0], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA
-        );
+
+        given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
+                .willReturn(uploadedFiles);
+
+        given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
+                .willReturn(assayDataListWithFiles);
+
+        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(uploadedFile1);
+
+        assertThat(validationResults.size(), is(equalTo(1)));
+
+        assertThat(validationResults, hasItem(singleValidationResultTestFile1));
+    }
+
+    @Test
+    public void whenAllStorageFilesReferenced_And_AllFileMetadataReferenceAFileInStorage_ThenAssayDataValidationShouldSucceed() {
         SingleValidationResult singleValidationResultAssayData2 = createSingleValidationResult(
                 ASSAYDATA_IDS[1], SingleValidationResultStatus.Pass, FileReferenceValidator.SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA
         );
@@ -173,15 +169,11 @@ public class FileReferenceValidatorTest {
         given(this.assayDataRepository.findBySubmissionId(SUBMISSION_ID))
                 .willReturn(assayDataListWithFiles);
 
-        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(SUBMISSION_ID);
+        List<SingleValidationResult> validationResults = fileReferenceValidator.validate(assayDataWithFile2, SUBMISSION_ID);
 
-        assertThat(validationResults.size(), is(equalTo(4)));
+        assertThat(validationResults.size(), is(equalTo(1)));
 
-        assertThat(validationResults, hasItem(singleValidationResultTestFile1));
-        assertThat(validationResults, hasItem(singleValidationResultTestFile2));
-        assertThat(validationResults, hasItem(singleValidationResultAssayData1));
         assertThat(validationResults, hasItem(singleValidationResultAssayData2));
-
     }
 
     private File createFile(String fileId, String filename, String targetPathBase) {
@@ -208,5 +200,4 @@ public class FileReferenceValidatorTest {
         result.setMessage(message);
         return result;
     }
-
 }

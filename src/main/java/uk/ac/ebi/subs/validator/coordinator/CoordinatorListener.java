@@ -143,6 +143,8 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(assayData,envelope.getSubmissionId(), false)) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         } else {
+            fileValidationRequestHandler.handleFilesWhenSubmittableChanged(envelope.getSubmissionId());
+
             logger.trace("Triggering chained validation from assayData {}", assayData.getId());
             chainedValidationService.triggerChainedValidation(assayData, envelope.getSubmissionId());
         }

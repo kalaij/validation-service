@@ -16,6 +16,7 @@ import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
+import uk.ac.ebi.subs.validator.filereference.FileReferenceValidator;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.Arrays;
@@ -34,6 +35,9 @@ public class AssayDataHandlerTest {
     @MockBean
     private AttributeValidator attributeValidator;
 
+    @MockBean
+    private FileReferenceValidator fileReferenceValidator;
+
     private final String assayDataId = "assayDataID";
     private final String validationResultId = "vrID";
     private final int validationVersion = 42;
@@ -48,7 +52,7 @@ public class AssayDataHandlerTest {
     public void buildUp() {
 
         //setup the handler
-        assayDataHandler = new AssayDataHandler(referenceValidator, attributeValidator);
+        assayDataHandler = new AssayDataHandler(referenceValidator, attributeValidator, fileReferenceValidator);
 
         //refs
         assayRef = new AssayRef();

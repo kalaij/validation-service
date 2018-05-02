@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.fileupload.File;
 import uk.ac.ebi.subs.messaging.Exchanges;
 import uk.ac.ebi.subs.repository.model.AssayData;
+import uk.ac.ebi.subs.repository.repos.fileupload.FileRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.AssayDataRepository;
 import uk.ac.ebi.subs.validator.data.FileUploadValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
@@ -30,6 +31,8 @@ public class FileValidationRequestHandler {
     private SubmittableHandler submittableHandler;
     @NonNull
     private AssayDataRepository assayDataRepository;
+    @NonNull
+    private FileRepository fileRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(FileValidationRequestHandler.class);
 
@@ -68,5 +71,15 @@ public class FileValidationRequestHandler {
         });
 
         return false;
+    }
+
+    void handleFilesWhenSubmittableChanged(String submissionId) {
+        List<uk.ac.ebi.subs.repository.model.fileupload.File> uploadedFiles = fileRepository.findBySubmissionId(submissionId);
+
+        uploadedFiles.forEach( uploadedFile -> {
+            if (!handleFile(uploadedFile, submissionId)) {
+                logger.error("Error handling file to validate with id {}", uploadedFile.getId());
+            }
+        });
     }
 }

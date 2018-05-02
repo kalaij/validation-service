@@ -1,5 +1,7 @@
 package uk.ac.ebi.subs.validator.core.handlers;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.validator.core.validators.AttributeValidator;
@@ -8,6 +10,7 @@ import uk.ac.ebi.subs.validator.core.validators.ValidatorHelper;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.filereference.FileReferenceValidator;
 
 import java.util.List;
 
@@ -18,18 +21,15 @@ import java.util.List;
  * a Sample via {@link uk.ac.ebi.subs.data.component.SampleRef SampleRef}.
  */
 @Service
+@RequiredArgsConstructor
 public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessageEnvelope> {
 
-
+    @NonNull
     private ReferenceValidator refValidator;
-
+    @NonNull
     private AttributeValidator attributeValidator;
-
-    public AssayDataHandler(ReferenceValidator refValidator,
-                            AttributeValidator attributeValidator) {
-        this.refValidator = refValidator;
-        this.attributeValidator = attributeValidator;
-    }
+    @NonNull
+    private FileReferenceValidator fileReferenceValidator;
 
     @Override
     List<SingleValidationResult> validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
@@ -40,6 +40,10 @@ public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessage
                 assayData.getAssayRefs(),
                 envelope.getAssays()
         );
+
+        if (assayData.getFiles().size() > 0) {
+            results.addAll(fileReferenceValidator.validate(assayData, envelope.getSubmissionId()));
+        }
 
         return results;
     }
