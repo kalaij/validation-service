@@ -3,8 +3,8 @@ package uk.ac.ebi.subs.validator.filereference;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.subs.repository.model.AssayData;
-import uk.ac.ebi.subs.repository.model.fileupload.File;
+import uk.ac.ebi.subs.data.fileupload.File;
+import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.repository.repos.fileupload.FileRepository;
 import uk.ac.ebi.subs.repository.repos.submittables.AssayDataRepository;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
@@ -49,9 +49,9 @@ public class FileReferenceValidator {
         return singleValidationResults;
     }
 
-    public List<SingleValidationResult> validate(AssayData entityToValidate) {
+    public List<SingleValidationResult> validate(AssayData entityToValidate, String submissionID) {
         List<SingleValidationResult> singleValidationResults = new ArrayList<>();
-        List<File> uploadedFiles = fileRepository.findBySubmissionId(entityToValidate.getSubmission().getId());
+        List<uk.ac.ebi.subs.repository.model.fileupload.File> uploadedFiles = fileRepository.findBySubmissionId(submissionID);
         List<String> filePathsFromUploadedFile =
                 uploadedFiles.stream().map(File::getTargetPath).collect(Collectors.toList());
 
@@ -68,7 +68,7 @@ public class FileReferenceValidator {
     }
 
     public List<SingleValidationResult> validate(String submissionID) {
-        List<File> storedFiles = fileRepository.findBySubmissionId(submissionID);
+        List<uk.ac.ebi.subs.repository.model.fileupload.File> storedFiles = fileRepository.findBySubmissionId(submissionID);
         final List<uk.ac.ebi.subs.repository.model.AssayData> assayDataList =
                 assayDataRepository.findBySubmissionId(submissionID);
 

@@ -39,6 +39,7 @@ public class UploadedFileFileReferenceHandlerTest {
     private final String FILE_NAME = "test.cram";
 
     private FileUploadValidationMessageEnvelope envelope;
+    private File file;
 
     @Before
     public void buildUp() {
@@ -46,7 +47,7 @@ public class UploadedFileFileReferenceHandlerTest {
         fileReferenceHandler = new FileReferenceHandler(fileReferenceValidator);
 
         // uploaded file
-        File file = new File();
+        file = new File();
         file.setId(FILE_ID);
         file.setFilename(FILE_NAME);
         file.setStatus(FileStatus.READY_FOR_ARCHIVE);
@@ -93,7 +94,7 @@ public class UploadedFileFileReferenceHandlerTest {
 
     private void mockRefValidatorCalls(SingleValidationResult fileValidationResult) {
         when(
-                fileReferenceValidator.validate(submissionId)
+                fileReferenceValidator.validate(file)
         ).thenReturn(
                 Collections.singletonList(fileValidationResult)
         );
