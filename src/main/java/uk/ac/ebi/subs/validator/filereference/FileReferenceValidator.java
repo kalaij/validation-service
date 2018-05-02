@@ -72,47 +72,6 @@ public class FileReferenceValidator {
         return singleValidationResults;
     }
 
-    public List<SingleValidationResult> validate(String submissionID) {
-        List<uk.ac.ebi.subs.repository.model.fileupload.File> storedFiles = fileRepository.findBySubmissionId(submissionID);
-        final List<uk.ac.ebi.subs.repository.model.AssayData> assayDataList =
-                assayDataRepository.findBySubmissionId(submissionID);
-
-        List<String> filePathsFromMetadata = assayDataList
-                .stream().map( AssayData::getFiles).collect(Collectors.toList())
-                .stream().flatMap(List::stream).map(uk.ac.ebi.subs.data.component.File::getName)
-                .collect(Collectors.toList());
-
-        Map<String, List<String>> filePathsByAssayDataID = new HashMap<>();
-        for (AssayData assayData : assayDataList) {
-            filePathsByAssayDataID.put(
-                assayData.getId(),
-                assayData.getFiles().stream().map(uk.ac.ebi.subs.data.component.File::getName).collect(Collectors.toList())
-            );
-        }
-
-        List<SingleValidationResult> singleValidationResults = new ArrayList<>();
-
-        for (File file : storedFiles) {
-            singleValidationResults.add(
-                    validateIfStoredFilesReferencedInSubmittables(file, filePathsFromMetadata)
-            );
-        }
-
-        filePathsByAssayDataID.forEach( (assayDataID, filePaths) -> {
-            if (filePaths.size() > 0) {
-                for (String filepath : filePaths) {
-                    singleValidationResults.add(validateIfReferencedFileExistsOnStorage(assayDataID, filepath,
-                            storedFiles.stream().map(File::getTargetPath).collect(Collectors.toList())));
-                }
-            } else {
-                singleValidationResults.add(generateDefaultSingleValidationResult(
-                        assayDataID, SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA));
-            }
-        } );
-
-        return singleValidationResults;
-    }
-
     private SingleValidationResult validateIfStoredFilesReferencedInSubmittables(
             File uploadedFile, List<String> filePathsFromMetadata ) {
         SingleValidationResult singleValidationResult = generateDefaultSingleValidationResult(
