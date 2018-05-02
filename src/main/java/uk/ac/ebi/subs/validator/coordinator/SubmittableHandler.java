@@ -180,6 +180,23 @@ public class SubmittableHandler {
         return false;
     }
 
+    boolean handleSubmittableForFileReferenceValidation(AssayData assayData, String submissionId) {
+        Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
+        if (optionalValidationResult.isPresent()) {
+            ValidationResult validationResult = optionalValidationResult.get();
+            logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+
+            AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
+            assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
+
+            logger.debug("Sending assay data to file reference validation queue");
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_FILE_REF_VALIDATION, assayDataValidationMessageEnvelope);
+
+            return validationResult.getEntityUuid() != null;
+        }
+        return false;
+    }
+
     protected void handleSubmittable(Submittable submittable, String submissionId) {
         if(submittable instanceof Project) {
             handleSubmittable((Project) submittable);

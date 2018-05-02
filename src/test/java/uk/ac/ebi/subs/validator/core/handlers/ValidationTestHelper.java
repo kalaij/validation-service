@@ -38,7 +38,7 @@ public final class ValidationTestHelper {
                 envelope.getValidationResultUUID());
 
 
-        return handler.handleValidationRequest(validationDTO, FileReferenceValidationType.ASSAY_DATA);
+        return handler.handleValidationRequestForSubmittable(validationDTO, FileReferenceValidationType.ASSAY_DATA);
     }
 
     public static SingleValidationResultsEnvelope getValidationResultForUploadedFileFileReference(
@@ -49,7 +49,7 @@ public final class ValidationTestHelper {
                 envelope.getValidationResultUUID());
 
 
-        return handler.handleValidationRequest(validationDTO, FileReferenceValidationType.UPLOADED_FILE);
+        return handler.handleValidationRequestForUploadedFile(validationDTO, FileReferenceValidationType.UPLOADED_FILE);
     };
 
 

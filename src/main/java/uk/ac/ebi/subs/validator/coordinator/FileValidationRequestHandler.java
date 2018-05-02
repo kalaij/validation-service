@@ -8,9 +8,12 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.subs.data.fileupload.File;
 import uk.ac.ebi.subs.messaging.Exchanges;
+import uk.ac.ebi.subs.repository.model.AssayData;
+import uk.ac.ebi.subs.repository.repos.submittables.AssayDataRepository;
 import uk.ac.ebi.subs.validator.data.FileUploadValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationResult;
 
+import java.util.List;
 import java.util.Optional;
 
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_FILE_REF_VALIDATION;
@@ -23,6 +26,10 @@ public class FileValidationRequestHandler {
     private RabbitMessagingTemplate rabbitMessagingTemplate;
     @NonNull
     private CoordinatorValidationResultService coordinatorValidationResultService;
+    @NonNull
+    private SubmittableHandler submittableHandler;
+    @NonNull
+    private AssayDataRepository assayDataRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(FileValidationRequestHandler.class);
 
@@ -32,7 +39,7 @@ public class FileValidationRequestHandler {
      * @return true if it could create a {@link FileUploadValidationMessageEnvelope} with the {@link File} entity and
      * the UUID of the {@link ValidationResult}
      */
-    protected boolean handleFile(File file, String submissionId) {
+    boolean handleFile(File file, String submissionId) {
         Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(file);
         if (optionalValidationResult.isPresent()) {
             ValidationResult validationResult = optionalValidationResult.get();
@@ -47,6 +54,19 @@ public class FileValidationRequestHandler {
 
             return validationResult.getEntityUuid() != null;
         }
+        return false;
+    }
+
+    boolean handleSubmittableForFileReferenceValidation(String submissionId) {
+        List<AssayData> assayDataList = assayDataRepository.findBySubmissionId(submissionId);
+        assayDataList.forEach( assayData -> {
+
+            // TODO: karoly add later a check if that entity has been archived previously (proposed: ArchivedSubmittable)
+            // if yes, then make sure that the list of file references has not been changed
+
+            submittableHandler.handleSubmittableForFileReferenceValidation(assayData, submissionId);
+        });
+
         return false;
     }
 }

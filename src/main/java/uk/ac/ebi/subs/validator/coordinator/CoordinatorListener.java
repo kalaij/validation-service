@@ -165,5 +165,8 @@ public class CoordinatorListener {
         if (!fileValidationRequestHandler.handleFile(fileToValidate, envelope.getSubmissionId())) {
             logger.error("Error handling file to validate with id {}", fileToValidate.getId());
         }
+        if (!fileValidationRequestHandler.handleSubmittableForFileReferenceValidation(envelope.getSubmissionId())) {
+            logger.error("Error handling submittables to validate their file references for submission (id: {})", envelope.getSubmissionId());
+        }
     }
 }

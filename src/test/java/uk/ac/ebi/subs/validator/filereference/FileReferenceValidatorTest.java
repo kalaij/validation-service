@@ -131,11 +131,11 @@ public class FileReferenceValidatorTest {
     public void whenFileMetadataReferenceAFileThatNotInStorage_ThenAssayDataValidationShouldFail() {
         SingleValidationResult singleValidationResultAssayData1 = createSingleValidationResult(
                 ASSAYDATA_IDS[0], SingleValidationResultStatus.Error,
-                String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_STORED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[0]))
+                String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[0]))
         );
         SingleValidationResult singleValidationResultAssayData2 = createSingleValidationResult(
                 ASSAYDATA_IDS[1], SingleValidationResultStatus.Error,
-                String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_STORED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[1]))
+                String.format(FileReferenceValidator.FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE, String.join(PATH_SEPARATOR, TARGET_BASE_PATH, FILENAMES[1]))
         );
 
         given(this.fileRepository.findBySubmissionId(SUBMISSION_ID))
