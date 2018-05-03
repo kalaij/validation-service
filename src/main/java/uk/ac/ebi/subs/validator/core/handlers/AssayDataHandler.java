@@ -41,7 +41,7 @@ public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessage
                 envelope.getAssays()
         );
 
-        if (assayData.getFiles().size() > 0) {
+        if (!assayData.getFiles().isEmpty()) {
             results.addAll(fileReferenceValidator.validate(assayData, envelope.getSubmissionId()));
         }
 

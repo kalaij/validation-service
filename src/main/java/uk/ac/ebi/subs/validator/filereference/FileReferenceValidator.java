@@ -59,7 +59,7 @@ public class FileReferenceValidator {
                 .map(uk.ac.ebi.subs.data.component.File::getName)
                 .collect(Collectors.toList());
 
-        if (filePathsFromEntity.size() > 0) {
+        if (!filePathsFromEntity.isEmpty()) {
             for (String filepath : filePathsFromEntity) {
                 singleValidationResults.add(validateIfReferencedFileExistsOnStorage(entityToValidate.getId(), filepath,
                         filePathsFromUploadedFile));
