@@ -25,11 +25,29 @@ public class FileReferenceHandler {
     @NonNull
     private FileReferenceValidator fileReferenceValidator;
 
-    public SingleValidationResultsEnvelope handleValidationRequest(FileReferenceValidationDTO validationDTO,
-                                                                   FileReferenceValidationType fileReferenceValidationType) {
-        String submissionId = validationDTO.getSubmissionId();
+    public SingleValidationResultsEnvelope handleValidationRequestForUploadedFile(FileReferenceValidationDTO validationDTO,
+                                                                                  FileReferenceValidationType fileReferenceValidationType) {
 
-        List<SingleValidationResult> interestingResults = fileReferenceValidator.validate(submissionId).stream()
+        File fileToValidate = (File)validationDTO.getEntityToValidate();
+        List<SingleValidationResult> validationResult = fileReferenceValidator.validate(fileToValidate);
+
+        return processValidationResult(validationResult, validationDTO, fileReferenceValidationType);
+    }
+
+    public SingleValidationResultsEnvelope handleValidationRequestForSubmittable(FileReferenceValidationDTO validationDTO,
+                                                                           FileReferenceValidationType fileReferenceValidationType) {
+
+        AssayData entityToValidate = (AssayData)validationDTO.getEntityToValidate();
+        String submissionID = validationDTO.getSubmissionId();
+        List<SingleValidationResult> validationResult = fileReferenceValidator.validate(entityToValidate, submissionID);
+
+        return processValidationResult(validationResult, validationDTO, fileReferenceValidationType);
+    }
+
+    private SingleValidationResultsEnvelope processValidationResult(List<SingleValidationResult> validationResult,
+                                                                    FileReferenceValidationDTO validationDTO,
+                                                                    FileReferenceValidationType fileReferenceValidationType) {
+        List<SingleValidationResult> interestingResults = validationResult.stream()
                 .filter(ValidationHelper::statusIsNotPassOrPending)
                 .collect(Collectors.toList());
 

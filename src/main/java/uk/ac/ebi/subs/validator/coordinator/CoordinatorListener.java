@@ -1,5 +1,7 @@
 package uk.ac.ebi.subs.validator.coordinator;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -25,16 +27,16 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_SA
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_STUDY_VALIDATOR;
 
 @Component
+@RequiredArgsConstructor
 public class CoordinatorListener {
     private static final Logger logger = LoggerFactory.getLogger(CoordinatorListener.class);
 
+    @NonNull
     private SubmittableHandler submittableHandler;
+    @NonNull
+    private FileValidationRequestHandler fileValidationRequestHandler;
+    @NonNull
     private ChainedValidationService chainedValidationService;
-
-    public CoordinatorListener(SubmittableHandler submittableHandler, ChainedValidationService chainedValidationService) {
-        this.submittableHandler = submittableHandler;
-        this.chainedValidationService = chainedValidationService;
-    }
 
     /**
      * Project validator data entry point.
@@ -141,6 +143,8 @@ public class CoordinatorListener {
         if (!submittableHandler.handleSubmittable(assayData,envelope.getSubmissionId())) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         } else {
+            fileValidationRequestHandler.handleFilesWhenSubmittableChanged(envelope.getSubmissionId());
+
             logger.trace("Triggering chained validation from assayData {}", assayData.getId());
             chainedValidationService.triggerChainedValidation(assayData, envelope.getSubmissionId());
         }
@@ -160,8 +164,11 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on file [id: {}]", fileToValidate.getId());
 
-        if (!submittableHandler.handleSubmittable(fileToValidate,envelope.getSubmissionId())) {
+        if (!fileValidationRequestHandler.handleFile(fileToValidate, envelope.getSubmissionId())) {
             logger.error("Error handling file to validate with id {}", fileToValidate.getId());
+        }
+        if (!fileValidationRequestHandler.handleSubmittableForFileReferenceValidation(envelope.getSubmissionId())) {
+            logger.error("Error handling submittables to validate their file references for submission (id: {})", envelope.getSubmissionId());
         }
     }
 }

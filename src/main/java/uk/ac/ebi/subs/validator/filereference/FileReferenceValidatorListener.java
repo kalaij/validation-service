@@ -41,7 +41,7 @@ public class FileReferenceValidatorListener {
                 envelope.getValidationResultUUID());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope =
-                fileReferenceHandler.handleValidationRequest(validationDTO, FileReferenceValidationType.ASSAY_DATA);
+                fileReferenceHandler.handleValidationRequestForSubmittable(validationDTO, FileReferenceValidationType.ASSAY_DATA);
         sendResults(singleValidationResultsEnvelope);
     }
 
@@ -54,7 +54,7 @@ public class FileReferenceValidatorListener {
                 envelope.getValidationResultUUID());
 
         SingleValidationResultsEnvelope singleValidationResultsEnvelope =
-                fileReferenceHandler.handleValidationRequest(validationDTO, FileReferenceValidationType.UPLOADED_FILE);
+                fileReferenceHandler.handleValidationRequestForUploadedFile(validationDTO, FileReferenceValidationType.UPLOADED_FILE);
         sendResults(singleValidationResultsEnvelope);
     }
 
