@@ -162,7 +162,7 @@ public class SubmittableHandler {
      * @return true if it could create a {@link ValidationMessageEnvelope} with the {@link AssayData} entity and
      * the UUID of the {@link ValidationResult}
      */
-    protected boolean handleSubmittable(AssayData assayData, String submissionId, boolean triggeredByFileUpload) {
+    protected boolean handleSubmittable(AssayData assayData, String submissionId) {
         Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
         if (optionalValidationResult.isPresent()) {
             ValidationResult validationResult = optionalValidationResult.get();
@@ -171,14 +171,26 @@ public class SubmittableHandler {
             AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
             assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
 
-            if (!triggeredByFileUpload) {
-                logger.debug("Sending assay data to validation queues");
-                rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-                rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-            } else {
-                logger.debug("Sending assay data to file reference validation queue");
-                rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_FILE_REF_VALIDATION, assayDataValidationMessageEnvelope);
-            }
+            logger.debug("Sending assay data to validation queues");
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+
+            return validationResult.getEntityUuid() != null;
+        }
+        return false;
+    }
+
+    protected boolean handleSubmittableForFileUpload(AssayData assayData, String submissionId) {
+        Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
+        if (optionalValidationResult.isPresent()) {
+            ValidationResult validationResult = optionalValidationResult.get();
+            logger.debug("Validation result document has been persisted into MongoDB with ID: {}", validationResult.getUuid());
+
+            AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
+            assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
+
+            logger.debug("Sending assay data to file reference validation queue");
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_FILE_REF_VALIDATION, assayDataValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
@@ -195,7 +207,7 @@ public class SubmittableHandler {
         } else if(submittable instanceof Assay) {
             handleSubmittable((Assay) submittable, submissionId);
         } else if(submittable instanceof AssayData) {
-            handleSubmittable((AssayData) submittable, submissionId, false);
+            handleSubmittable((AssayData) submittable, submissionId);
         } else {
             logger.error("Could not understand submittable {}", submittable);
         }

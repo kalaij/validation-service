@@ -67,7 +67,7 @@ public class FileValidationRequestHandler {
             // TODO: karoly add later a check if that entity has been archived previously (proposed: ArchivedSubmittable)
             // if yes, then make sure that the list of file references has not been changed
 
-            submittableHandler.handleSubmittable(assayData, submissionId, true);
+            submittableHandler.handleSubmittableForFileUpload(assayData, submissionId);
         });
 
         return false;

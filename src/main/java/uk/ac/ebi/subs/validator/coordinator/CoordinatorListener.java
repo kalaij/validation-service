@@ -140,7 +140,7 @@ public class CoordinatorListener {
 
         logger.info("Received validation request on assay data {}", assayData.getId());
 
-        if (!submittableHandler.handleSubmittable(assayData,envelope.getSubmissionId(), false)) {
+        if (!submittableHandler.handleSubmittable(assayData,envelope.getSubmissionId())) {
             logger.error("Error handling assayData with id {}", assayData.getId());
         } else {
             fileValidationRequestHandler.handleFilesWhenSubmittableChanged(envelope.getSubmissionId());
