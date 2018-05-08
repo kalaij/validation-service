@@ -183,7 +183,7 @@ public class FileReferenceValidatorTest {
         file.setFilename(filename);
         file.setTargetPath(String.join(
                 PATH_SEPARATOR, targetPathBase,
-                FileReferenceValidator.buildBaseFilePathBySubmissionID(SUBMISSION_ID), filename));
+                buildBaseFilePathBySubmissionID(SUBMISSION_ID), filename));
 
         return file;
     }
@@ -202,5 +202,18 @@ public class FileReferenceValidatorTest {
         result.setMessage(message);
         return result;
     }
+
+    private String buildBaseFilePathBySubmissionID(String submissionID) {
+        StringBuilder baseFilePath = new StringBuilder();
+        baseFilePath.append(submissionID.substring(0, 1));
+        baseFilePath.append(PATH_SEPARATOR);
+        baseFilePath.append(submissionID.substring(1, 2));
+        baseFilePath.append(PATH_SEPARATOR);
+        baseFilePath.append(submissionID);
+
+        return baseFilePath.toString();
+    }
+
+
 
 }

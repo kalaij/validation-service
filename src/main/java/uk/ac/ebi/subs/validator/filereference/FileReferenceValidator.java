@@ -39,10 +39,7 @@ public class FileReferenceValidator {
 
         List<String> filePathsFromMetadata = assayDataList
                 .stream().map( AssayData::getFiles).collect(Collectors.toList())
-                .stream().flatMap(List::stream).map( file ->
-                    String.join(FILE_SEPARATOR,
-                            buildBaseFilePathBySubmissionID(fileToValidate.getSubmissionId()), file.getName())
-                )
+                .stream().flatMap(List::stream).map(uk.ac.ebi.subs.data.component.File::getName)
                 .collect(Collectors.toList());
 
         singleValidationResults.add(
@@ -56,17 +53,11 @@ public class FileReferenceValidator {
         List<SingleValidationResult> singleValidationResults = new ArrayList<>();
         List<uk.ac.ebi.subs.repository.model.fileupload.File> uploadedFiles = fileRepository.findBySubmissionId(submissionID);
         List<String> filePathsFromUploadedFile =
-                uploadedFiles.stream().map(uploadedFile ->
-                        subtractServerDependantPath(
-                                uploadedFile.getTargetPath(), uploadedFile.getSubmissionId())
-                )
+                uploadedFiles.stream().map(File::getFilename)
                 .collect(Collectors.toList());
 
         List<String> filePathsFromEntity = entityToValidate.getFiles().stream()
-                .map( file ->
-                    String.join(FILE_SEPARATOR,
-                            buildBaseFilePathBySubmissionID(submissionID), file.getName())
-                )
+                .map(uk.ac.ebi.subs.data.component.File::getName)
                 .collect(Collectors.toList());
 
         if (!filePathsFromEntity.isEmpty()) {
@@ -82,30 +73,12 @@ public class FileReferenceValidator {
         return singleValidationResults;
     }
 
-    static String buildBaseFilePathBySubmissionID(String submissionID) {
-        StringBuilder baseFilePath = new StringBuilder();
-        baseFilePath.append(submissionID.substring(0, 1));
-        baseFilePath.append(FILE_SEPARATOR);
-        baseFilePath.append(submissionID.substring(1, 2));
-        baseFilePath.append(FILE_SEPARATOR);
-        baseFilePath.append(submissionID);
-
-        return baseFilePath.toString();
-    }
-
-    private String subtractServerDependantPath(String fullFilePath, String submissionID) {
-        int indexOfRelativePath = fullFilePath.indexOf(buildBaseFilePathBySubmissionID(submissionID));
-        return fullFilePath.substring(indexOfRelativePath);
-    }
-
     private SingleValidationResult validateIfStoredFilesReferencedInSubmittables(
             File uploadedFile, List<String> filePathsFromMetadata ) {
         SingleValidationResult singleValidationResult = generateDefaultSingleValidationResult(
                 uploadedFile.getId(), SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE);
 
-        if (!filePathsFromMetadata.contains(
-                subtractServerDependantPath(
-                        uploadedFile.getTargetPath(), uploadedFile.getSubmissionId()))) {
+        if (!filePathsFromMetadata.contains(uploadedFile.getFilename())) {
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
             singleValidationResult.setMessage(String.format(STORED_FILE_NOT_REFERENCED, uploadedFile.getFilename()));
         }
