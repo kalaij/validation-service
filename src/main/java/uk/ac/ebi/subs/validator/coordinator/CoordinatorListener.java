@@ -19,6 +19,7 @@ import uk.ac.ebi.subs.validator.data.ProjectValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.SampleValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.StudyValidationEnvelopeToCoordinator;
 
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.FILE_DELETION_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.FILE_REF_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_DATA_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_ASSAY_VALIDATOR;
@@ -169,6 +170,19 @@ public class CoordinatorListener {
         }
         if (!fileValidationRequestHandler.handleSubmittableForFileReferenceValidation(envelope.getSubmissionId())) {
             logger.error("Error handling submittables to validate their file references for submission (id: {})", envelope.getSubmissionId());
+        }
+    }
+
+    /**
+     * File deletion entry point to trigger a file reference validation to the given submission.
+     * @param fileDeletedMessage contains the ID of the submission to validate
+     */
+    @RabbitListener(queues = FILE_DELETION_VALIDATOR)
+    public void processFileDeletionRequest(FileDeletedMessage fileDeletedMessage) {
+        String submissionID = fileDeletedMessage.getSubmissionId();
+
+        if (!fileValidationRequestHandler.handleSubmittableForFileReferenceValidation(submissionID)) {
+            logger.error("Error handling file deletion for submission (id: {})", submissionID);
         }
     }
 }
