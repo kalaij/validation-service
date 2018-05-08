@@ -94,7 +94,7 @@ public class FileReferenceValidator {
         if (!storedFilesPathList.contains(metadataFilePath)) {
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
             singleValidationResult.setMessage(String.format(FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE,
-                    metadataFilePath.substring(metadataFilePath.lastIndexOf(FILE_SEPARATOR) + 1)));
+                    metadataFilePath));
         }
 
         return singleValidationResult;
