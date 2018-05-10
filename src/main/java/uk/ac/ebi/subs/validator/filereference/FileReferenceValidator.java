@@ -12,9 +12,7 @@ import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +29,8 @@ public class FileReferenceValidator {
     final static String FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE = "The file [%s] referenced in the metadata is not exists on the file storage area.";
     static final String SUCCESS_FILE_VALIDATION_MESSAGE_ASSAY_DATA = "All referenced files exists on the file storage.";
     static final String SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE = "All file uploaded file(s) referenced in file metadata";
+
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     public List<SingleValidationResult> validate(File fileToValidate) {
         List<SingleValidationResult> singleValidationResults = new ArrayList<>();
@@ -53,7 +53,8 @@ public class FileReferenceValidator {
         List<SingleValidationResult> singleValidationResults = new ArrayList<>();
         List<uk.ac.ebi.subs.repository.model.fileupload.File> uploadedFiles = fileRepository.findBySubmissionId(submissionID);
         List<String> filePathsFromUploadedFile =
-                uploadedFiles.stream().map(File::getTargetPath).collect(Collectors.toList());
+                uploadedFiles.stream().map(File::getFilename)
+                .collect(Collectors.toList());
 
         List<String> filePathsFromEntity = entityToValidate.getFiles().stream()
                 .map(uk.ac.ebi.subs.data.component.File::getName)
@@ -77,7 +78,7 @@ public class FileReferenceValidator {
         SingleValidationResult singleValidationResult = generateDefaultSingleValidationResult(
                 uploadedFile.getId(), SUCCESS_FILE_VALIDATION_MESSAGE_UPLOADED_FILE);
 
-        if (!filePathsFromMetadata.contains(uploadedFile.getTargetPath())) {
+        if (!filePathsFromMetadata.contains(uploadedFile.getFilename())) {
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
             singleValidationResult.setMessage(String.format(STORED_FILE_NOT_REFERENCED, uploadedFile.getFilename()));
         }
@@ -92,7 +93,8 @@ public class FileReferenceValidator {
 
         if (!storedFilesPathList.contains(metadataFilePath)) {
             singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
-            singleValidationResult.setMessage(String.format(FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE, metadataFilePath));
+            singleValidationResult.setMessage(String.format(FILE_METADATA_NOT_EXISTS_AS_UPLOADED_FILE,
+                    metadataFilePath));
         }
 
         return singleValidationResult;
