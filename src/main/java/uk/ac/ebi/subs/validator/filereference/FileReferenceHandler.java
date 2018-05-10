@@ -57,8 +57,8 @@ public class FileReferenceHandler {
                             ((AssayData)validationDTO.getEntityToValidate()).getId() :
                             ((File)validationDTO.getEntityToValidate()).getId();
 
-            SingleValidationResult r = ValidatorHelper.getDefaultSingleValidationResult(objectToValidateID);
-            r.setValidationStatus(SingleValidationResultStatus.Pass);
+            SingleValidationResult r = ValidatorHelper.getDefaultSingleValidationResult(
+                    objectToValidateID, ValidationAuthor.FileReference);
             interestingResults = Collections.singletonList(r);
         }
 

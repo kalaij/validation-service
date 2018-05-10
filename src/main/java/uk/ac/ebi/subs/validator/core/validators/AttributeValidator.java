@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.Attribute;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class AttributeValidator {
     }
 
     private SingleValidationResult createSingleErrorResult(String id, String message) {
-        SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id);
+        SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(id, ValidationAuthor.Core);
         singleValidationResult.setMessage(message);
         singleValidationResult.setValidationStatus(SingleValidationResultStatus.Error);
 

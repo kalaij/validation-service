@@ -29,8 +29,8 @@ public abstract class AbstractHandler<T extends ValidationMessageEnvelope> {
                 .collect(Collectors.toList());
 
         if (interestingResults.isEmpty()) {
-            SingleValidationResult r = ValidatorHelper.getDefaultSingleValidationResult(envelope.getEntityToValidate().getId());
-            r.setValidationStatus(SingleValidationResultStatus.Pass);
+            SingleValidationResult r = ValidatorHelper.getDefaultSingleValidationResult(
+                    envelope.getEntityToValidate().getId(), ValidationAuthor.Core);
             interestingResults = Arrays.asList(r);
         }
 

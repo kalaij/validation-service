@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class ValidatorHelper {
 
-    public static SingleValidationResult getDefaultSingleValidationResult(String id) {
-        SingleValidationResult singleValidationResult = new SingleValidationResult(ValidationAuthor.Core, id);
+    public static SingleValidationResult getDefaultSingleValidationResult(String id, ValidationAuthor validationAuthor) {
+        SingleValidationResult singleValidationResult = new SingleValidationResult(validationAuthor, id);
         singleValidationResult.setValidationStatus(SingleValidationResultStatus.Pass);
         return singleValidationResult;
     }
