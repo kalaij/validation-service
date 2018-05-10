@@ -5,8 +5,7 @@ import uk.ac.ebi.subs.data.component.StudyDataType;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
-
-import static uk.ac.ebi.subs.validator.core.validators.ValidatorHelper.getDefaultSingleValidationResult;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 @Service
 public class StudyTypeValidator {
@@ -20,7 +19,8 @@ public class StudyTypeValidator {
      * @return singleValidationResult
      */
     public SingleValidationResult validate(Study study) {
-        SingleValidationResult singleValidationResult = ValidatorHelper.getDefaultSingleValidationResult(study.getId());
+        SingleValidationResult singleValidationResult =
+                ValidatorHelper.getDefaultSingleValidationResult(study.getId(), ValidationAuthor.Core);
         StudyDataType studyDataType = study.getStudyType();
 
         if (studyDataType == null) {
