@@ -20,7 +20,7 @@ public class CoordinatorRoutingKeys {
 
     public static final String EVENT_FILE_CREATED = "usi.file.created";
     public static final String EVENT_FILE_REF_VALIDATION = "file.reference.validation";
-    public static final String EVENT_FILE_DELETED = "file.deleted";
+    public static final String EVENT_FILE_DELETED = "file.deleted.validation";
 
     private static final String SUBMITTABLE_CREATED = "usi.submittable.created";
     private static final String SUBMITTABLE_UPDATED = "usi.submittable.updated";
