@@ -30,12 +30,12 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_EN
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_ASSAY_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_SAMPLE_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_STUDY_VALIDATION;
-import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_SCHEMA_ASSAYDATA_VALIDATION;
-import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_SCHEMA_ASSAY_VALIDATION;
-import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_SCHEMA_SAMPLE_VALIDATION;
-import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_SCHEMA_STUDY_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_ASSAYDATA_FILEREF_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_ASSAYDATA_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_ASSAY_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_SAMPLE_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_STUDY_VALIDATION;
 
 @Component
 public class SubmittableHandler {
