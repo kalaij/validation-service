@@ -2,19 +2,27 @@ package uk.ac.ebi.subs.validator.messaging;
 
 public class CoordinatorRoutingKeys {
 
+    // Sample
     public static final String EVENT_BIOSAMPLES_SAMPLE_VALIDATION = "biosamples.sample.validation";
     public static final String EVENT_TAXON_SAMPLE_VALIDATION = "taxon.sample.validation";
     public static final String EVENT_ENA_SAMPLE_VALIDATION = "ena.sample.validation";
     public static final String EVENT_CORE_SAMPLE_VALIDATION = "core.sample.validation";
+    public static final String EVENT_SCHEMA_SAMPLE_VALIDATION = "schema.sample.validation";
 
+    // Study
     public static final String EVENT_CORE_STUDY_VALIDATION = "core.study.validation";
     public static final String EVENT_ENA_STUDY_VALIDATION = "ena.study.validation";
+    public static final String EVENT_SCHEMA_STUDY_VALIDATION = "schema.study.validation";
 
+    // Assay
     public static final String EVENT_CORE_ASSAY_VALIDATION = "core.assay.validation";
     public static final String EVENT_ENA_ASSAY_VALIDATION = "ena.assay.validation";
+    public static final String EVENT_SCHEMA_ASSAY_VALIDATION = "schema.assay.validation";
 
+    // AssayData
     public static final String EVENT_CORE_ASSAYDATA_VALIDATION = "core.assaydata.validation";
     public static final String EVENT_ENA_ASSAYDATA_VALIDATION = "ena.assaydata.validation";
+    public static final String EVENT_SCHEMA_ASSAYDATA_VALIDATION = "schema.assaydata.validation";
 
     public static final String EVENT_BIOSTUDIES_PROJECT_VALIDATION = "biostudies.project.validation";
 
