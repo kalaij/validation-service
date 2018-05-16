@@ -26,16 +26,19 @@ public class JsonSchemaValidatorListener {
     private static Logger logger = LoggerFactory.getLogger(JsonSchemaValidatorListener.class);
 
     private RabbitMessagingTemplate rabbitMessagingTemplate;
+    private JsonSchemaValidationHandler validationHandler;
 
-    public JsonSchemaValidatorListener(RabbitMessagingTemplate rabbitMessagingTemplate) {
+    public JsonSchemaValidatorListener(RabbitMessagingTemplate rabbitMessagingTemplate, JsonSchemaValidationHandler validationHandler) {
         this.rabbitMessagingTemplate = rabbitMessagingTemplate;
+        this.validationHandler = validationHandler;
     }
 
     @RabbitListener(queues = SchemaQueues.SCHEMA_SAMPLE_VALIDATION)
     public void handleSampleValidationRequest(SampleValidationMessageEnvelope envelope) {
         logger.debug("Sample validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
-        // TODO
+        SingleValidationResultsEnvelope resultsEnvelope = validationHandler.handleSampleValidation(envelope);
+        sendResults(resultsEnvelope);
     }
 
     @RabbitListener(queues = SchemaQueues.SCHEMA_STUDY_VALIDATION)

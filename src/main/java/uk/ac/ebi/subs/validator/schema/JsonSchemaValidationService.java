@@ -13,18 +13,23 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class JsonSchemaService {
-    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaService.class);
+public class JsonSchemaValidationService {
+    private static final Logger logger = LoggerFactory.getLogger(JsonSchemaValidationService.class);
     private static final String JSON_SCHEMA_VALIDATOR = "https://usi-json-schema-validator.herokuapp.com/validate";
 
     private RestTemplate restTemplate;
 
-    public JsonSchemaService(RestTemplate restTemplate) {
+    public JsonSchemaValidationService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public List<JsonSchemaValidationError> validate(JsonNode schema, JsonNode submittable) {
-        ResponseEntity<JsonSchemaValidationError[]> response = restTemplate.postForEntity(JSON_SCHEMA_VALIDATOR, new JsonSchemaValidationRequestBody(schema, submittable), JsonSchemaValidationError[].class);
+        logger.trace("Calling json-schema-validator...");
+        ResponseEntity<JsonSchemaValidationError[]> response = restTemplate.postForEntity(
+                JSON_SCHEMA_VALIDATOR,
+                new JsonSchemaValidationRequestBody(schema, submittable),
+                JsonSchemaValidationError[].class
+        );
         return Arrays.asList(response.getBody());
     }
 }

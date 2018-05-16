@@ -21,40 +21,40 @@ import static org.hamcrest.Matchers.is;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Category(MongoDBDependentTest.class) // Spring auto configuration creates the MongoDB client beans and tries to connect.
-public class JsonSchemaServiceTest {
+public class JsonSchemaValidationServiceTest {
 
     @Autowired
-    private JsonSchemaService jsonSchemaService;
+    private JsonSchemaValidationService jsonSchemaValidationService;
 
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void errorList_ShouldBe_Empty() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaService.validate(mapper.readTree("{}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{}"), mapper.readTree("{}"));
         assertThat(errorList, empty());
     }
 
     @Test
     public void errorList_ShouldHave_OneError() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
         assertThat(errorList, hasSize(1));
     }
 
     @Test
     public void errorList_ShouldHave_ErrorOnMissingAlias() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
         assertThat(errorList.get(0).getDataPath(), is("alias"));
     }
 
     @Test
     public void errorList_ShouldHave_OneErrorMessageOnMissingAlias() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
         assertThat(errorList.get(0).getErrors(), hasSize(1));
     }
 
     @Test
     public void errorList_ErrorMessageOnMissingAlias_ShouldBe() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
         assertThat(errorList.get(0).getErrors().get(0), is("should have required property 'alias'"));
     }
 }
