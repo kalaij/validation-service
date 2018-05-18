@@ -28,8 +28,14 @@ public class ChainedValidationService {
     }
 
     protected Stream<? extends StoredSubmittable> streamSubmittablesInSubmissionExceptTriggerSubmittable(Submittable triggerSubmittable, String submissionId) {
-        return streamSubmittablesInSubmission(submissionId)
-                .filter(submittable -> !submittable.getId().equals(triggerSubmittable.getId()));
+        Stream<? extends StoredSubmittable> streamSubmittablesInSubmission = streamSubmittablesInSubmission(submissionId);
+
+        if (triggerSubmittable != null) {
+            streamSubmittablesInSubmission = streamSubmittablesInSubmission
+                    .filter(submittable -> !submittable.getId().equals(triggerSubmittable.getId()));
+        }
+
+        return streamSubmittablesInSubmission;
     }
 
     protected Stream<? extends StoredSubmittable> streamSubmittablesInSubmission(String submissionId) {

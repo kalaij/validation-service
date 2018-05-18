@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.coordinator;
+package uk.ac.ebi.subs.validator.coordinator.messages;
 
 import lombok.Data;
 

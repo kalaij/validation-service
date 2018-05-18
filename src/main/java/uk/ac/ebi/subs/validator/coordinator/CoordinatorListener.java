@@ -12,6 +12,8 @@ import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Project;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
+import uk.ac.ebi.subs.validator.coordinator.messages.FileDeletedMessage;
+import uk.ac.ebi.subs.validator.coordinator.messages.StoredSubmittableDeleteMessage;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.AssayValidationEnvelopeToCoordinator;
 import uk.ac.ebi.subs.validator.data.FileUploadValidationEnvelopeToCoordinator;
@@ -26,6 +28,7 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_AS
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_PROJECT_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_SAMPLE_VALIDATOR;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_STUDY_VALIDATOR;
+import static uk.ac.ebi.subs.validator.messaging.CoordinatorQueues.SUBMISSION_SUBMITTABLE_DELETED;
 
 @Component
 @RequiredArgsConstructor
@@ -184,5 +187,22 @@ public class CoordinatorListener {
         if (!fileValidationRequestHandler.handleSubmittableForFileReferenceValidation(submissionID)) {
             logger.error("Error handling file deletion for submission (id: {})", submissionID);
         }
+    }
+
+    /**
+     * Submittable deletion entry point for triggering a file reference and chained validation
+     * based on the given submission ID..
+     * @param storedSubmittableDeleteMessage contains the ID of the submission to validate
+     */
+    @RabbitListener(queues = SUBMISSION_SUBMITTABLE_DELETED)
+    public void processSubmittableDeletion(StoredSubmittableDeleteMessage storedSubmittableDeleteMessage) {
+        String submissionID = storedSubmittableDeleteMessage.getSubmissionId();
+
+        if (!fileValidationRequestHandler.handleFilesWhenSubmittableChanged(submissionID)) {
+            logger.error("Error handling submittable deleted from submission (id: {})", submissionID);
+        }
+
+        logger.trace("Triggering chained validation from submission (id: {})", submissionID);
+        chainedValidationService.triggerChainedValidation(null, submissionID);
     }
 }
