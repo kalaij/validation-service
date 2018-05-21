@@ -214,4 +214,29 @@ public class CoordinatorMessagingConfiguration {
         return BindingBuilder.bind(fileDeletionQueue).to(submissionExchange)
                 .with(EVENT_FILE_DELETED);
     }
+
+    /**
+     * Instantiate a {@link Queue} for validate the given submission after submittable has been deleted.
+     *
+     * @return an instance of a {@link Queue} for validate submission after submittable has been deleted.
+     */
+    @Bean
+    Queue submittableDeletionQueue() {
+        return Queues.buildQueueWithDlx(SUBMISSION_SUBMITTABLE_DELETED);
+    }
+
+    /**
+     * Create a {@link Binding} between the submission exchange and validation queue using the routing key of the
+     * submittable deletion.
+     *
+     * @param submittableDeletionQueue {@link Queue} for validating submission after submittable has been deleted
+     * @param submissionExchange {@link TopicExchange} for submissions
+     * @return a {@link Binding} between the submission exchange and validation queue using the routing key of
+     * submittable deletion.
+     */
+    @Bean
+    Binding validationForSubmittableDeletionBinding(Queue submittableDeletionQueue, TopicExchange submissionExchange) {
+        return BindingBuilder.bind(submittableDeletionQueue).to(submissionExchange)
+                .with(EVENT_SUBMITTABLE_DELETED);
+    }
 }

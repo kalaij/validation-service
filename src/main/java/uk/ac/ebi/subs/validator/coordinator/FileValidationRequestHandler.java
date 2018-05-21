@@ -73,13 +73,18 @@ public class FileValidationRequestHandler {
         return false;
     }
 
-    void handleFilesWhenSubmittableChanged(String submissionId) {
+    boolean handleFilesWhenSubmittableChanged(String submissionId) {
+        boolean hasPassed = true;
         List<uk.ac.ebi.subs.repository.model.fileupload.File> uploadedFiles = fileRepository.findBySubmissionId(submissionId);
 
-        uploadedFiles.forEach( uploadedFile -> {
+        for (File uploadedFile : uploadedFiles) {
             if (!handleFile(uploadedFile, submissionId)) {
                 logger.error("Error handling file to validate with id {}", uploadedFile.getId());
             }
-        });
+
+            hasPassed = false;
+        }
+
+        return hasPassed;
     }
 }

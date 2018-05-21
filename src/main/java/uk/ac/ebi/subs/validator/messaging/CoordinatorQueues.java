@@ -11,4 +11,5 @@ public class CoordinatorQueues {
     public static final String FILE_REF_VALIDATOR = "usi-file-reference-validator";
 
     public static final String FILE_DELETION_VALIDATOR = "file-reference-file-deleted-validation";
+    public static final String SUBMISSION_SUBMITTABLE_DELETED = "usi-submittable-deletion";
 }

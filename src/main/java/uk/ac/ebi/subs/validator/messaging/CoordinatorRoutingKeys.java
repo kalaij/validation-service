@@ -40,4 +40,5 @@ public class CoordinatorRoutingKeys {
     static final String SUBMITTABLE_PROJECT_CREATED = SUBMITTABLE_CREATED + ".project";
     static final String SUBMITTABLE_PROJECT_UPDATED = SUBMITTABLE_UPDATED + ".project";
 
+    static final String EVENT_SUBMITTABLE_DELETED = "usi.submittable.deletion";
 }
