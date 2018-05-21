@@ -200,9 +200,9 @@ public class CoordinatorListener {
 
         if (!fileValidationRequestHandler.handleFilesWhenSubmittableChanged(submissionID)) {
             logger.error("Error handling submittable deleted from submission (id: {})", submissionID);
+        } else {
+            logger.trace("Triggering chained validation from submission (id: {})", submissionID);
+            chainedValidationService.triggerChainedValidation(null, submissionID);
         }
-
-        logger.trace("Triggering chained validation from submission (id: {})", submissionID);
-        chainedValidationService.triggerChainedValidation(null, submissionID);
     }
 }
