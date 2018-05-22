@@ -35,17 +35,11 @@ public class AssayDataHandler extends AbstractHandler<AssayDataValidationMessage
     List<SingleValidationResult> validateSubmittable(AssayDataValidationMessageEnvelope envelope) {
         AssayData assayData = getAssayDataFromEnvelope(envelope);
 
-        List<SingleValidationResult> results = refValidator.validate(
+        return refValidator.validate(
                 assayData.getId(),
                 assayData.getAssayRefs(),
                 envelope.getAssays()
         );
-
-        if (!assayData.getFiles().isEmpty()) {
-            results.addAll(fileReferenceValidator.validate(assayData, envelope.getSubmissionId()));
-        }
-
-        return results;
     }
 
     @Override
