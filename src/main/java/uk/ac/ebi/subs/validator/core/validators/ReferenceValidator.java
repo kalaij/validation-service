@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.data.component.AbstractSubsRef;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
+import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 import uk.ac.ebi.subs.validator.model.Submittable;
 
 import java.util.ArrayList;
@@ -67,7 +68,8 @@ public class ReferenceValidator {
     }
 
     public SingleValidationResult validate(String idOfSubmittableBeingValidated, AbstractSubsRef referenceToSubmittable, Submittable referencedSubmittable) {
-        SingleValidationResult singleValidationResult = getDefaultSingleValidationResult(idOfSubmittableBeingValidated);
+        SingleValidationResult singleValidationResult =
+                getDefaultSingleValidationResult(idOfSubmittableBeingValidated, ValidationAuthor.Core);
 
         if (referencedSubmittable == null) {
             if (referenceToSubmittable.getAccession() == null || referenceToSubmittable.getAccession().isEmpty()) {

@@ -5,6 +5,7 @@ import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ public class BlankValidationResultMaps {
             Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Ena);
     private static final List<ValidationAuthor> ASSAY_DATA_VALIDATION_SERVICES_REQUIRED =
             Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Ena);
+    private static final List<ValidationAuthor> FILE_REF_VALIDATION_SERVICES_REQUIRED =
+            Collections.singletonList(ValidationAuthor.FileReference);
 
     private static final List<ValidationAuthor> PROJECT_VALIDATION_SERVICES_REQUIRED = Arrays.asList(ValidationAuthor.BioStudies);
 
@@ -49,6 +52,10 @@ public class BlankValidationResultMaps {
 
     public static Map<ValidationAuthor, List<SingleValidationResult>> forAssayData() {
         return generateDefaultMap(ASSAY_DATA_VALIDATION_SERVICES_REQUIRED);
+    }
+
+    public static Map<ValidationAuthor, List<SingleValidationResult>> forFile() {
+        return generateDefaultMap(FILE_REF_VALIDATION_SERVICES_REQUIRED);
     }
 
     private static Map<ValidationAuthor, List<SingleValidationResult>> generateDefaultMap(List<ValidationAuthor> validationAuthors) {
