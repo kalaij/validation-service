@@ -178,7 +178,7 @@ public class SubmittableHandler {
         return false;
     }
 
-    protected boolean handleSubmittableForFileUpload(AssayData assayData, String submissionId) {
+    protected boolean handleSubmittableForFileOperation(AssayData assayData, String submissionId) {
         Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
         if (optionalValidationResult.isPresent()) {
             ValidationResult validationResult = optionalValidationResult.get();
@@ -189,6 +189,10 @@ public class SubmittableHandler {
 
             logger.debug("Sending assay data to file reference validation queue");
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ASSAYDATA_FILEREF_VALIDATION, assayDataValidationMessageEnvelope);
+
+            logger.debug("Sending assay data to validation queue");
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
