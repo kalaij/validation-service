@@ -26,7 +26,7 @@ public class JsonSchemaValidationServiceTest {
     @Autowired
     private JsonSchemaValidationService jsonSchemaValidationService;
 
-    ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void errorList_ShouldBe_Empty() throws IOException {

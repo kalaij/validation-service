@@ -26,4 +26,13 @@ public final class ValidationHelper {
                 validationAuthor
         );
     }
+
+    public static SingleValidationResult generatePassingSingleValidationResult(String entityUuid, ValidationAuthor author) {
+        SingleValidationResult validationResult = new SingleValidationResult();
+        validationResult.setValidationAuthor(author);
+        validationResult.setEntityUuid(entityUuid);
+
+        validationResult.setValidationStatus(SingleValidationResultStatus.Pass);
+        return validationResult;
+    }
 }
