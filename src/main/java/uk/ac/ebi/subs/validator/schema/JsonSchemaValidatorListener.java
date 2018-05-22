@@ -45,7 +45,8 @@ public class JsonSchemaValidatorListener {
     public void handleStudyValidationRequest(StudyValidationMessageEnvelope envelope) {
         logger.debug("Study validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
-        // TODO
+        SingleValidationResultsEnvelope resultsEnvelope = validationHandler.handleStudyValidation(envelope);
+        sendResults(resultsEnvelope);
     }
 
     @RabbitListener(queues = SchemaQueues.SCHEMA_ASSAY_VALIDATION)
