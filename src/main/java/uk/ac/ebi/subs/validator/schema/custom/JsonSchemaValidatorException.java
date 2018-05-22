@@ -1,4 +1,4 @@
-package uk.ac.ebi.subs.validator.schema;
+package uk.ac.ebi.subs.validator.schema.custom;
 
 public class JsonSchemaValidatorException extends RuntimeException {
 

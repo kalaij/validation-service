@@ -1,12 +1,14 @@
 package uk.ac.ebi.subs.validator.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.validator.config.MongoDBDependentTest;
 import uk.ac.ebi.subs.validator.schema.model.JsonSchemaValidationError;
 
@@ -19,12 +21,14 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @Category(MongoDBDependentTest.class) // Spring auto configuration creates the MongoDB client beans and tries to connect.
 public class JsonSchemaValidationServiceTest {
 
     @Autowired
     private JsonSchemaValidationService jsonSchemaValidationService;
+    @Autowired
+    private SchemaService schemaService;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -56,5 +60,13 @@ public class JsonSchemaValidationServiceTest {
     public void errorList_ErrorMessageOnMissingAlias_ShouldBe() throws IOException {
         List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
         assertThat(errorList.get(0).getErrors().get(0), is("should have required property 'alias'"));
+    }
+
+    @Test
+    public void test() throws IOException {
+        ObjectNode sampleSchema = schemaService.getSchemaFor(new Sample());
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.readTree("{}"));
+
+        System.out.println(errorList);
     }
 }

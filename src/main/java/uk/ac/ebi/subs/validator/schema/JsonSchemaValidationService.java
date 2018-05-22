@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.subs.validator.schema.model.JsonSchemaValidationError;
 import uk.ac.ebi.subs.validator.schema.model.JsonSchemaValidationRequestBody;
+import uk.ac.ebi.subs.validator.schema.custom.JsonSchemaValidatorException;
 
 import java.util.Arrays;
 import java.util.List;
