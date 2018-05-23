@@ -23,7 +23,7 @@ public class SchemaServiceTest {
 
     @Test
     public void getSchemaForSample() {
-        System.out.println(schemaService.getSchemaFor(new Sample()));
+        schemaService.getSchemaFor(new Sample());
     }
 
     @Test(expected = SchemaNotFoundException.class)

@@ -14,6 +14,7 @@ import uk.ac.ebi.subs.validator.schema.custom.CustomHttpMessageConverter;
 import uk.ac.ebi.subs.validator.schema.custom.SchemaNotFoundException;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class SchemaService {
@@ -25,7 +26,9 @@ public class SchemaService {
 
     public SchemaService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.restTemplate.setMessageConverters(Arrays.asList(new CustomHttpMessageConverter()));
+        List messageConverters = this.restTemplate.getMessageConverters();
+        messageConverters.add(new CustomHttpMessageConverter());
+        this.restTemplate.setMessageConverters(messageConverters);
     }
 
     public ObjectNode getSchemaFor(Sample sample) throws SchemaNotFoundException {
