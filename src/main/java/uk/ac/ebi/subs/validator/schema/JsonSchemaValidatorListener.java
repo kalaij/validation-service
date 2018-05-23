@@ -53,14 +53,16 @@ public class JsonSchemaValidatorListener {
     public void handleAssayValidationRequest(AssayValidationMessageEnvelope envelope) {
         logger.debug("Assay validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
-        // TODO
+        SingleValidationResultsEnvelope resultsEnvelope = validationHandler.handleAssayValidation(envelope);
+        sendResults(resultsEnvelope);
     }
 
     @RabbitListener(queues = SchemaQueues.SCHEMA_ASSAYDATA_VALIDATION)
     public void handleAssayDataValidationRequest(AssayDataValidationMessageEnvelope envelope) {
         logger.debug("AssayData validation request received with ID: {}.", envelope.getEntityToValidate().getId());
 
-        // TODO
+        SingleValidationResultsEnvelope resultsEnvelope = validationHandler.handleAssayDataValidation(envelope);
+        sendResults(resultsEnvelope);
     }
 
     private void sendResults(SingleValidationResultsEnvelope envelope) {

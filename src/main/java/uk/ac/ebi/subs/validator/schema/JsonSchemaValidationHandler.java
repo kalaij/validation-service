@@ -1,8 +1,12 @@
 package uk.ac.ebi.subs.validator.schema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
+import uk.ac.ebi.subs.validator.data.AssayValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SampleValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.SingleValidationResult;
 import uk.ac.ebi.subs.validator.data.SingleValidationResultsEnvelope;
@@ -22,6 +26,16 @@ import static uk.ac.ebi.subs.validator.util.ValidationHelper.generateSingleValid
 @Service
 public class JsonSchemaValidationHandler {
 
+    // Temporary solution - schema url should be provided not hardcoded
+    @Value("${sample.schema.url}")
+    private String sampleSchemaUrl;
+    @Value("${study.schema.url}")
+    private String studySchemaUrl;
+    @Value("${assay.schema.url}")
+    private String assaySchemaUrl;
+    @Value("${assaydata.schema.url}")
+    private String assayDataSchemaUrl;
+
     private JsonSchemaValidationService validationService;
     private SchemaService schemaService;
     private ObjectMapper mapper = new ObjectMapper();
@@ -29,10 +43,11 @@ public class JsonSchemaValidationHandler {
     public JsonSchemaValidationHandler(JsonSchemaValidationService validationService, SchemaService schemaService) {
         this.validationService = validationService;
         this.schemaService = schemaService;
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
 
     public SingleValidationResultsEnvelope handleSampleValidation(SampleValidationMessageEnvelope envelope) {
-        JsonNode sampleSchema = schemaService.getSchemaFor(envelope.getEntityToValidate()); // TODO - handle logic on which schema to use for validation
+        JsonNode sampleSchema = schemaService.getSchemaFor(envelope.getEntityToValidate().getClass().getTypeName(), sampleSchemaUrl); // TODO - handle logic on which schema to use for validation
 
         List<JsonSchemaValidationError> jsonSchemaValidationErrors = validationService.validate(sampleSchema, mapper.valueToTree(envelope.getEntityToValidate()));
         List<SingleValidationResult> singleValidationResultList = getSingleValidationResults(envelope, jsonSchemaValidationErrors);
@@ -42,9 +57,29 @@ public class JsonSchemaValidationHandler {
     }
 
     public SingleValidationResultsEnvelope handleStudyValidation(StudyValidationMessageEnvelope envelope)  {
-        JsonNode studySchema = schemaService.getSchemaFor(envelope.getEntityToValidate()); // TODO - handle logic on which schema to use for validation
+        JsonNode studySchema = schemaService.getSchemaFor(envelope.getEntityToValidate().getClass().getTypeName(), studySchemaUrl); // TODO - handle logic on which schema to use for validation
 
         List<JsonSchemaValidationError> jsonSchemaValidationErrors = validationService.validate(studySchema, mapper.valueToTree(envelope.getEntityToValidate()));
+        List<SingleValidationResult> singleValidationResultList = getSingleValidationResults(envelope, jsonSchemaValidationErrors);
+
+        return generateSingleValidationResultsEnvelope(envelope.getValidationResultVersion(),
+                envelope.getValidationResultUUID(), singleValidationResultList, ValidationAuthor.JsonSchema);
+    }
+
+    public SingleValidationResultsEnvelope handleAssayValidation(AssayValidationMessageEnvelope envelope)  {
+        JsonNode assaySchema = schemaService.getSchemaFor(envelope.getEntityToValidate().getClass().getTypeName(), assaySchemaUrl); // TODO - handle logic on which schema to use for validation
+
+        List<JsonSchemaValidationError> jsonSchemaValidationErrors = validationService.validate(assaySchema, mapper.valueToTree(envelope.getEntityToValidate()));
+        List<SingleValidationResult> singleValidationResultList = getSingleValidationResults(envelope, jsonSchemaValidationErrors);
+
+        return generateSingleValidationResultsEnvelope(envelope.getValidationResultVersion(),
+                envelope.getValidationResultUUID(), singleValidationResultList, ValidationAuthor.JsonSchema);
+    }
+
+    public SingleValidationResultsEnvelope handleAssayDataValidation(AssayDataValidationMessageEnvelope envelope)  {
+        JsonNode assayDataSchema = schemaService.getSchemaFor(envelope.getEntityToValidate().getClass().getTypeName(), assayDataSchemaUrl); // TODO - handle logic on which schema to use for validation
+
+        List<JsonSchemaValidationError> jsonSchemaValidationErrors = validationService.validate(assayDataSchema, mapper.valueToTree(envelope.getEntityToValidate()));
         List<SingleValidationResult> singleValidationResultList = getSingleValidationResults(envelope, jsonSchemaValidationErrors);
 
         return generateSingleValidationResultsEnvelope(envelope.getValidationResultVersion(),

@@ -1,7 +1,9 @@
 package uk.ac.ebi.subs.validator.schema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -29,8 +31,15 @@ public class JsonSchemaValidationServiceTest {
     private JsonSchemaValidationService jsonSchemaValidationService;
     @Autowired
     private SchemaService schemaService;
+    private static ObjectMapper mapper;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private String sampleSchemaUrl = "https://raw.githubusercontent.com/EMBL-EBI-SUBS/validation-schemas/master/sample/sample-schema.json";
+
+    @BeforeClass
+    public static void setUp() {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY); // Null fields and empty collections are not included in the serialization.
+    }
 
     @Test
     public void errorList_ShouldBe_Empty() throws IOException {
@@ -40,33 +49,39 @@ public class JsonSchemaValidationServiceTest {
 
     @Test
     public void errorList_ShouldHave_OneError() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.valueToTree(new Sample()));
         assertThat(errorList, hasSize(1));
     }
 
     @Test
     public void errorList_ShouldHave_ErrorOnMissingAlias() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"),  mapper.valueToTree(new Sample()));
         assertThat(errorList.get(0).getDataPath(), is("alias"));
     }
 
     @Test
     public void errorList_ShouldHave_OneErrorMessageOnMissingAlias() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"),  mapper.valueToTree(new Sample()));
         assertThat(errorList.get(0).getErrors(), hasSize(1));
     }
 
     @Test
     public void errorList_ErrorMessageOnMissingAlias_ShouldBe() throws IOException {
-        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"), mapper.readTree("{}"));
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"),  mapper.valueToTree(new Sample()));
         assertThat(errorList.get(0).getErrors().get(0), is("should have required property 'alias'"));
     }
 
     @Test
-    public void test() throws IOException {
-        ObjectNode sampleSchema = schemaService.getSchemaFor(new Sample());
+    public void errorList_shouldHave_ThreeErrors() throws IOException {
+        JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
         List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.readTree("{}"));
+        assertThat(errorList, hasSize(3));
+    }
 
-        System.out.println(errorList);
+    @Test
+    public void emptySample_hasSixErrors() {
+        JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.valueToTree(new Sample()));
+        assertThat(errorList, hasSize(3));
     }
 }
