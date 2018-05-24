@@ -1,5 +1,6 @@
 package uk.ac.ebi.subs.validator.schema;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
@@ -8,13 +9,20 @@ import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
 import uk.ac.ebi.subs.validator.schema.custom.CustomHttpMessageConverter;
-import uk.ac.ebi.subs.validator.schema.custom.SchemaNotFoundException;
 
 import java.util.Arrays;
 
-public class SchemaServiceTest {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-    private String schemaUrl = "https://raw.githubusercontent.com/EMBL-EBI-SUBS/validation-schemas/master/study/study-schema.json";
+public class SchemaServiceTest {
+    private String schemaRootUrl = "https://raw.githubusercontent.com/EMBL-EBI-SUBS/validation-schemas/master";
+
+    private String studySchemaUrl = schemaRootUrl + "/study/study-schema.json";
+    private String sampleSchemaUrl = schemaRootUrl + "/sample/sample-schema.json";
+    private String assaySchemaUrl = schemaRootUrl + "/assay/assay-schema.json";
+    private String assayDataSchemaUrl = schemaRootUrl + "/assaydata/assaydata-schema.json";
+
     private RestTemplate restTemplate = new RestTemplate();
     private SchemaService schemaService;
 
@@ -26,21 +34,25 @@ public class SchemaServiceTest {
 
     @Test
     public void getSchemaForSample() {
-        schemaService.getSchemaFor(Sample.class.getTypeName(),"https://raw.githubusercontent.com/EMBL-EBI-SUBS/validation-schemas/master/sample/sample-schema.json");
+        JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
+        assertThat(sampleSchema.get("title").asText(), is("Submissions Sample Schema"));
     }
 
-    @Test(expected = SchemaNotFoundException.class)
+    @Test
     public void getSchemaForStudy() {
-        schemaService.getSchemaFor(Study.class.getTypeName(), schemaUrl);
+        JsonNode studySchema = schemaService.getSchemaFor(Study.class.getTypeName(), studySchemaUrl);
+        assertThat(studySchema.get("title").asText(), is("Submissions Study Schema"));
     }
 
-    @Test(expected = SchemaNotFoundException.class)
+    @Test
     public void getSchemaForAssay() {
-        schemaService.getSchemaFor(Assay.class.getTypeName(), schemaUrl);
+        JsonNode assaySchema = schemaService.getSchemaFor(Assay.class.getTypeName(), assaySchemaUrl);
+        assertThat(assaySchema.get("title").asText(), is("Submissions Assay Schema"));
     }
 
-    @Test(expected = SchemaNotFoundException.class)
+    @Test
     public void getSchemaForAssayData() {
-        schemaService.getSchemaFor(AssayData.class.getTypeName(), schemaUrl);
+        JsonNode assayDataSchema = schemaService.getSchemaFor(AssayData.class.getTypeName(), assayDataSchemaUrl);
+        assertThat(assayDataSchema.get("title").asText(), is("Submissions Assay Data Schema"));
     }
 }
