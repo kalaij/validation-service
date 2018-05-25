@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.subs.validator.schema.custom.JsonAsTextPlainHttpMessageConverter;
-import uk.ac.ebi.subs.validator.schema.custom.SchemaNotFoundException;
 
 import java.util.List;
 
@@ -22,12 +21,12 @@ public class SchemaService {
         this.restTemplate.setMessageConverters(messageConverters);
     }
 
-    public JsonNode getSchemaFor(String submittableType, String schemaUrl) throws SchemaNotFoundException {
+    public JsonNode getSchemaFor(String submittableType, String schemaUrl) {
         JsonNode schema;
         try {
             schema = restTemplate.getForObject(schemaUrl, ObjectNode.class);
         } catch (RestClientException e) {
-            throw new SchemaNotFoundException(submittableType + " schema - " + e.getMessage(), e);
+            throw new RestClientException(submittableType + " schema - " + e.getMessage(), e);
         }
         return schema;
     }
