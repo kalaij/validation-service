@@ -8,7 +8,7 @@ import uk.ac.ebi.subs.data.submittable.Assay;
 import uk.ac.ebi.subs.data.submittable.AssayData;
 import uk.ac.ebi.subs.data.submittable.Sample;
 import uk.ac.ebi.subs.data.submittable.Study;
-import uk.ac.ebi.subs.validator.schema.custom.CustomHttpMessageConverter;
+import uk.ac.ebi.subs.validator.schema.custom.JsonAsTextPlainHttpMessageConverter;
 
 import java.util.Arrays;
 
@@ -28,7 +28,7 @@ public class SchemaServiceTest {
 
     @Before
     public void setUp() {
-        restTemplate.setMessageConverters(Arrays.asList(new CustomHttpMessageConverter()));
+        restTemplate.setMessageConverters(Arrays.asList(new JsonAsTextPlainHttpMessageConverter()));
         schemaService = new SchemaService(restTemplate);
     }
 

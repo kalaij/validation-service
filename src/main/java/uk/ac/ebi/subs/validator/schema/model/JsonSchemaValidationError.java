@@ -26,19 +26,7 @@ public class JsonSchemaValidationError {
 
     @JsonIgnore
     public String getErrorsAsString() {
-        String errorString = "";
-        for (int i = 0; i < errors.size(); i++) {
-            if (i == 0) {
-                errorString = errors.get(i);
-            } else {
-                errorString += ", " + errors.get(i);
-            }
-
-            if(i == errors.size()-1) {
-                errorString += ".";
-            }
-        }
-        return errorString;
+        return String.join(", ", errors) + ".";
     }
 
     @Override

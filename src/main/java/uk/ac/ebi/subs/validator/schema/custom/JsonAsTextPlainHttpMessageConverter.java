@@ -10,9 +10,9 @@ import java.util.Arrays;
  * we will be calling are in fact returning a json response body we need a custom HttpMessageConverter that is in fact
  * the same as the MappingJackson2HttpMessageConverter but accepts Content-Type as text/plain.
  */
-public class CustomHttpMessageConverter extends MappingJackson2HttpMessageConverter {
+public class JsonAsTextPlainHttpMessageConverter extends MappingJackson2HttpMessageConverter {
 
-    public CustomHttpMessageConverter() {
+    public JsonAsTextPlainHttpMessageConverter() {
         this.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_PLAIN));
     }
 

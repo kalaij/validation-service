@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.ebi.subs.validator.schema.custom.CustomHttpMessageConverter;
+import uk.ac.ebi.subs.validator.schema.custom.JsonAsTextPlainHttpMessageConverter;
 import uk.ac.ebi.subs.validator.schema.custom.SchemaNotFoundException;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class SchemaService {
     public SchemaService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         List messageConverters = this.restTemplate.getMessageConverters();
-        messageConverters.add(new CustomHttpMessageConverter());
+        messageConverters.add(new JsonAsTextPlainHttpMessageConverter());
         this.restTemplate.setMessageConverters(messageConverters);
     }
 

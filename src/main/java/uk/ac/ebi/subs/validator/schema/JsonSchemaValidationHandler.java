@@ -92,12 +92,12 @@ public class JsonSchemaValidationHandler {
         if(jsonSchemaValidationErrors.isEmpty()) {
             singleValidationResultList = Arrays.asList(generatePassingSingleValidationResult(envelope.getEntityToValidate().getId(), ValidationAuthor.JsonSchema));
         } else {
-            singleValidationResultList = covertToSingleValidationResultList(jsonSchemaValidationErrors, envelope.getEntityToValidate().getId());
+            singleValidationResultList = convertToSingleValidationResultList(jsonSchemaValidationErrors, envelope.getEntityToValidate().getId());
         }
         return singleValidationResultList;
     }
 
-    private List<SingleValidationResult> covertToSingleValidationResultList(List<JsonSchemaValidationError> errorList, String entityUuid) {
+    private List<SingleValidationResult> convertToSingleValidationResultList(List<JsonSchemaValidationError> errorList, String entityUuid) {
         List<SingleValidationResult> validationResults = new ArrayList<>();
         for (JsonSchemaValidationError error : errorList) {
             validationResults.add(generateSchemaSingleValidationResult(error, entityUuid));
