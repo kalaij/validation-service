@@ -79,7 +79,7 @@ public class JsonSchemaValidationServiceTest {
     }
 
     @Test
-    public void emptySample_hasSixErrors() {
+    public void emptySample_hasThreeErrors() {
         JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
         List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.valueToTree(new Sample()));
         assertThat(errorList, hasSize(3));
