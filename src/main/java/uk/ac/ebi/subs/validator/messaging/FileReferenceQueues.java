@@ -1,7 +1,7 @@
 package uk.ac.ebi.subs.validator.messaging;
 
 /**
- * This class holds the definition the queues to which the core-validator listens to.
+ * This class holds the definition the queues to which the file reference validator listens to.
  *
  */
 public class FileReferenceQueues {

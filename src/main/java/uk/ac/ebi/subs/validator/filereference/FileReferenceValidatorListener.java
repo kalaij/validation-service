@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static uk.ac.ebi.subs.validator.messaging.FileReferenceQueues.FILE_REFERENCE_ASSAYDATA_VALIDATION;
-import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_ERROR;
-import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_VALIDATION_SUCCESS;
+import static uk.ac.ebi.subs.validator.messaging.ValidatorsCommonRoutingKeys.EVENT_VALIDATION_ERROR;
+import static uk.ac.ebi.subs.validator.messaging.ValidatorsCommonRoutingKeys.EVENT_VALIDATION_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
