@@ -31,6 +31,11 @@ public class CustomSerializationTest {
     }
 
     @Test
+    public void localDateYearWithLeadingZerosSerializationTest() {
+        assertEquals(TextNode.valueOf("0008-11-01"), mapper.valueToTree(LocalDate.of(8,11,1)));
+    }
+
+    @Test
     public void sampleSerializationTest() {
         assertEquals(
                 "{\"id\":\"test-sample-id\",\"accession\":\"ABC12345\",\"alias\":\"test-alias\",\"team\":" +
