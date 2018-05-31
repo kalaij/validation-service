@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static uk.ac.ebi.subs.validator.TestUtils.createStaticSample;
 import static uk.ac.ebi.subs.validator.schema.SchemaTestHelper.createCustomObjectMapper;
 
-public class LocalDateCustomSerializerTest {
+public class CustomSerializationTest {
 
     private static ObjectMapper mapper;
 
