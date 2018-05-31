@@ -1,6 +1,5 @@
 package uk.ac.ebi.subs.validator.schema;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.BeforeClass;
@@ -21,6 +20,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static uk.ac.ebi.subs.validator.TestUtils.createStaticSample;
+import static uk.ac.ebi.subs.validator.schema.SchemaTestHelper.createCustomObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,8 +38,7 @@ public class JsonSchemaValidationServiceTest {
 
     @BeforeClass
     public static void setUp() {
-        mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY); // Null fields and empty collections are not included in the serialization.
+        mapper = createCustomObjectMapper();
     }
 
     @Test
@@ -83,5 +83,12 @@ public class JsonSchemaValidationServiceTest {
         JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
         List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.valueToTree(new Sample()));
         assertThat(errorList, hasSize(3));
+    }
+
+    @Test
+    public void sample_mustHaveReleaseDate() {
+        JsonNode sampleSchema = schemaService.getSchemaFor(Sample.class.getTypeName(), sampleSchemaUrl);
+        List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(sampleSchema, mapper.valueToTree(createStaticSample()));
+        assertThat(errorList, hasSize(0));
     }
 }
