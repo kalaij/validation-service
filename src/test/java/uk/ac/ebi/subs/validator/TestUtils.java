@@ -33,6 +33,23 @@ public final class TestUtils {
         return sample;
     }
 
+    public static Sample createStaticSample() {
+        return createStaticSampleWithReleaseDate(LocalDate.of(2018,1,1));
+    }
+
+    public static Sample createStaticSampleWithReleaseDate(LocalDate date) {
+        Sample sample = new Sample();
+        sample.setId("test-sample-id");
+        sample.setTaxon("test-taxonomy");
+        sample.setTaxonId(9606L);
+        sample.setAccession("ABC12345");
+        sample.setAlias("test-alias");
+        sample.setDescription("Description for a test sample.");
+        sample.setTeam(testTeam);
+        sample.setReleaseDate(date);
+        return sample;
+    }
+
     public static ValidationResult createValidationResult(String submittableUuid) {
         ValidationResult validationResult = new ValidationResult();
         validationResult.setUuid(UUID.randomUUID().toString());

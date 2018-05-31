@@ -3,6 +3,7 @@ package uk.ac.ebi.subs.validator.schema;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.subs.validator.data.AssayDataValidationMessageEnvelope;
@@ -14,8 +15,10 @@ import uk.ac.ebi.subs.validator.data.StudyValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.ValidationMessageEnvelope;
 import uk.ac.ebi.subs.validator.data.structures.SingleValidationResultStatus;
 import uk.ac.ebi.subs.validator.data.structures.ValidationAuthor;
+import uk.ac.ebi.subs.validator.schema.custom.LocalDateCustomSerializer;
 import uk.ac.ebi.subs.validator.schema.model.JsonSchemaValidationError;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,11 +42,14 @@ public class JsonSchemaValidationHandler {
     private JsonSchemaValidationService validationService;
     private SchemaService schemaService;
     private ObjectMapper mapper = new ObjectMapper();
+    private SimpleModule module = new SimpleModule();
 
     public JsonSchemaValidationHandler(JsonSchemaValidationService validationService, SchemaService schemaService) {
         this.validationService = validationService;
         this.schemaService = schemaService;
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY); // Null fields and empty collections are not included in the serialization.
+        this.module.addSerializer(LocalDate.class, new LocalDateCustomSerializer());
+        this.mapper.registerModule(module);
     }
 
     public SingleValidationResultsEnvelope handleSampleValidation(SampleValidationMessageEnvelope envelope) {
