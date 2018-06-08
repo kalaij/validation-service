@@ -176,10 +176,7 @@ public class SubmittableHandler {
             AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
             assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
 
-            logger.debug("Sending assay data to validation queues");
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+            triggerAssayDataValidations(assayDataValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
@@ -198,13 +195,18 @@ public class SubmittableHandler {
             logger.debug("Sending assay data to file reference validation queue");
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ASSAYDATA_FILEREF_VALIDATION, assayDataValidationMessageEnvelope);
 
-            logger.debug("Sending assay data to validation queue");
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+            triggerAssayDataValidations(assayDataValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
         return false;
+    }
+
+    private void triggerAssayDataValidations(AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope) {
+        logger.debug("Sending assay data to validation queues");
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
     }
 
     protected void handleSubmittable(Submittable submittable, String submissionId) {
