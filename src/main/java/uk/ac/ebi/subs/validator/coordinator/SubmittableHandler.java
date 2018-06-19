@@ -32,6 +32,10 @@ import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_EN
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_ENA_STUDY_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.CoordinatorRoutingKeys.EVENT_TAXON_SAMPLE_VALIDATION;
 import static uk.ac.ebi.subs.validator.messaging.FileReferenceRoutingKeys.EVENT_ASSAYDATA_FILEREF_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_ASSAYDATA_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_ASSAY_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_SAMPLE_VALIDATION;
+import static uk.ac.ebi.subs.validator.messaging.SchemaRoutingKeys.EVENT_SCHEMA_STUDY_VALIDATION;
 
 @Component
 public class SubmittableHandler {
@@ -101,6 +105,7 @@ public class SubmittableHandler {
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_SAMPLE_VALIDATION, messageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_TAXON_SAMPLE_VALIDATION, messageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_BIOSAMPLES_SAMPLE_VALIDATION, messageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_SAMPLE_VALIDATION, messageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
@@ -125,6 +130,7 @@ public class SubmittableHandler {
             logger.debug("Sending study to validation queues");
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_STUDY_VALIDATION, studyValidationMessageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_STUDY_VALIDATION, studyValidationMessageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_STUDY_VALIDATION, studyValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
@@ -148,6 +154,7 @@ public class SubmittableHandler {
             logger.debug("Sending assay to validation queues");
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAY_VALIDATION, assayValidationMessageEnvelope);
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAY_VALIDATION, assayValidationMessageEnvelope);
+            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_ASSAY_VALIDATION, assayValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
@@ -169,16 +176,14 @@ public class SubmittableHandler {
             AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope = new AssayDataValidationMessageEnvelope(validationResult.getUuid(), validationResult.getVersion(), assayData,submissionId);
             assayDataValidationMessageEnvelopeExpander.expandEnvelope(assayDataValidationMessageEnvelope);
 
-            logger.debug("Sending assay data to validation queues");
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
-            rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+            triggerAssayDataValidations(assayDataValidationMessageEnvelope);
 
             return validationResult.getEntityUuid() != null;
         }
         return false;
     }
 
-    protected boolean handleSubmittableForFileUpload(AssayData assayData, String submissionId) {
+    protected boolean handleSubmittableForFileOperation(AssayData assayData, String submissionId) {
         Optional<ValidationResult> optionalValidationResult = coordinatorValidationResultService.fetchValidationResultDocument(assayData);
         if (optionalValidationResult.isPresent()) {
             ValidationResult validationResult = optionalValidationResult.get();
@@ -190,9 +195,18 @@ public class SubmittableHandler {
             logger.debug("Sending assay data to file reference validation queue");
             rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ASSAYDATA_FILEREF_VALIDATION, assayDataValidationMessageEnvelope);
 
+            triggerAssayDataValidations(assayDataValidationMessageEnvelope);
+
             return validationResult.getEntityUuid() != null;
         }
         return false;
+    }
+
+    private void triggerAssayDataValidations(AssayDataValidationMessageEnvelope assayDataValidationMessageEnvelope) {
+        logger.debug("Sending assay data to validation queues");
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_CORE_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_ENA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
+        rabbitMessagingTemplate.convertAndSend(Exchanges.SUBMISSIONS, EVENT_SCHEMA_ASSAYDATA_VALIDATION, assayDataValidationMessageEnvelope);
     }
 
     protected void handleSubmittable(Submittable submittable, String submissionId) {

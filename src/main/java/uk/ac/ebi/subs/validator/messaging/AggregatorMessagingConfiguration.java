@@ -11,8 +11,8 @@ import uk.ac.ebi.subs.messaging.ExchangeConfig;
 import uk.ac.ebi.subs.messaging.Queues;
 
 import static uk.ac.ebi.subs.validator.messaging.AggregatorQueues.VALIDATION_RESULT;
-import static uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_ERROR;
-import static uk.ac.ebi.subs.validator.messaging.AggregatorRoutingKeys.EVENT_VALIDATION_SUCCESS;
+import static uk.ac.ebi.subs.validator.messaging.ValidatorsCommonRoutingKeys.EVENT_VALIDATION_ERROR;
+import static uk.ac.ebi.subs.validator.messaging.ValidatorsCommonRoutingKeys.EVENT_VALIDATION_SUCCESS;
 
 /**
  * Messaging configuration for the validator aggregator.
@@ -44,8 +44,7 @@ public class AggregatorMessagingConfiguration {
      */
     @Bean
     Binding validationResultSuccessBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
-        return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
-                .with(EVENT_VALIDATION_SUCCESS);
+        return BindingBuilder.bind(validationResultQueue).to(submissionExchange).with(EVENT_VALIDATION_SUCCESS);
     }
 
     /**
@@ -59,9 +58,7 @@ public class AggregatorMessagingConfiguration {
      */
     @Bean
     Binding validationResultErrorBinding(Queue validationResultQueue, TopicExchange submissionExchange) {
-        return BindingBuilder.bind(validationResultQueue).to(submissionExchange)
-                .with(EVENT_VALIDATION_ERROR);
+        return BindingBuilder.bind(validationResultQueue).to(submissionExchange).with(EVENT_VALIDATION_ERROR);
     }
-
 
 }
