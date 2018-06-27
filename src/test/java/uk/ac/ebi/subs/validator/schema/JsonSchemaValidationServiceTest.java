@@ -56,7 +56,7 @@ public class JsonSchemaValidationServiceTest {
     @Test
     public void errorList_ShouldHave_ErrorOnMissingAlias() throws IOException {
         List<JsonSchemaValidationError> errorList = jsonSchemaValidationService.validate(mapper.readTree("{\"required\": [ \"alias\" ]}"),  mapper.valueToTree(new Sample()));
-        assertThat(errorList.get(0).getDataPath(), is("alias"));
+        assertThat(errorList.get(0).getDataPath(), is(".alias"));
     }
 
     @Test
