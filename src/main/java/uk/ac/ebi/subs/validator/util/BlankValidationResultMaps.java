@@ -25,7 +25,7 @@ public class BlankValidationResultMaps {
     private static final List<ValidationAuthor> ASSAY_DATA_VALIDATION_SERVICES_REQUIRED =
             Arrays.asList(ValidationAuthor.Core, ValidationAuthor.Ena, ValidationAuthor.JsonSchema);
     private static final List<ValidationAuthor> FILE_REF_VALIDATION_SERVICES_REQUIRED =
-            Collections.singletonList(ValidationAuthor.FileReference);
+            Arrays.asList(ValidationAuthor.FileReference, ValidationAuthor.FileContent);
 
     private static final List<ValidationAuthor> PROJECT_VALIDATION_SERVICES_REQUIRED = Arrays.asList(ValidationAuthor.BioStudies);
 
